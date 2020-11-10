@@ -47,7 +47,7 @@ type AspectRatio
 
 {-| Construct an aspect ratio from the width and height of the object.
 -}
-from : Interval number coordinates -> Interval number coordinates -> AspectRatio
+from : Interval Float coordinates -> Interval Float coordinates -> AspectRatio
 from width height =
     AspectRatio
         (Quantity.unwrap <| Interval.width width)
