@@ -13,6 +13,7 @@
             "ianmackenzie/elm-geometry": "3.8.0",
             "ianmackenzie/elm-geometry-svg": "3.0.0",
             "ianmackenzie/elm-units": "2.7.0",
+            "ianmackenzie/elm-units-interval": "2.1.0",
             "mdgriffith/elm-ui": "1.1.8"
         },
         "indirect": {
@@ -24,8 +25,7 @@
             "ianmackenzie/elm-1d-parameter": "1.0.1",
             "ianmackenzie/elm-float-extra": "1.1.0",
             "ianmackenzie/elm-interval": "2.0.0",
-            "ianmackenzie/elm-triangular-mesh": "1.1.0",
-            "ianmackenzie/elm-units-interval": "2.1.0"
+            "ianmackenzie/elm-triangular-mesh": "1.1.0"
         }
     },
     "test-dependencies": {
