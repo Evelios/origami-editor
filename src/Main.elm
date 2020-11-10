@@ -1,8 +1,18 @@
 module Main exposing (..)
 
+import BoundingBox2d exposing (BoundingBox2d)
 import Browser
-import Element exposing (none)
+import Browser.Dom
+import Browser.Events
+import Data.Coordinates exposing (Cartesian)
+import Element exposing (..)
+import Framework.View as View
 import Html exposing (Html)
+import Pixels exposing (Pixels)
+import Point2d
+import Task
+
+
 main : Program () Model Msg
 main =
     Browser.element
@@ -11,35 +21,76 @@ main =
         , update = update
         , subscriptions = subscriptions
         }
+
+
+
 -- Init
-type alias Model = {}
 
 
-init : () -> (Model, Cmd Msg)
+type alias Model =
+    { paperArea : BoundingBox2d Pixels Cartesian
+    }
+
+
+init : () -> ( Model, Cmd Msg )
 init _ =
-    ({}, Cmd.none)
+    ( { paperArea = BoundingBox2d.singleton Point2d.origin
+      }
+    , Task.attempt ViewAreaResize <|
+        Browser.Dom.getViewportOf View.pageId
+    )
+
 
 
 -- Update
 
 
-type Msg = None
+type Msg
+    = ViewAreaResize (Result Browser.Dom.Error Browser.Dom.Viewport)
+    | BrowserResize Int Int
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        None ->
-            (model, Cmd.none)
+        BrowserResize _ _ ->
+            ( model
+            , Task.attempt ViewAreaResize <|
+                Browser.Dom.getViewportOf View.pageId
+            )
+
+        ViewAreaResize viewportResult ->
+            case viewportResult of
+                Ok { viewport } ->
+                    ( { model
+                        | paperArea =
+                            BoundingBox2d.withDimensions
+                                ( Pixels.float viewport.width
+                                , Pixels.float viewport.height
+                                )
+                                Point2d.origin
+                      }
+                    , Cmd.none
+                    )
+
+                Err _ ->
+                    ( model, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.none
+    Browser.Events.onResize BrowserResize
 
 
 
 -- View
 
+
 view : Model -> Html msg
-view _ =
-    Element.layout [] none
+view model =
+    Element.layout
+        [ width fill
+        , height fill
+        , padding 50
+        ]
+        (View.page model.paperArea)

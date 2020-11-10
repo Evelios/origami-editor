@@ -2,8 +2,6 @@ module Util.BoundingBox2d exposing (..)
 
 import BoundingBox2d exposing (BoundingBox2d)
 import Data.AspectRatio as AspectRatio exposing (AspectRatio)
-import Data.Coordinates exposing (Cartesian)
-import Pixels exposing (Pixels)
 import Quantity exposing (Quantity)
 import Quantity.Interval as Interval exposing (Interval)
 
@@ -20,7 +18,10 @@ aspectRatio boundingBox =
 {-| Change the aspect ratio of the current size but make sure that the new size remains in the same bounding box as the
 original size object. The bounding box is shrunk around it's center point.
 -}
-shrinkToAspectRatio : AspectRatio -> BoundingBox2d Pixels Cartesian -> BoundingBox2d Pixels Cartesian
+shrinkToAspectRatio :
+    AspectRatio
+    -> BoundingBox2d units coordinates
+    -> BoundingBox2d units coordinates
 shrinkToAspectRatio newRatio boundingBox =
     let
         ( width, height ) =
