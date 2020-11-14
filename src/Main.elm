@@ -13,6 +13,7 @@ import Graph exposing (Graph)
 import Html exposing (Html)
 import Pixels exposing (Pixels)
 import Point2d exposing (Point2d)
+import Quantity
 import Task
 import Util.BoundingBox2d as BoundingBox2d
 
@@ -31,10 +32,15 @@ main =
 -- Init
 
 
+type alias PointGraph =
+    Graph (Point2d Pixels Cartesian) Edge
+
+
 type alias Model =
     { paperArea : BoundingBox2d Pixels Cartesian
     , aspectRatio : AspectRatio
-    , graph : Graph (Point2d Pixels Cartesian) Edge
+    , graph : PointGraph
+    , hoveredVertex : Maybe (Point2d Pixels Cartesian)
     }
 
 
@@ -48,6 +54,7 @@ init _ =
                 , maxY = Pixels.float 1
                 }
       , aspectRatio = AspectRatio.unsafe 1 1
+      , hoveredVertex = Nothing
       , graph = Graph.empty
       }
     , Task.attempt ViewAreaResize <|
@@ -63,6 +70,8 @@ type Msg
     = ViewAreaResize (Result Browser.Dom.Error Browser.Dom.Viewport)
     | BrowserResize Int Int
     | PaperClicked (Point2d Pixels Cartesian)
+    | PaperHovered (Point2d Pixels Cartesian)
+    | PaperExited
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -92,9 +101,44 @@ update msg model =
                     ( model, Cmd.none )
 
         PaperClicked position ->
-            ( { model | graph = Graph.addVertex (Debug.log "position" position) model.graph }
+            ( { model
+                | graph = Graph.addVertex position model.graph
+                , hoveredVertex = Just position
+              }
             , Cmd.none
             )
+
+        PaperHovered position ->
+            ( { model | hoveredVertex = pointHovered position model.graph }
+            , Cmd.none
+            )
+
+        PaperExited ->
+            ( { model | hoveredVertex = Nothing }
+            , Cmd.none
+            )
+
+
+pointHovered : Point2d Pixels Cartesian -> PointGraph -> Maybe (Point2d Pixels Cartesian)
+pointHovered position graph =
+    let
+        hoverDistance =
+            Pixels.float 20
+
+        sortedPoints =
+            Graph.vertices graph
+                |> List.sortBy (Point2d.distanceFrom position >> Pixels.inPixels)
+    in
+    case sortedPoints of
+        closest :: _ ->
+            if Point2d.distanceFrom position closest |> Quantity.lessThanOrEqualTo hoverDistance then
+                Just closest
+
+            else
+                Nothing
+
+        _ ->
+            Nothing
 
 
 subscriptions : Model -> Sub Msg
@@ -119,6 +163,9 @@ view model =
                 BoundingBox2d.shrinkToAspectRatio
                     model.aspectRatio
                     model.paperArea
+            , hoveredVertex = model.hoveredVertex
             , onClick = PaperClicked
+            , onMouseMove = PaperHovered
+            , onMouseLeave = PaperExited
             }
         )

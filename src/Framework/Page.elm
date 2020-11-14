@@ -20,6 +20,7 @@ import TypedSvg.Attributes as Attributes
 import TypedSvg.Attributes.InPx as InPx
 import TypedSvg.Core exposing (Attribute)
 import TypedSvg.Types exposing (Paint(..), Transform(..))
+import Util.List
 
 
 colors =
@@ -47,6 +48,14 @@ vertex point =
         (Circle2d.atPoint point <| Pixels.pixels 5)
 
 
+hoveredVertex : Point2d Pixels coordinates -> Svg msg
+hoveredVertex point =
+    Svg.circle2d
+        [ Attributes.fill <| Paint colors.vertex
+        ]
+        (Circle2d.atPoint point <| Pixels.pixels 5)
+
+
 background : BoundingBox2d Pixels coordinates -> Svg msg
 background boundingBox =
     Svg.boundingBox2d
@@ -59,19 +68,25 @@ background boundingBox =
 view :
     { graph : Graph (Point2d Pixels Cartesian) Edge
     , boundingBox : BoundingBox2d Pixels Cartesian
+    , hoveredVertex : Maybe (Point2d Pixels Cartesian)
     , onClick : Point2d Pixels Cartesian -> msg
+    , onMouseMove : Point2d Pixels Cartesian -> msg
+    , onMouseLeave : msg
     }
     -> Element msg
-view { graph, boundingBox, onClick } =
+view options =
     let
         elements =
-            [ background boundingBox ]
-                ++ List.map vertex (Graph.vertices graph)
+            [ background options.boundingBox ]
+                ++ List.map vertex (Graph.vertices options.graph)
+                |> Util.List.appendIf (Maybe.map hoveredVertex options.hoveredVertex)
     in
     Svg.svg
-        ([ onClickEvent boundingBox <| onClick
+        ([ onClickEvent options.boundingBox <| options.onClick
+         , onMouseMove options.boundingBox <| options.onMouseMove
+         , Events.onMouseOut options.onMouseLeave
          ]
-            ++ boundingBoxAttributes boundingBox
+            ++ boundingBoxAttributes options.boundingBox
         )
         elements
         |> html
@@ -108,24 +123,8 @@ boundingBoxAttributes boundingBox =
     ]
 
 
-boundingBoxAttributesCartesian : BoundingBox2d Pixels SvgYDown -> List (Attribute msg)
-boundingBoxAttributesCartesian boundingBox =
-    let
-        { minX, maxX, minY, maxY } =
-            BoundingBox2d.extrema boundingBox
 
-        ( width, height ) =
-            BoundingBox2d.intervals boundingBox
-                |> Tuple.mapBoth Interval.width Interval.width
-    in
-    [ Attributes.viewBox
-        (Quantity.unwrap minX)
-        (Quantity.unwrap minY)
-        (Quantity.unwrap (maxX |> Quantity.minus minX))
-        (Quantity.unwrap (maxY |> Quantity.minus minY))
-    , InPx.width (Quantity.unwrap width)
-    , InPx.height (Quantity.unwrap height)
-    ]
+-- Event Handlers
 
 
 {-| Information about handling mouse events can be found on the [elm package
@@ -137,6 +136,16 @@ website][1] and on the [Mozilla documentation][2].
 -}
 onClickEvent : BoundingBox2d Pixels Cartesian -> (Point2d Pixels Cartesian -> msg) -> Attribute msg
 onClickEvent boundingBox message =
+    Events.on "click" (Decode.map message <| point2dDecoder boundingBox)
+
+
+onMouseMove : BoundingBox2d Pixels Cartesian -> (Point2d Pixels Cartesian -> msg) -> Attribute msg
+onMouseMove boundingBox message =
+    Events.on "mousemove" (Decode.map message <| point2dDecoder boundingBox)
+
+
+point2dDecoder : BoundingBox2d Pixels Cartesian -> Decoder (Point2d Pixels Cartesian)
+point2dDecoder boundingBox =
     let
         svgDecoder : Decoder (Point2d Pixels SvgYDown)
         svgDecoder =
@@ -144,13 +153,9 @@ onClickEvent boundingBox message =
                 Point2d.pixels
                 (Decode.field "offsetX" Decode.float)
                 (Decode.field "offsetY" Decode.float)
-
-        decoder : Decoder (Point2d Pixels Cartesian)
-        decoder =
-            Decode.map
-                (Point2d.relativeTo
-                    (Coordinates.svgYDownToCartesian boundingBox)
-                )
-                svgDecoder
     in
-    Events.on "click" (Decode.map message decoder)
+    Decode.map
+        (Point2d.relativeTo
+            (Coordinates.svgYDownToCartesian boundingBox)
+        )
+        svgDecoder
