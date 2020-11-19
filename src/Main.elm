@@ -41,6 +41,7 @@ type alias Model =
     , aspectRatio : AspectRatio
     , graph : PointGraph
     , hoveredVertex : Maybe (Point2d Pixels Cartesian)
+    , selectedVertex : Maybe (Point2d Pixels Cartesian)
     }
 
 
@@ -55,6 +56,7 @@ init _ =
                 }
       , aspectRatio = AspectRatio.unsafe 1 1
       , hoveredVertex = Nothing
+      , selectedVertex = Nothing
       , graph = Graph.empty
       }
     , Task.attempt ViewAreaResize <|
@@ -69,9 +71,11 @@ init _ =
 type Msg
     = ViewAreaResize (Result Browser.Dom.Error Browser.Dom.Viewport)
     | BrowserResize Int Int
-    | PaperClicked (Point2d Pixels Cartesian)
     | PaperHovered (Point2d Pixels Cartesian)
+    | PaperMouseDown (Point2d Pixels Cartesian)
+    | PaperMouseUp (Point2d Pixels Cartesian)
     | PaperExited
+    | DeselectVertex
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -100,16 +104,34 @@ update msg model =
                 Err _ ->
                     ( model, Cmd.none )
 
-        PaperClicked position ->
-            ( { model
-                | graph = Graph.addVertex position model.graph
-                , hoveredVertex = Just position
-              }
-            , Cmd.none
-            )
+        PaperMouseDown position ->
+            case pointWithin position model.graph of
+                Just point ->
+                    ( { model | selectedVertex = Just point }
+                    , Cmd.none
+                    )
+
+                Nothing ->
+                    { model
+                        | graph = Graph.addVertex position model.graph
+                        , hoveredVertex = Just position
+                    }
+                        |> update DeselectVertex
+
+        PaperMouseUp position ->
+            case pointWithin position model.graph of
+                Just point ->
+                    ( model
+                    , Cmd.none
+                    )
+
+                Nothing ->
+                    ( model
+                    , Cmd.none
+                    )
 
         PaperHovered position ->
-            ( { model | hoveredVertex = pointHovered position model.graph }
+            ( { model | hoveredVertex = pointWithin position model.graph }
             , Cmd.none
             )
 
@@ -118,9 +140,14 @@ update msg model =
             , Cmd.none
             )
 
+        DeselectVertex ->
+            ( { model | selectedVertex = Nothing }
+            , Cmd.none
+            )
 
-pointHovered : Point2d Pixels Cartesian -> PointGraph -> Maybe (Point2d Pixels Cartesian)
-pointHovered position graph =
+
+pointWithin : Point2d Pixels Cartesian -> PointGraph -> Maybe (Point2d Pixels Cartesian)
+pointWithin position graph =
     let
         hoverDistance =
             Pixels.float 20
@@ -164,8 +191,10 @@ view model =
                     model.aspectRatio
                     model.paperArea
             , hoveredVertex = model.hoveredVertex
-            , onClick = PaperClicked
+            , selectedVertex = model.selectedVertex
             , onMouseMove = PaperHovered
+            , onMouseDown = PaperMouseDown
+            , onMouseUp = PaperMouseUp
             , onMouseLeave = PaperExited
             }
         )

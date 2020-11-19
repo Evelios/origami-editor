@@ -2,10 +2,11 @@ module Framework.Page exposing (..)
 
 import BoundingBox2d exposing (BoundingBox2d)
 import Circle2d
-import Color
+import Color exposing (Color)
 import Data.Coordinates as Coordinates exposing (Cartesian, SvgYDown)
 import Data.Edge exposing (Edge)
 import Element exposing (Element, centerX, centerY, html)
+import Framework.Color
 import Geometry.Svg as Svg
 import Graph exposing (Graph)
 import Html.Attributes
@@ -23,12 +24,6 @@ import TypedSvg.Types exposing (Paint(..), Transform(..))
 import Util.List
 
 
-colors =
-    { background = Color.rgb255 100 100 100
-    , vertex = Color.rgb255 180 40 75
-    }
-
-
 pageId : String
 pageId =
     "page"
@@ -38,28 +33,34 @@ pageId =
 --
 
 
-vertex : Point2d Pixels coordinates -> Svg msg
-vertex point =
+vertex : Color -> Float -> Point2d Pixels coordinates -> Svg msg
+vertex color size point =
     Svg.circle2d
-        [ Attributes.fill PaintNone
-        , InPx.strokeWidth 2
-        , Attributes.stroke <| Paint colors.vertex
+        [ Attributes.fill <| Paint color
         ]
-        (Circle2d.atPoint point <| Pixels.pixels 5)
+        (Circle2d.atPoint point <| Pixels.pixels size)
 
 
-hoveredVertex : Point2d Pixels coordinates -> Svg msg
-hoveredVertex point =
-    Svg.circle2d
-        [ Attributes.fill <| Paint colors.vertex
-        ]
-        (Circle2d.atPoint point <| Pixels.pixels 5)
+vertexStandard : Point2d Pixels coordinates -> Svg msg
+vertexStandard =
+    vertex Framework.Color.point 3
+
+
+vertexActive : Point2d Pixels coordinates -> Svg msg
+vertexActive =
+    vertex Framework.Color.pointActive 3
+
+
+vertexSelected : Point2d Pixels coordinates -> Svg msg
+vertexSelected =
+    vertex Framework.Color.pointSelected 5
 
 
 background : BoundingBox2d Pixels coordinates -> Svg msg
 background boundingBox =
     Svg.boundingBox2d
-        [ Attributes.fill <| Paint colors.background
+        [ Attributes.fill <| Paint Framework.Color.paperColor
+        , Attributes.stroke <| Paint Framework.Color.paperColor
         ]
         boundingBox
 
@@ -69,8 +70,10 @@ view :
     { graph : Graph (Point2d Pixels Cartesian) Edge
     , boundingBox : BoundingBox2d Pixels Cartesian
     , hoveredVertex : Maybe (Point2d Pixels Cartesian)
-    , onClick : Point2d Pixels Cartesian -> msg
+    , selectedVertex : Maybe (Point2d Pixels Cartesian)
     , onMouseMove : Point2d Pixels Cartesian -> msg
+    , onMouseDown : Point2d Pixels Cartesian -> msg
+    , onMouseUp : Point2d Pixels Cartesian -> msg
     , onMouseLeave : msg
     }
     -> Element msg
@@ -78,12 +81,14 @@ view options =
     let
         elements =
             [ background options.boundingBox ]
-                ++ List.map vertex (Graph.vertices options.graph)
-                |> Util.List.appendIf (Maybe.map hoveredVertex options.hoveredVertex)
+                ++ List.map vertexStandard (Graph.vertices options.graph)
+                |> Util.List.appendIf (Maybe.map vertexActive options.hoveredVertex)
+                |> Util.List.appendIf (Maybe.map vertexSelected options.selectedVertex)
     in
     Svg.svg
-        ([ onClickEvent options.boundingBox <| options.onClick
-         , onMouseMove options.boundingBox <| options.onMouseMove
+        ([ onMouseMove options.boundingBox <| options.onMouseMove
+         , onMouseDown options.boundingBox <| options.onMouseDown
+         , onMouseUp options.boundingBox <| options.onMouseUp
          , Events.onMouseOut options.onMouseLeave
          ]
             ++ boundingBoxAttributes options.boundingBox
@@ -127,6 +132,42 @@ boundingBoxAttributes boundingBox =
 -- Event Handlers
 
 
+onClickEvent : BoundingBox2d Pixels Cartesian -> (Point2d Pixels Cartesian -> msg) -> Attribute msg
+onClickEvent boundingBox message =
+    onEvent
+        { event = "click"
+        , boundingBox = boundingBox
+        , onTrigger = message
+        }
+
+
+onMouseDown : BoundingBox2d Pixels Cartesian -> (Point2d Pixels Cartesian -> msg) -> Attribute msg
+onMouseDown boundingBox message =
+    onEvent
+        { event = "mousedown"
+        , boundingBox = boundingBox
+        , onTrigger = message
+        }
+
+
+onMouseUp : BoundingBox2d Pixels Cartesian -> (Point2d Pixels Cartesian -> msg) -> Attribute msg
+onMouseUp boundingBox message =
+    onEvent
+        { event = "mouseup"
+        , boundingBox = boundingBox
+        , onTrigger = message
+        }
+
+
+onMouseMove : BoundingBox2d Pixels Cartesian -> (Point2d Pixels Cartesian -> msg) -> Attribute msg
+onMouseMove boundingBox message =
+    onEvent
+        { event = "mousemove"
+        , boundingBox = boundingBox
+        , onTrigger = message
+        }
+
+
 {-| Information about handling mouse events can be found on the [elm package
 website][1] and on the [Mozilla documentation][2].
 
@@ -134,14 +175,14 @@ website][1] and on the [Mozilla documentation][2].
 [2]: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent
 
 -}
-onClickEvent : BoundingBox2d Pixels Cartesian -> (Point2d Pixels Cartesian -> msg) -> Attribute msg
-onClickEvent boundingBox message =
-    Events.on "click" (Decode.map message <| point2dDecoder boundingBox)
-
-
-onMouseMove : BoundingBox2d Pixels Cartesian -> (Point2d Pixels Cartesian -> msg) -> Attribute msg
-onMouseMove boundingBox message =
-    Events.on "mousemove" (Decode.map message <| point2dDecoder boundingBox)
+onEvent :
+    { event : String
+    , boundingBox : BoundingBox2d Pixels Cartesian
+    , onTrigger : Point2d Pixels Cartesian -> msg
+    }
+    -> Attribute msg
+onEvent { event, boundingBox, onTrigger } =
+    Events.on event (Decode.map onTrigger <| point2dDecoder boundingBox)
 
 
 point2dDecoder : BoundingBox2d Pixels Cartesian -> Decoder (Point2d Pixels Cartesian)

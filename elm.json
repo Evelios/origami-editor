@@ -18,15 +18,18 @@
             "ianmackenzie/elm-geometry-svg": "3.0.0",
             "ianmackenzie/elm-units": "2.7.0",
             "ianmackenzie/elm-units-interval": "2.1.0",
-            "mdgriffith/elm-ui": "1.1.8"
+            "mdgriffith/elm-ui": "1.1.8",
+            "noahzgordon/elm-color-extra": "1.0.2"
         },
         "indirect": {
             "elm/random": "1.0.0",
+            "elm/regex": "1.0.0",
             "elm/time": "1.0.0",
             "elm/url": "1.0.0",
             "elm/virtual-dom": "1.0.2",
             "elm-community/maybe-extra": "5.2.0",
             "erlandsona/assoc-set": "1.1.0",
+            "fredcy/elm-parseint": "2.0.1",
             "ianmackenzie/elm-1d-parameter": "1.0.1",
             "ianmackenzie/elm-float-extra": "1.1.0",
             "ianmackenzie/elm-interval": "2.0.0",
