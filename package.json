@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "run-p dev:docs dev:app",
+    "start": "run-p dev:app",
     "test": "run-p test:code test:docs",
     "test:code": "npx elm-test",
     "test:docs": "npx elm-doc-preview --output /dev/null",

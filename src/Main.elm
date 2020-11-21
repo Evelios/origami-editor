@@ -6,7 +6,7 @@ import Browser.Dom
 import Browser.Events
 import Data.AspectRatio as AspectRatio exposing (AspectRatio)
 import Data.Coordinates exposing (Cartesian, SvgYDown)
-import Data.Edge exposing (Edge)
+import Data.Edge as Edge exposing (Edge)
 import Element exposing (..)
 import Framework.Page as Page
 import Graph exposing (Graph)
@@ -106,10 +106,25 @@ update msg model =
 
         PaperMouseDown position ->
             case pointWithin position model.graph of
-                Just point ->
-                    ( { model | selectedVertex = Just point }
-                    , Cmd.none
-                    )
+                Just newPoint ->
+                    case model.selectedVertex of
+                        Just oldPoint ->
+                            ( { model
+                                | graph =
+                                    Graph.addEdge
+                                        newPoint
+                                        oldPoint
+                                        Edge.new
+                                        model.graph
+                                , selectedVertex = Nothing
+                              }
+                            , Cmd.none
+                            )
+
+                        Nothing ->
+                            ( { model | selectedVertex = Just newPoint }
+                            , Cmd.none
+                            )
 
                 Nothing ->
                     { model

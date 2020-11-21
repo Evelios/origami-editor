@@ -1,4 +1,7 @@
-module Data.Edge exposing (Edge)
+module Data.Edge exposing
+    ( Edge
+    , new
+    )
 
 {-|
 
@@ -13,3 +16,9 @@ module Data.Edge exposing (Edge)
 {-| -}
 type Edge
     = Edge
+
+
+{-| -}
+new : Edge
+new =
+    Edge

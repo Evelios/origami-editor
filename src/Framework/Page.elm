@@ -11,6 +11,7 @@ import Geometry.Svg as Svg
 import Graph exposing (Graph)
 import Html.Attributes
 import Json.Decode as Decode exposing (Decoder)
+import LineSegment2d
 import Pixels exposing (Pixels)
 import Point2d exposing (Point2d)
 import Quantity exposing (Unitless)
@@ -56,6 +57,20 @@ vertexSelected =
     vertex Framework.Color.pointSelected 5
 
 
+edge :
+    { from : Point2d Pixels coordinates
+    , to : Point2d Pixels coordinates
+    , data : Edge
+    }
+    -> Svg msg
+edge { from, to } =
+    Svg.lineSegment2d
+        [ InPx.strokeWidth 2
+        , Attributes.stroke <| Paint Framework.Color.paperBorder
+        ]
+        (LineSegment2d.from from to)
+
+
 background : BoundingBox2d Pixels coordinates -> Svg msg
 background boundingBox =
     Svg.boundingBox2d
@@ -82,6 +97,7 @@ view options =
         elements =
             [ background options.boundingBox ]
                 ++ List.map vertexStandard (Graph.vertices options.graph)
+                ++ List.map edge (Graph.edges options.graph)
                 |> Util.List.appendIf (Maybe.map vertexActive options.hoveredVertex)
                 |> Util.List.appendIf (Maybe.map vertexSelected options.selectedVertex)
     in
