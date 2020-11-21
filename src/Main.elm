@@ -6,10 +6,10 @@ import Browser.Dom
 import Browser.Events
 import Data.AspectRatio as AspectRatio exposing (AspectRatio)
 import Data.Coordinates exposing (Cartesian, SvgYDown)
-import Data.Edge as Edge exposing (Edge)
+import Data.CreasePattern as CreasePattern exposing (CreasePattern)
+import Data.Edge exposing (Edge(..))
 import Element exposing (..)
 import Framework.Page as Page
-import Graph exposing (Graph)
 import Html exposing (Html)
 import Pixels exposing (Pixels)
 import Point2d exposing (Point2d)
@@ -32,14 +32,10 @@ main =
 -- Init
 
 
-type alias PointGraph =
-    Graph (Point2d Pixels Cartesian) Edge
-
-
 type alias Model =
     { paperArea : BoundingBox2d Pixels Cartesian
     , aspectRatio : AspectRatio
-    , graph : PointGraph
+    , creasePattern : CreasePattern Pixels Cartesian
     , hoveredVertex : Maybe (Point2d Pixels Cartesian)
     , selectedVertex : Maybe (Point2d Pixels Cartesian)
     }
@@ -47,17 +43,20 @@ type alias Model =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { paperArea =
+    let
+        paperArea =
             BoundingBox2d.fromExtrema
                 { minX = Pixels.float -1
                 , maxX = Pixels.float 1
                 , minY = Pixels.float -1
                 , maxY = Pixels.float 1
                 }
+    in
+    ( { paperArea = paperArea
       , aspectRatio = AspectRatio.unsafe 1 1
       , hoveredVertex = Nothing
       , selectedVertex = Nothing
-      , graph = Graph.empty
+      , creasePattern = CreasePattern.new paperArea
       }
     , Task.attempt ViewAreaResize <|
         Browser.Dom.getViewportOf Page.pageId
@@ -90,13 +89,17 @@ update msg model =
         ViewAreaResize viewportResult ->
             case viewportResult of
                 Ok { viewport } ->
-                    ( { model
-                        | paperArea =
+                    let
+                        paperArea =
                             BoundingBox2d.withDimensions
                                 ( Pixels.pixels viewport.width
                                 , Pixels.pixels viewport.height
                                 )
                                 Point2d.origin
+                    in
+                    ( { model
+                        | paperArea = paperArea
+                        , creasePattern = CreasePattern.new paperArea
                       }
                     , Cmd.none
                     )
@@ -105,17 +108,17 @@ update msg model =
                     ( model, Cmd.none )
 
         PaperMouseDown position ->
-            case pointWithin position model.graph of
+            case pointWithin position model.creasePattern of
                 Just newPoint ->
                     case model.selectedVertex of
                         Just oldPoint ->
                             ( { model
-                                | graph =
-                                    Graph.addEdge
+                                | creasePattern =
+                                    CreasePattern.foldBetween
                                         newPoint
                                         oldPoint
-                                        Edge.new
-                                        model.graph
+                                        Valley
+                                        model.creasePattern
                                 , selectedVertex = Nothing
                               }
                             , Cmd.none
@@ -128,13 +131,13 @@ update msg model =
 
                 Nothing ->
                     { model
-                        | graph = Graph.addVertex position model.graph
+                        | creasePattern = CreasePattern.addVertex position model.creasePattern
                         , hoveredVertex = Just position
                     }
                         |> update DeselectVertex
 
         PaperMouseUp position ->
-            case pointWithin position model.graph of
+            case pointWithin position model.creasePattern of
                 Just point ->
                     ( model
                     , Cmd.none
@@ -146,7 +149,7 @@ update msg model =
                     )
 
         PaperHovered position ->
-            ( { model | hoveredVertex = pointWithin position model.graph }
+            ( { model | hoveredVertex = pointWithin position model.creasePattern }
             , Cmd.none
             )
 
@@ -161,14 +164,14 @@ update msg model =
             )
 
 
-pointWithin : Point2d Pixels Cartesian -> PointGraph -> Maybe (Point2d Pixels Cartesian)
-pointWithin position graph =
+pointWithin : Point2d Pixels Cartesian -> CreasePattern Pixels Cartesian -> Maybe (Point2d Pixels Cartesian)
+pointWithin position creasePattern =
     let
         hoverDistance =
             Pixels.float 20
 
         sortedPoints =
-            Graph.vertices graph
+            CreasePattern.vertices creasePattern
                 |> List.sortBy (Point2d.distanceFrom position >> Pixels.inPixels)
     in
     case sortedPoints of
@@ -200,7 +203,7 @@ view model =
         , padding 50
         ]
         (Page.view
-            { graph = model.graph
+            { creasePattern = model.creasePattern
             , boundingBox =
                 BoundingBox2d.shrinkToAspectRatio
                     model.aspectRatio

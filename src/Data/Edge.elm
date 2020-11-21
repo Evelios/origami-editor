@@ -1,7 +1,4 @@
-module Data.Edge exposing
-    ( Edge
-    , new
-    )
+module Data.Edge exposing (Edge(..))
 
 {-|
 
@@ -13,12 +10,7 @@ module Data.Edge exposing
 -}
 
 
-{-| -}
 type Edge
-    = Edge
-
-
-{-| -}
-new : Edge
-new =
-    Edge
+    = Mountain
+    | Valley
+    | Boundary

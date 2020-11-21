@@ -4,11 +4,11 @@ import BoundingBox2d exposing (BoundingBox2d)
 import Circle2d
 import Color exposing (Color)
 import Data.Coordinates as Coordinates exposing (Cartesian, SvgYDown)
+import Data.CreasePattern as CreasePattern exposing (CreasePattern)
 import Data.Edge exposing (Edge)
 import Element exposing (Element, centerX, centerY, html)
 import Framework.Color
 import Geometry.Svg as Svg
-import Graph exposing (Graph)
 import Html.Attributes
 import Json.Decode as Decode exposing (Decoder)
 import LineSegment2d
@@ -82,7 +82,7 @@ background boundingBox =
 
 {-| -}
 view :
-    { graph : Graph (Point2d Pixels Cartesian) Edge
+    { creasePattern : CreasePattern Pixels Cartesian
     , boundingBox : BoundingBox2d Pixels Cartesian
     , hoveredVertex : Maybe (Point2d Pixels Cartesian)
     , selectedVertex : Maybe (Point2d Pixels Cartesian)
@@ -96,8 +96,8 @@ view options =
     let
         elements =
             [ background options.boundingBox ]
-                ++ List.map vertexStandard (Graph.vertices options.graph)
-                ++ List.map edge (Graph.edges options.graph)
+                ++ List.map vertexStandard (CreasePattern.vertices options.creasePattern)
+                ++ List.map edge (CreasePattern.edges options.creasePattern)
                 |> Util.List.appendIf (Maybe.map vertexActive options.hoveredVertex)
                 |> Util.List.appendIf (Maybe.map vertexSelected options.selectedVertex)
     in
