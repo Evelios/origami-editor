@@ -2,7 +2,7 @@ module Data.CreasePattern exposing
     ( CreasePattern
     , new
     , addVertex, fold, foldBetween
-    , edges, vertices
+    , edges, vertices, potentialFolds
     )
 
 {-|
@@ -25,15 +25,18 @@ module Data.CreasePattern exposing
 
 # Accessors
 
-@docs edges, vertices
+@docs edges, vertices, potentialFolds
 
 -}
 
 import BoundingBox2d exposing (BoundingBox2d)
+import Data.Axioms as Axioms
 import Data.Edge exposing (Edge(..))
 import Graph exposing (Graph)
 import LineSegment2d exposing (LineSegment2d)
+import List.Extra
 import Point2d exposing (Point2d)
+import Util.BoundingBox2d as BoundingBox2d
 
 
 
@@ -42,7 +45,7 @@ import Point2d exposing (Point2d)
 
 {-| -}
 type CreasePattern units coordinates
-    = CreasePattern (Graph (Point2d units coordinates) Edge)
+    = CreasePattern (BoundingBox2d units coordinates) (Graph (Point2d units coordinates) Edge)
 
 
 
@@ -52,28 +55,10 @@ type CreasePattern units coordinates
 {-| -}
 new : BoundingBox2d units coordinates -> CreasePattern units coordinates
 new boundingBox =
-    let
-        { minX, maxX, minY, maxY } =
-            BoundingBox2d.extrema boundingBox
-
-        { bl, tl, tr, br } =
-            { bl = Point2d.xy minX minY
-            , tl = Point2d.xy minX maxY
-            , tr = Point2d.xy maxX maxY
-            , br = Point2d.xy maxX minY
-            }
-
-        borders =
-            [ LineSegment2d.from bl tl
-            , LineSegment2d.from tl tr
-            , LineSegment2d.from tr br
-            , LineSegment2d.from br bl
-            ]
-    in
     List.foldl
         (\line -> fold line Boundary)
-        (CreasePattern Graph.empty)
-        borders
+        (CreasePattern boundingBox Graph.empty)
+        (BoundingBox2d.edges boundingBox)
 
 
 
@@ -84,7 +69,7 @@ new boundingBox =
 vertices :
     CreasePattern units coordinates
     -> List (Point2d units coordinates)
-vertices (CreasePattern graph) =
+vertices (CreasePattern _ graph) =
     Graph.vertices graph
 
 
@@ -97,8 +82,18 @@ edges :
             , to : Point2d units coordinates
             , data : Edge
             }
-edges (CreasePattern graph) =
+edges (CreasePattern _ graph) =
     Graph.edges graph
+
+
+{-| -}
+potentialFolds : CreasePattern units coordinates -> List (LineSegment2d units coordinates)
+potentialFolds (CreasePattern boundingBox graph) =
+    let
+        vertexPairs =
+            List.Extra.uniquePairs (Graph.vertices graph)
+    in
+    List.map (\( from, to ) -> Axioms.first from to boundingBox) vertexPairs
 
 
 
@@ -110,9 +105,9 @@ addVertex :
     Point2d units coordinates
     -> CreasePattern units coordinates
     -> CreasePattern units coordinates
-addVertex point (CreasePattern graph) =
+addVertex point (CreasePattern boundingBox graph) =
     Graph.addVertex point graph
-        |> CreasePattern
+        |> CreasePattern boundingBox
 
 
 {-| -}
@@ -136,10 +131,10 @@ foldBetween :
     -> Edge
     -> CreasePattern units coordinates
     -> CreasePattern units coordinates
-foldBetween start end edge (CreasePattern graph) =
+foldBetween start end edge (CreasePattern boundingBox graph) =
     if Graph.hasEdge end start graph then
-        CreasePattern graph
+        CreasePattern boundingBox graph
 
     else
         Graph.addEdge start end edge graph
-            |> CreasePattern
+            |> CreasePattern boundingBox

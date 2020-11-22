@@ -2,8 +2,31 @@ module Util.BoundingBox2d exposing (..)
 
 import BoundingBox2d exposing (BoundingBox2d)
 import Data.AspectRatio as AspectRatio exposing (AspectRatio)
+import LineSegment2d exposing (LineSegment2d)
+import Point2d
 import Quantity exposing (Quantity)
 import Quantity.Interval as Interval exposing (Interval)
+
+
+{-| -}
+edges : BoundingBox2d units coordinates -> List (LineSegment2d units coordinates)
+edges boundingBox =
+    let
+        { minX, maxX, minY, maxY } =
+            BoundingBox2d.extrema boundingBox
+
+        { bl, tl, tr, br } =
+            { bl = Point2d.xy minX minY
+            , tl = Point2d.xy minX maxY
+            , tr = Point2d.xy maxX maxY
+            , br = Point2d.xy maxX minY
+            }
+    in
+    [ LineSegment2d.from bl tl
+    , LineSegment2d.from tl tr
+    , LineSegment2d.from tr br
+    , LineSegment2d.from br bl
+    ]
 
 
 {-| Get the aspect ratio of a bounding box.

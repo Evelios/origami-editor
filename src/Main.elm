@@ -44,6 +44,9 @@ type alias Model =
 init : () -> ( Model, Cmd Msg )
 init _ =
     let
+        aspectRatio =
+            AspectRatio.unsafe 1 1
+
         paperArea =
             BoundingBox2d.fromExtrema
                 { minX = Pixels.float -1
@@ -51,9 +54,11 @@ init _ =
                 , minY = Pixels.float -1
                 , maxY = Pixels.float 1
                 }
+                |> BoundingBox2d.shrinkToAspectRatio
+                    aspectRatio
     in
     ( { paperArea = paperArea
-      , aspectRatio = AspectRatio.unsafe 1 1
+      , aspectRatio = aspectRatio
       , hoveredVertex = Nothing
       , selectedVertex = Nothing
       , creasePattern = CreasePattern.new paperArea
@@ -96,6 +101,7 @@ update msg model =
                                 , Pixels.pixels viewport.height
                                 )
                                 Point2d.origin
+                                |> BoundingBox2d.shrinkToAspectRatio model.aspectRatio
                     in
                     ( { model
                         | paperArea = paperArea

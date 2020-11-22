@@ -11,7 +11,7 @@ import Framework.Color
 import Geometry.Svg as Svg
 import Html.Attributes
 import Json.Decode as Decode exposing (Decoder)
-import LineSegment2d
+import LineSegment2d exposing (LineSegment2d)
 import Pixels exposing (Pixels)
 import Point2d exposing (Point2d)
 import Quantity exposing (Unitless)
@@ -71,6 +71,17 @@ edge { from, to } =
         (LineSegment2d.from from to)
 
 
+potentialFold :
+    LineSegment2d units coordinates
+    -> Svg msg
+potentialFold line =
+    Svg.lineSegment2d
+        [ InPx.strokeWidth 1
+        , Attributes.stroke <| Paint Framework.Color.paperBorder
+        ]
+        line
+
+
 background : BoundingBox2d Pixels coordinates -> Svg msg
 background boundingBox =
     Svg.boundingBox2d
@@ -98,6 +109,7 @@ view options =
             [ background options.boundingBox ]
                 ++ List.map vertexStandard (CreasePattern.vertices options.creasePattern)
                 ++ List.map edge (CreasePattern.edges options.creasePattern)
+                ++ List.map potentialFold (CreasePattern.potentialFolds options.creasePattern)
                 |> Util.List.appendIf (Maybe.map vertexActive options.hoveredVertex)
                 |> Util.List.appendIf (Maybe.map vertexSelected options.selectedVertex)
     in
@@ -134,10 +146,10 @@ boundingBoxAttributes boundingBox =
                 |> Tuple.mapBoth Interval.width Interval.width
     in
     [ Attributes.viewBox
-        (Quantity.unwrap minX)
-        (Quantity.unwrap minY)
-        (Quantity.unwrap (maxX |> Quantity.minus minX))
-        (Quantity.unwrap (maxY |> Quantity.minus minY))
+        (Quantity.unwrap minX - 10)
+        (Quantity.unwrap minY - 10)
+        (Quantity.unwrap (maxX |> Quantity.minus minX) + 20)
+        (Quantity.unwrap (maxY |> Quantity.minus minY) + 20)
     , InPx.width (Quantity.unwrap width)
     , InPx.height (Quantity.unwrap height)
     , Attributes.transform [ Scale 1 -1 ]
