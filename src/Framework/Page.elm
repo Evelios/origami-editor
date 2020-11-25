@@ -71,17 +71,6 @@ edge { from, to } =
         (LineSegment2d.from from to)
 
 
-potentialFold :
-    LineSegment2d units coordinates
-    -> Svg msg
-potentialFold line =
-    Svg.lineSegment2d
-        [ InPx.strokeWidth 1
-        , Attributes.stroke <| Paint Framework.Color.paperBorder
-        ]
-        line
-
-
 background : BoundingBox2d Pixels coordinates -> Svg msg
 background boundingBox =
     Svg.boundingBox2d
@@ -98,8 +87,7 @@ view :
     , hoveredVertex : Maybe (Point2d Pixels Cartesian)
     , selectedVertex : Maybe (Point2d Pixels Cartesian)
     , onMouseMove : Point2d Pixels Cartesian -> msg
-    , onMouseDown : Point2d Pixels Cartesian -> msg
-    , onMouseUp : Point2d Pixels Cartesian -> msg
+    , onMouseClick : Point2d Pixels Cartesian -> msg
     , onMouseLeave : msg
     }
     -> Element msg
@@ -109,14 +97,12 @@ view options =
             [ background options.boundingBox ]
                 ++ List.map vertexStandard (CreasePattern.vertices options.creasePattern)
                 ++ List.map edge (CreasePattern.edges options.creasePattern)
-                ++ List.map potentialFold (CreasePattern.potentialFolds options.creasePattern)
                 |> Util.List.appendIf (Maybe.map vertexActive options.hoveredVertex)
                 |> Util.List.appendIf (Maybe.map vertexSelected options.selectedVertex)
     in
     Svg.svg
         ([ onMouseMove options.boundingBox <| options.onMouseMove
-         , onMouseDown options.boundingBox <| options.onMouseDown
-         , onMouseUp options.boundingBox <| options.onMouseUp
+         , onClickEvent options.boundingBox <| options.onMouseClick
          , Events.onMouseOut options.onMouseLeave
          ]
             ++ boundingBoxAttributes options.boundingBox
@@ -164,24 +150,6 @@ onClickEvent : BoundingBox2d Pixels Cartesian -> (Point2d Pixels Cartesian -> ms
 onClickEvent boundingBox message =
     onEvent
         { event = "click"
-        , boundingBox = boundingBox
-        , onTrigger = message
-        }
-
-
-onMouseDown : BoundingBox2d Pixels Cartesian -> (Point2d Pixels Cartesian -> msg) -> Attribute msg
-onMouseDown boundingBox message =
-    onEvent
-        { event = "mousedown"
-        , boundingBox = boundingBox
-        , onTrigger = message
-        }
-
-
-onMouseUp : BoundingBox2d Pixels Cartesian -> (Point2d Pixels Cartesian -> msg) -> Attribute msg
-onMouseUp boundingBox message =
-    onEvent
-        { event = "mouseup"
         , boundingBox = boundingBox
         , onTrigger = message
         }

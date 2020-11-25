@@ -13,9 +13,9 @@ import Framework.Page as Page
 import Html exposing (Html)
 import Pixels exposing (Pixels)
 import Point2d exposing (Point2d)
-import Quantity
 import Task
 import Util.BoundingBox2d as BoundingBox2d
+import Util.Point2d as Point2d
 
 
 main : Program () Model Msg
@@ -32,12 +32,16 @@ main =
 -- Init
 
 
+type Selectable
+    = SelectedVertex (Point2d Pixels Cartesian)
+
+
 type alias Model =
     { paperArea : BoundingBox2d Pixels Cartesian
     , aspectRatio : AspectRatio
     , creasePattern : CreasePattern Pixels Cartesian
-    , hoveredVertex : Maybe (Point2d Pixels Cartesian)
-    , selectedVertex : Maybe (Point2d Pixels Cartesian)
+    , hoveredVertex : Maybe Selectable
+    , selectedVertex : Maybe Selectable
     }
 
 
@@ -76,8 +80,7 @@ type Msg
     = ViewAreaResize (Result Browser.Dom.Error Browser.Dom.Viewport)
     | BrowserResize Int Int
     | PaperHovered (Point2d Pixels Cartesian)
-    | PaperMouseDown (Point2d Pixels Cartesian)
-    | PaperMouseUp (Point2d Pixels Cartesian)
+    | PaperClicked (Point2d Pixels Cartesian)
     | PaperExited
     | DeselectVertex
 
@@ -113,11 +116,11 @@ update msg model =
                 Err _ ->
                     ( model, Cmd.none )
 
-        PaperMouseDown position ->
-            case pointWithin position model.creasePattern of
+        PaperClicked position ->
+            case Point2d.within (Pixels.pixels 20) position (CreasePattern.vertices model.creasePattern) of
                 Just newPoint ->
                     case model.selectedVertex of
-                        Just oldPoint ->
+                        Just (SelectedVertex oldPoint) ->
                             ( { model
                                 | creasePattern =
                                     CreasePattern.foldBetween
@@ -130,32 +133,27 @@ update msg model =
                             , Cmd.none
                             )
 
-                        Nothing ->
-                            ( { model | selectedVertex = Just newPoint }
+                        _ ->
+                            ( { model | selectedVertex = Just <| SelectedVertex newPoint }
                             , Cmd.none
                             )
 
                 Nothing ->
                     { model
                         | creasePattern = CreasePattern.addVertex position model.creasePattern
-                        , hoveredVertex = Just position
+                        , hoveredVertex = Just (SelectedVertex position)
                     }
                         |> update DeselectVertex
 
-        PaperMouseUp position ->
-            case pointWithin position model.creasePattern of
-                Just point ->
-                    ( model
-                    , Cmd.none
-                    )
-
-                Nothing ->
-                    ( model
-                    , Cmd.none
-                    )
-
         PaperHovered position ->
-            ( { model | hoveredVertex = pointWithin position model.creasePattern }
+            ( { model
+                | hoveredVertex =
+                    Point2d.within
+                        (Pixels.pixels 10)
+                        position
+                        (CreasePattern.vertices model.creasePattern)
+                        |> Maybe.map SelectedVertex
+              }
             , Cmd.none
             )
 
@@ -170,28 +168,6 @@ update msg model =
             )
 
 
-pointWithin : Point2d Pixels Cartesian -> CreasePattern Pixels Cartesian -> Maybe (Point2d Pixels Cartesian)
-pointWithin position creasePattern =
-    let
-        hoverDistance =
-            Pixels.float 20
-
-        sortedPoints =
-            CreasePattern.vertices creasePattern
-                |> List.sortBy (Point2d.distanceFrom position >> Pixels.inPixels)
-    in
-    case sortedPoints of
-        closest :: _ ->
-            if Point2d.distanceFrom position closest |> Quantity.lessThanOrEqualTo hoverDistance then
-                Just closest
-
-            else
-                Nothing
-
-        _ ->
-            Nothing
-
-
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Browser.Events.onResize BrowserResize
@@ -203,6 +179,23 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view model =
+    let
+        hovered =
+            case model.hoveredVertex of
+                Just (SelectedVertex vertex) ->
+                    Just vertex
+
+                _ ->
+                    Nothing
+
+        selected =
+            case model.selectedVertex of
+                Just (SelectedVertex vertex) ->
+                    Just vertex
+
+                _ ->
+                    Nothing
+    in
     Element.layout
         [ width fill
         , height fill
@@ -214,11 +207,10 @@ view model =
                 BoundingBox2d.shrinkToAspectRatio
                     model.aspectRatio
                     model.paperArea
-            , hoveredVertex = model.hoveredVertex
-            , selectedVertex = model.selectedVertex
+            , hoveredVertex = hovered
+            , selectedVertex = selected
             , onMouseMove = PaperHovered
-            , onMouseDown = PaperMouseDown
-            , onMouseUp = PaperMouseUp
+            , onMouseClick = PaperClicked
             , onMouseLeave = PaperExited
             }
         )
