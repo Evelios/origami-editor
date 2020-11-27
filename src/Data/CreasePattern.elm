@@ -1,8 +1,8 @@
 module Data.CreasePattern exposing
     ( CreasePattern
     , new
+    , edges, vertices, potentialFolds, size
     , addVertex, fold, foldBetween
-    , edges, vertices, potentialFolds
     )
 
 {-|
@@ -18,14 +18,14 @@ module Data.CreasePattern exposing
 @docs new
 
 
+# Accessors
+
+@docs edges, vertices, potentialFolds, size
+
+
 # Modifiers
 
 @docs addVertex, fold, foldBetween
-
-
-# Accessors
-
-@docs edges, vertices, potentialFolds
 
 -}
 
@@ -63,6 +63,13 @@ new boundingBox =
 
 
 -- Accessors
+
+
+{-| Get the size of the page.
+-}
+size : CreasePattern units coordinates -> BoundingBox2d units coordinates
+size (CreasePattern boundingBox _) =
+    boundingBox
 
 
 {-| -}

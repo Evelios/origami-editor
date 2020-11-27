@@ -4,18 +4,19 @@ import BoundingBox2d exposing (BoundingBox2d)
 import Browser
 import Browser.Dom
 import Browser.Events
-import Data.AspectRatio as AspectRatio exposing (AspectRatio)
-import Data.Coordinates exposing (Cartesian, SvgYDown)
+import Data.Coordinates as Coordinates exposing (Cartesian, SvgYUp)
 import Data.CreasePattern as CreasePattern exposing (CreasePattern)
-import Data.Edge exposing (Edge(..))
 import Element exposing (..)
-import Framework.Page as Page
+import Framework.Origami as Origami
+import Framework.Svg
 import Html exposing (Html)
+import Html.Attributes
 import Pixels exposing (Pixels)
 import Point2d exposing (Point2d)
+import Quantity exposing (Unitless)
+import Svg exposing (Svg)
 import Task
 import Util.BoundingBox2d as BoundingBox2d
-import Util.Point2d as Point2d
 
 
 main : Program () Model Msg
@@ -37,39 +38,40 @@ type Selectable
 
 
 type alias Model =
-    { paperArea : BoundingBox2d Pixels Cartesian
-    , aspectRatio : AspectRatio
-    , creasePattern : CreasePattern Pixels Cartesian
-    , hoveredVertex : Maybe Selectable
-    , selectedVertex : Maybe Selectable
+    { viewArea : BoundingBox2d Pixels SvgYUp
+    , creasePattern : CreasePattern Unitless Cartesian
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    let
-        aspectRatio =
-            AspectRatio.unsafe 1 1
-
-        paperArea =
+    ( { viewArea =
             BoundingBox2d.fromExtrema
-                { minX = Pixels.float -1
+                { minX = Pixels.float 0
                 , maxX = Pixels.float 1
-                , minY = Pixels.float -1
+                , minY = Pixels.float 0
                 , maxY = Pixels.float 1
                 }
-                |> BoundingBox2d.shrinkToAspectRatio
-                    aspectRatio
-    in
-    ( { paperArea = paperArea
-      , aspectRatio = aspectRatio
-      , hoveredVertex = Nothing
-      , selectedVertex = Nothing
-      , creasePattern = CreasePattern.new paperArea
+      , creasePattern =
+            CreasePattern.new <|
+                BoundingBox2d.fromExtrema
+                    { minX = Quantity.float -1
+                    , maxX = Quantity.float 1
+                    , minY = Quantity.float -1
+                    , maxY = Quantity.float 1
+                    }
       }
     , Task.attempt ViewAreaResize <|
-        Browser.Dom.getViewportOf Page.pageId
+        Browser.Dom.getViewportOf ids.viewArea
     )
+
+
+{-| Collection of div ids that need to be tracked for things like resize events.
+-}
+ids : { viewArea : String }
+ids =
+    { viewArea = "viewArea"
+    }
 
 
 
@@ -79,10 +81,8 @@ init _ =
 type Msg
     = ViewAreaResize (Result Browser.Dom.Error Browser.Dom.Viewport)
     | BrowserResize Int Int
-    | PaperHovered (Point2d Pixels Cartesian)
-    | PaperClicked (Point2d Pixels Cartesian)
-    | PaperExited
-    | DeselectVertex
+    | OnClickPage (Point2d Pixels SvgYUp)
+    | OnClickCreasePattern (Point2d Unitless Cartesian)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -91,24 +91,26 @@ update msg model =
         BrowserResize _ _ ->
             ( model
             , Task.attempt ViewAreaResize <|
-                Browser.Dom.getViewportOf Page.pageId
+                Browser.Dom.getViewportOf ids.viewArea
             )
 
         ViewAreaResize viewportResult ->
             case viewportResult of
                 Ok { viewport } ->
-                    let
-                        paperArea =
-                            BoundingBox2d.withDimensions
-                                ( Pixels.pixels viewport.width
-                                , Pixels.pixels viewport.height
-                                )
-                                Point2d.origin
-                                |> BoundingBox2d.shrinkToAspectRatio model.aspectRatio
-                    in
                     ( { model
-                        | paperArea = paperArea
-                        , creasePattern = CreasePattern.new paperArea
+                        | viewArea =
+                            BoundingBox2d.fromExtrema
+                                { minX = Quantity.zero
+                                , maxX = Pixels.pixels viewport.width
+                                , minY = Quantity.zero
+                                , maxY = Pixels.pixels viewport.height
+                                }
+                                |> Debug.log "View Area"
+                                |> BoundingBox2d.shrinkToAspectRatio
+                                    (BoundingBox2d.aspectRatio
+                                        (CreasePattern.size model.creasePattern)
+                                    )
+                                |> Debug.log "Paper View Area"
                       }
                     , Cmd.none
                     )
@@ -116,56 +118,15 @@ update msg model =
                 Err _ ->
                     ( model, Cmd.none )
 
-        PaperClicked position ->
-            case Point2d.within (Pixels.pixels 20) position (CreasePattern.vertices model.creasePattern) of
-                Just newPoint ->
-                    case model.selectedVertex of
-                        Just (SelectedVertex oldPoint) ->
-                            ( { model
-                                | creasePattern =
-                                    CreasePattern.foldBetween
-                                        newPoint
-                                        oldPoint
-                                        Valley
-                                        model.creasePattern
-                                , selectedVertex = Nothing
-                              }
-                            , Cmd.none
-                            )
+        OnClickPage position ->
+            update
+                (OnClickCreasePattern <|
+                    Coordinates.svgYUpToCartesian model.viewArea position
+                )
+                model
 
-                        _ ->
-                            ( { model | selectedVertex = Just <| SelectedVertex newPoint }
-                            , Cmd.none
-                            )
-
-                Nothing ->
-                    { model
-                        | creasePattern = CreasePattern.addVertex position model.creasePattern
-                        , hoveredVertex = Just (SelectedVertex position)
-                    }
-                        |> update DeselectVertex
-
-        PaperHovered position ->
-            ( { model
-                | hoveredVertex =
-                    Point2d.within
-                        (Pixels.pixels 10)
-                        position
-                        (CreasePattern.vertices model.creasePattern)
-                        |> Maybe.map SelectedVertex
-              }
-            , Cmd.none
-            )
-
-        PaperExited ->
-            ( { model | hoveredVertex = Nothing }
-            , Cmd.none
-            )
-
-        DeselectVertex ->
-            ( { model | selectedVertex = Nothing }
-            , Cmd.none
-            )
+        OnClickCreasePattern _ ->
+            ( model, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -179,38 +140,31 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view model =
-    let
-        hovered =
-            case model.hoveredVertex of
-                Just (SelectedVertex vertex) ->
-                    Just vertex
-
-                _ ->
-                    Nothing
-
-        selected =
-            case model.selectedVertex of
-                Just (SelectedVertex vertex) ->
-                    Just vertex
-
-                _ ->
-                    Nothing
-    in
-    Element.layout
+    layout
         [ width fill
         , height fill
         , padding 50
         ]
-        (Page.view
-            { creasePattern = model.creasePattern
-            , boundingBox =
-                BoundingBox2d.shrinkToAspectRatio
-                    model.aspectRatio
-                    model.paperArea
-            , hoveredVertex = hovered
-            , selectedVertex = selected
-            , onMouseMove = PaperHovered
-            , onMouseClick = PaperClicked
-            , onMouseLeave = PaperExited
-            }
+        (el
+            [ htmlAttribute <| Html.Attributes.id ids.viewArea
+            , width fill
+            , height fill
+            ]
+            (paper model)
         )
+
+
+paper : Model -> Element Msg
+paper model =
+    Svg.svg
+        (Framework.Svg.boundingBoxAttributes
+            (CreasePattern.size model.creasePattern)
+            model.viewArea
+        )
+        [ Origami.page
+            []
+            { onClick = OnClickPage
+            , size = CreasePattern.size model.creasePattern
+            }
+        ]
+        |> html
