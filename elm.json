@@ -20,7 +20,9 @@
             "ianmackenzie/elm-units": "2.7.0",
             "ianmackenzie/elm-units-interval": "2.1.0",
             "mdgriffith/elm-ui": "1.1.8",
-            "noahzgordon/elm-color-extra": "1.0.2"
+            "myrho/elm-round": "1.0.4",
+            "noahzgordon/elm-color-extra": "1.0.2",
+            "turboMaCk/any-set": "1.4.0"
         },
         "indirect": {
             "elm/random": "1.0.0",
@@ -36,7 +38,8 @@
             "ianmackenzie/elm-interval": "2.0.0",
             "ianmackenzie/elm-triangular-mesh": "1.1.0",
             "pzp1997/assoc-list": "1.0.0",
-            "skyqrose/assoc-list-extra": "1.0.0"
+            "skyqrose/assoc-list-extra": "1.0.0",
+            "turboMaCk/any-dict": "2.3.0"
         }
     },
     "test-dependencies": {

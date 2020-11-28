@@ -3,9 +3,19 @@ module Util.BoundingBox2d exposing (..)
 import BoundingBox2d exposing (BoundingBox2d)
 import Data.AspectRatio as AspectRatio exposing (AspectRatio)
 import LineSegment2d exposing (LineSegment2d)
-import Point2d
+import Point2d exposing (Point2d)
 import Quantity exposing (Quantity)
 import Quantity.Interval as Interval exposing (Interval)
+import Vector2d
+
+
+{-| -}
+dimensions :
+    BoundingBox2d units coordinates
+    -> ( Quantity Float units, Quantity Float units )
+dimensions boundingBox =
+    BoundingBox2d.intervals boundingBox
+        |> Tuple.mapBoth Interval.width Interval.width
 
 
 {-| -}
@@ -48,8 +58,7 @@ shrinkToAspectRatio :
 shrinkToAspectRatio newRatio boundingBox =
     let
         ( width, height ) =
-            BoundingBox2d.intervals boundingBox
-                |> Tuple.mapBoth Interval.width Interval.width
+            dimensions boundingBox
 
         centerPoint =
             BoundingBox2d.centerPoint boundingBox
@@ -74,3 +83,21 @@ shrinkToAspectRatio newRatio boundingBox =
                 (Quantity.ratio height unscaledHeight)
     in
     BoundingBox2d.scaleAbout centerPoint scaleRatio unscaledBoundingBox
+
+
+{-| -}
+withTopLeft :
+    Point2d units coordinates
+    -> BoundingBox2d units coordinates
+    -> BoundingBox2d units coordinates
+withTopLeft topLeft boundingBox =
+    let
+        ( width, height ) =
+            dimensions boundingBox
+
+        center =
+            topLeft
+                |> Point2d.translateBy
+                    (Vector2d.xy (Quantity.half width) (Quantity.half height))
+    in
+    BoundingBox2d.withDimensions ( width, height ) center

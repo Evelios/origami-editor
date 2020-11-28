@@ -4,13 +4,15 @@ import BoundingBox2d exposing (BoundingBox2d)
 import Browser
 import Browser.Dom
 import Browser.Events
-import Data.Coordinates as Coordinates exposing (Cartesian, SvgYUp)
+import Data.Axioms as Axioms exposing (Axiom(..))
+import Data.Coordinates as Coordinates exposing (Cartesian, SvgYDown, SvgYUp)
 import Data.CreasePattern as CreasePattern exposing (CreasePattern)
 import Element exposing (..)
 import Framework.Origami as Origami
 import Framework.Svg
 import Html exposing (Html)
 import Html.Attributes
+import LineSegment2d exposing (LineSegment2d)
 import Pixels exposing (Pixels)
 import Point2d exposing (Point2d)
 import Quantity exposing (Unitless)
@@ -33,26 +35,18 @@ main =
 -- Init
 
 
-type Selectable
-    = SelectedVertex (Point2d Pixels Cartesian)
-
-
 type alias Model =
-    { viewArea : BoundingBox2d Pixels SvgYUp
+    { viewArea : BoundingBox2d Pixels SvgYDown
     , creasePattern : CreasePattern Unitless Cartesian
+    , axiom : Axiom
+    , potentialFolds : List (LineSegment2d Unitless Cartesian)
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { viewArea =
-            BoundingBox2d.fromExtrema
-                { minX = Pixels.float 0
-                , maxX = Pixels.float 1
-                , minY = Pixels.float 0
-                , maxY = Pixels.float 1
-                }
-      , creasePattern =
+    let
+        creasePattern =
             CreasePattern.new <|
                 BoundingBox2d.fromExtrema
                     { minX = Quantity.float -1
@@ -60,6 +54,20 @@ init _ =
                     , minY = Quantity.float -1
                     , maxY = Quantity.float 1
                     }
+
+        axiom =
+            First
+    in
+    ( { viewArea =
+            BoundingBox2d.fromExtrema
+                { minX = Pixels.float 0
+                , maxX = Pixels.float 1
+                , minY = Pixels.float 0
+                , maxY = Pixels.float 1
+                }
+      , creasePattern = creasePattern
+      , axiom = axiom
+      , potentialFolds = Axioms.perform axiom creasePattern
       }
     , Task.attempt ViewAreaResize <|
         Browser.Dom.getViewportOf ids.viewArea
@@ -105,12 +113,11 @@ update msg model =
                                 , minY = Quantity.zero
                                 , maxY = Pixels.pixels viewport.height
                                 }
-                                |> Debug.log "View Area"
                                 |> BoundingBox2d.shrinkToAspectRatio
                                     (BoundingBox2d.aspectRatio
                                         (CreasePattern.size model.creasePattern)
                                     )
-                                |> Debug.log "Paper View Area"
+                                |> BoundingBox2d.withTopLeft Point2d.origin
                       }
                     , Cmd.none
                     )
@@ -119,9 +126,13 @@ update msg model =
                     ( model, Cmd.none )
 
         OnClickPage position ->
+            let
+                { frame, rate } =
+                    Coordinates.svgYUpToCartesian model.viewArea
+            in
             update
                 (OnClickCreasePattern <|
-                    Coordinates.svgYUpToCartesian model.viewArea position
+                    (Point2d.relativeTo frame position |> Point2d.at_ rate)
                 )
                 model
 
@@ -156,15 +167,35 @@ view model =
 
 paper : Model -> Element Msg
 paper model =
+    let
+        potentialFolds =
+            List.map lineToSvg model.potentialFolds
+
+        edges =
+            CreasePattern.edges model.creasePattern
+                |> List.map
+                    ((\{ from, to } -> LineSegment2d.from from to)
+                        >> lineToSvg
+                    )
+
+        svgElements =
+            Origami.page
+                []
+                { onClick = OnClickPage
+                , size = model.viewArea
+                }
+                :: List.map Origami.potentialFold potentialFolds
+
+        { frame, rate } =
+            Coordinates.svgYDownToCartesian model.viewArea
+
+        lineToSvg =
+            LineSegment2d.at rate >> LineSegment2d.placeIn frame
+
+        pointToSvg =
+            Point2d.at rate >> Point2d.placeIn frame
+    in
     Svg.svg
-        (Framework.Svg.boundingBoxAttributes
-            (CreasePattern.size model.creasePattern)
-            model.viewArea
-        )
-        [ Origami.page
-            []
-            { onClick = OnClickPage
-            , size = CreasePattern.size model.creasePattern
-            }
-        ]
+        (Framework.Svg.boundingBoxAttributes model.viewArea)
+        svgElements
         |> html

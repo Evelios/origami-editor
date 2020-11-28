@@ -3,7 +3,7 @@ module Framework.Origami exposing (..)
 {-| -}
 
 import BoundingBox2d exposing (BoundingBox2d)
-import Data.Coordinates exposing (SvgYUp)
+import Data.Coordinates exposing (SvgYDown, SvgYUp)
 import Framework.Color
 import Framework.Events
 import Geometry.Svg as Svg
@@ -24,7 +24,7 @@ page :
     List (Svg.Attribute msg)
     ->
         { onClick : Point2d Pixels SvgYUp -> msg
-        , size : BoundingBox2d units coordinates
+        , size : BoundingBox2d Pixels SvgYDown
         }
     -> Svg msg
 page attributes options =
@@ -46,7 +46,7 @@ foldThickness =
 
 
 {-| -}
-crease : List (Svg.Attribute msg) -> LineSegment2d units coordinates -> Svg msg
+crease : List (Svg.Attribute msg) -> LineSegment2d Pixels SvgYDown -> Svg msg
 crease attributes =
     Svg.lineSegment2d
         ([ InPx.width foldThickness
@@ -57,7 +57,7 @@ crease attributes =
 
 
 {-| -}
-mountainFold : List (Svg.Attribute msg) -> LineSegment2d units coordinates -> Svg msg
+mountainFold : List (Svg.Attribute msg) -> LineSegment2d Pixels SvgYDown -> Svg msg
 mountainFold attributes =
     Svg.lineSegment2d
         ([ InPx.width foldThickness
@@ -68,7 +68,7 @@ mountainFold attributes =
 
 
 {-| -}
-valleyFold : List (Svg.Attribute msg) -> LineSegment2d units coordinates -> Svg msg
+valleyFold : List (Svg.Attribute msg) -> LineSegment2d Pixels SvgYDown -> Svg msg
 valleyFold attributes =
     Svg.lineSegment2d
         ([ InPx.width foldThickness
@@ -79,7 +79,7 @@ valleyFold attributes =
 
 
 {-| -}
-potentialFold : LineSegment2d units coordinates -> Svg msg
+potentialFold : LineSegment2d Pixels SvgYDown -> Svg msg
 potentialFold =
     Svg.lineSegment2d
         [ InPx.width foldThickness

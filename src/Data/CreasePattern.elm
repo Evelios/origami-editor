@@ -1,7 +1,7 @@
 module Data.CreasePattern exposing
     ( CreasePattern
     , new
-    , edges, vertices, potentialFolds, size
+    , edges, vertices, size
     , addVertex, fold, foldBetween
     )
 
@@ -20,7 +20,7 @@ module Data.CreasePattern exposing
 
 # Accessors
 
-@docs edges, vertices, potentialFolds, size
+@docs edges, vertices, size
 
 
 # Modifiers
@@ -30,11 +30,9 @@ module Data.CreasePattern exposing
 -}
 
 import BoundingBox2d exposing (BoundingBox2d)
-import Data.Axioms as Axioms
 import Data.Edge exposing (Edge(..))
 import Graph exposing (Graph)
 import LineSegment2d exposing (LineSegment2d)
-import List.Extra
 import Point2d exposing (Point2d)
 import Util.BoundingBox2d as BoundingBox2d
 
@@ -91,16 +89,6 @@ edges :
             }
 edges (CreasePattern _ graph) =
     Graph.edges graph
-
-
-{-| -}
-potentialFolds : CreasePattern units coordinates -> List (LineSegment2d units coordinates)
-potentialFolds (CreasePattern boundingBox graph) =
-    let
-        vertexPairs =
-            List.Extra.uniquePairs (Graph.vertices graph)
-    in
-    List.map (\( from, to ) -> Axioms.first from to boundingBox) vertexPairs
 
 
 

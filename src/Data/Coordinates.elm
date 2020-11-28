@@ -21,7 +21,7 @@ import BoundingBox2d exposing (BoundingBox2d)
 import Frame2d exposing (Frame2d)
 import Pixels exposing (Pixels)
 import Point2d exposing (Point2d)
-import Quantity exposing (Unitless)
+import Quantity exposing (Quantity, Rate, Unitless)
 import Quantity.Interval as Interval
 
 
@@ -51,27 +51,24 @@ means that everything within the given bounding box lies within the range
 (-1, 1) and domain of (-1, 1) as well.
 -}
 svgYDownToCartesian :
-    BoundingBox2d Pixels SvgYDown
-    -> Point2d Pixels SvgYDown
-    -> Point2d Unitless Cartesian
-svgYDownToCartesian boundingBox point =
+    BoundingBox2d Pixels coordinates
+    ->
+        { frame : Frame2d Pixels SvgYDown { defines : Cartesian }
+        , rate : Quantity Float (Rate Pixels Unitless)
+        }
+svgYDownToCartesian boundingBox =
     let
         ( halfWidth, halfHeight ) =
             BoundingBox2d.intervals boundingBox
                 |> Tuple.mapBoth
                     (Quantity.half << Interval.width)
                     (Quantity.half << Interval.width)
-
-        globalFrame : Frame2d Pixels SvgYDown { defines : Cartesian }
-        globalFrame =
-            Frame2d.atPoint (Point2d.xy halfWidth halfHeight)
-                |> Frame2d.reverseY
-
-        pixelsPerUnitless =
-            Quantity.max halfWidth halfHeight |> Quantity.per (Quantity.float 1)
     in
-    Point2d.relativeTo globalFrame point
-        |> Point2d.at_ pixelsPerUnitless
+    { frame =
+        Frame2d.atPoint (Point2d.xy halfWidth halfHeight)
+            |> Frame2d.reverseY
+    , rate = Quantity.max halfWidth halfHeight |> Quantity.per (Quantity.float 1)
+    }
 
 
 {-| Convert from the on screen system of a Y Down coordinate system in Pixels
@@ -81,23 +78,21 @@ means that everything within the given bounding box lies within the range
 (-1, 1) and domain of (-1, 1) as well.
 -}
 svgYUpToCartesian :
-    BoundingBox2d Pixels SvgYUp
-    -> Point2d Pixels SvgYUp
-    -> Point2d Unitless Cartesian
-svgYUpToCartesian boundingBox point =
+    BoundingBox2d Pixels coordinates
+    ->
+        { frame : Frame2d Pixels SvgYUp { defines : Cartesian }
+        , rate : Quantity Float (Rate Pixels Unitless)
+        }
+svgYUpToCartesian boundingBox =
     let
         ( halfWidth, halfHeight ) =
             BoundingBox2d.intervals boundingBox
                 |> Tuple.mapBoth
                     (Quantity.half << Interval.width)
                     (Quantity.half << Interval.width)
-
-        globalFrame : Frame2d Pixels SvgYUp { defines : Cartesian }
-        globalFrame =
-            Frame2d.atPoint (Point2d.xy halfWidth halfHeight)
-
-        pixelsPerUnitless =
-            Quantity.max halfWidth halfHeight |> Quantity.per (Quantity.float 1)
     in
-    Point2d.relativeTo globalFrame point
-        |> Point2d.at_ pixelsPerUnitless
+    { frame =
+        Frame2d.atPoint (Point2d.xy halfWidth halfHeight)
+    , rate =
+        Quantity.max halfWidth halfHeight |> Quantity.per (Quantity.float 1)
+    }

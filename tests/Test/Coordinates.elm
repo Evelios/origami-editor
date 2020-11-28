@@ -19,10 +19,14 @@ svgYDownToCartesian =
                 , maxY = Pixels.pixels 100
                 }
 
+        { frame, rate } =
+            Coordinates.svgYDownToCartesian boundingBox
+
         testConversion { name, input, expected } =
             test name <|
                 \_ ->
-                    Coordinates.svgYDownToCartesian boundingBox input
+                    Point2d.relativeTo frame input
+                        |> Point2d.at_ rate
                         |> Geometry.Expect.point2d expected
     in
     describe "svgYDownToCartesian" <|
