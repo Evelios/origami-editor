@@ -168,6 +168,12 @@ view model =
 paper : Model -> Element Msg
 paper model =
     let
+        paddedBoundingBox =
+            BoundingBox2d.scaleAbout
+                (BoundingBox2d.centerPoint model.viewArea)
+                1.1
+                model.viewArea
+
         potentialFolds =
             List.map lineToSvg model.potentialFolds
 
@@ -196,6 +202,6 @@ paper model =
             Point2d.at rate >> Point2d.placeIn frame
     in
     Svg.svg
-        (Framework.Svg.boundingBoxAttributes model.viewArea)
+        (Framework.Svg.boundingBoxAttributes paddedBoundingBox)
         svgElements
         |> html

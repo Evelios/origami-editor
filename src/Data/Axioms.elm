@@ -23,12 +23,12 @@ module Data.Axioms exposing
 import Axis2d
 import BoundingBox2d exposing (BoundingBox2d)
 import Data.CreasePattern as CreasePattern exposing (CreasePattern)
+import Data.Set as Set exposing (Set)
 import LineSegment2d exposing (LineSegment2d)
 import List.Extra
 import Point2d exposing (Point2d)
 import Set.Any as Set
 import Util.BoundingBox2d as BoundingBox2d
-import Util.Set as Set exposing (Set)
 
 
 {-| -}
@@ -51,12 +51,13 @@ perform axiom creasePattern =
                 (CreasePattern.vertices creasePattern)
 
         edges =
-            List.foldl
-                Set.insert
-                Set.lineSegment2d
-                (CreasePattern.edges creasePattern
-                    |> List.map (\{ from, to } -> LineSegment2d.from from to)
-                )
+            Debug.log "Edges" <|
+                List.foldl
+                    Set.insert
+                    Set.lineSegment2d
+                    (CreasePattern.edges creasePattern
+                        |> List.map (\{ from, to } -> LineSegment2d.from from to)
+                    )
 
         boundingBox =
             CreasePattern.size creasePattern
