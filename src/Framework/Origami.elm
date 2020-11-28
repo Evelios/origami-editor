@@ -24,6 +24,9 @@ page :
     List (Svg.Attribute msg)
     ->
         { onClick : Point2d Pixels SvgYDown -> msg
+        , onMouseMove : Point2d Pixels SvgYDown -> msg
+        , onEnter : Point2d Pixels SvgYDown -> msg
+        , onLeave : Point2d Pixels SvgYDown -> msg
         , size : BoundingBox2d Pixels SvgYDown
         }
     -> Svg msg
@@ -31,6 +34,9 @@ page attributes options =
     Svg.boundingBox2d
         ([ Attributes.fill <| Paint Framework.Color.paperColor
          , Framework.Events.onClick options.onClick
+         , Framework.Events.onMouseMove options.onMouseMove
+         , Framework.Events.onEnter options.onEnter
+         , Framework.Events.onLeave options.onLeave
          ]
             ++ attributes
         )
@@ -41,15 +47,18 @@ page attributes options =
 -- Edges
 
 
-foldThickness =
-    2
+thickness =
+    { thin = 1
+    , medium = 2
+    , thick = 4
+    }
 
 
 {-| -}
 crease : List (Svg.Attribute msg) -> LineSegment2d Pixels SvgYDown -> Svg msg
 crease attributes =
     Svg.lineSegment2d
-        ([ InPx.width foldThickness
+        ([ InPx.strokeWidth thickness.medium
          , Attributes.stroke <| Paint Framework.Color.paperBorder
          ]
             ++ attributes
@@ -60,7 +69,7 @@ crease attributes =
 mountainFold : List (Svg.Attribute msg) -> LineSegment2d Pixels SvgYDown -> Svg msg
 mountainFold attributes =
     Svg.lineSegment2d
-        ([ InPx.width foldThickness
+        ([ InPx.strokeWidth thickness.medium
          , Attributes.stroke <| Paint Framework.Color.paperBorder
          ]
             ++ attributes
@@ -71,7 +80,7 @@ mountainFold attributes =
 valleyFold : List (Svg.Attribute msg) -> LineSegment2d Pixels SvgYDown -> Svg msg
 valleyFold attributes =
     Svg.lineSegment2d
-        ([ InPx.width foldThickness
+        ([ InPx.strokeWidth thickness.medium
          , Attributes.stroke <| Paint Framework.Color.paperBorder
          ]
             ++ attributes
@@ -82,6 +91,15 @@ valleyFold attributes =
 potentialFold : LineSegment2d Pixels SvgYDown -> Svg msg
 potentialFold =
     Svg.lineSegment2d
-        [ InPx.width foldThickness
+        [ InPx.strokeWidth thickness.thin
+        , Attributes.stroke <| Paint Framework.Color.paperBorder
+        ]
+
+
+{-| -}
+hoveredPotentialFold : LineSegment2d Pixels SvgYDown -> Svg msg
+hoveredPotentialFold =
+    Svg.lineSegment2d
+        [ InPx.strokeWidth thickness.medium
         , Attributes.stroke <| Paint Framework.Color.paperBorder
         ]

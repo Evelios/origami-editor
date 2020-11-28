@@ -1,7 +1,10 @@
 module Util.Point2d exposing (..)
 
+import BoundingBox2d exposing (BoundingBox2d)
+import Data.Coordinates as Coordinates exposing (Cartesian, SvgYDown)
+import Pixels exposing (Pixels)
 import Point2d exposing (Point2d)
-import Quantity exposing (Quantity)
+import Quantity exposing (Quantity, Unitless)
 
 
 within :
@@ -25,3 +28,25 @@ within distance testPoint candidates =
 
         _ ->
             Nothing
+
+
+
+-- Conversions
+
+
+inCartesian : BoundingBox2d Pixels SvgYDown -> Point2d Pixels SvgYDown -> Point2d Unitless Cartesian
+inCartesian boundingBox =
+    let
+        { frame, rate } =
+            Coordinates.svgYDownToCartesian boundingBox
+    in
+    Point2d.relativeTo frame >> Point2d.at_ rate
+
+
+inSvgYDown : BoundingBox2d Pixels SvgYDown -> Point2d Unitless Cartesian -> Point2d Pixels SvgYDown
+inSvgYDown boundingBox =
+    let
+        { frame, rate } =
+            Coordinates.svgYDownToCartesian boundingBox
+    in
+    Point2d.at rate >> Point2d.placeIn frame

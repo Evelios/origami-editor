@@ -1,11 +1,11 @@
-module Framework.Events exposing (onClick, onMouseMove)
+module Framework.Events exposing (onClick, onMouseMove, onEnter, onLeave)
 
 {-|
 
 
 # Events
 
-@docs onClick, onMouseMove
+@docs onClick, onMouseMove, onEnter, onLeave
 
 -}
 
@@ -21,21 +21,37 @@ import Svg.Events as Events
 -- Event Handlers
 
 
+{-| -}
 onClick : (Point2d Pixels SvgYDown -> msg) -> Attribute msg
 onClick =
     onEvent "click"
 
 
+{-| -}
 onMouseMove : (Point2d Pixels SvgYDown -> msg) -> Attribute msg
 onMouseMove =
     onEvent "mousemove"
 
 
+{-| -}
+onEnter : (Point2d Pixels SvgYDown -> msg) -> Attribute msg
+onEnter =
+    onEvent "mouseenter"
+
+
+{-| -}
+onLeave : (Point2d Pixels SvgYDown -> msg) -> Attribute msg
+onLeave =
+    onEvent "mouseleave"
+
+
 {-| Information about handling mouse events can be found on the [elm package
-website][1] and on the [Mozilla documentation][2].
+website][1] and on the [Mozilla MouseEvent API][2] documentation. You can find a list of many
+of the possible mouse events in the [Mozilla Events][3] documentation.
 
 [1]: https://package.elm-lang.org/packages/elm/svg/latest/Svg-Events#on
 [2]: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent
+[3]: https://developer.mozilla.org/en-US/docs/Web/Events
 
 -}
 onEvent : String -> (Point2d Pixels SvgYDown -> msg) -> Attribute msg

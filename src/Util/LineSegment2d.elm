@@ -3,9 +3,12 @@ module Util.LineSegment2d exposing (..)
 {-| -}
 
 import Axis2d exposing (Axis2d)
+import BoundingBox2d exposing (BoundingBox2d)
+import Data.Coordinates as Coordinates exposing (Cartesian, SvgYDown)
 import LineSegment2d exposing (LineSegment2d)
+import Pixels exposing (Pixels)
 import Point2d exposing (Point2d)
-import Quantity exposing (Quantity)
+import Quantity exposing (Quantity, Unitless)
 import Util.Geometry as Geometry
 
 
@@ -79,3 +82,25 @@ distanceFrom point line =
 
         Nothing ->
             Quantity.infinity
+
+
+
+-- Conversions
+
+
+inCartesian : BoundingBox2d Pixels SvgYDown -> LineSegment2d Pixels SvgYDown -> LineSegment2d Unitless Cartesian
+inCartesian boundingBox =
+    let
+        { frame, rate } =
+            Coordinates.svgYDownToCartesian boundingBox
+    in
+    LineSegment2d.relativeTo frame >> LineSegment2d.at_ rate
+
+
+inSvgYDown : BoundingBox2d Pixels SvgYDown -> LineSegment2d Unitless Cartesian -> LineSegment2d Pixels SvgYDown
+inSvgYDown boundingBox =
+    let
+        { frame, rate } =
+            Coordinates.svgYDownToCartesian boundingBox
+    in
+    LineSegment2d.at rate >> LineSegment2d.placeIn frame
