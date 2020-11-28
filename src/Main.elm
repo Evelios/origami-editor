@@ -5,7 +5,7 @@ import Browser
 import Browser.Dom
 import Browser.Events
 import Data.Axioms as Axioms exposing (Axiom(..))
-import Data.Coordinates as Coordinates exposing (Cartesian, SvgYDown, SvgYUp)
+import Data.Coordinates as Coordinates exposing (Cartesian, SvgYDown)
 import Data.CreasePattern as CreasePattern exposing (CreasePattern)
 import Element exposing (..)
 import Framework.Origami as Origami
@@ -89,7 +89,7 @@ ids =
 type Msg
     = ViewAreaResize (Result Browser.Dom.Error Browser.Dom.Viewport)
     | BrowserResize Int Int
-    | OnClickPage (Point2d Pixels SvgYUp)
+    | OnClickPage (Point2d Pixels SvgYDown)
     | OnClickCreasePattern (Point2d Unitless Cartesian)
 
 
@@ -128,11 +128,12 @@ update msg model =
         OnClickPage position ->
             let
                 { frame, rate } =
-                    Coordinates.svgYUpToCartesian model.viewArea
+                    Coordinates.svgYDownToCartesian model.viewArea
             in
             update
                 (OnClickCreasePattern <|
-                    (Point2d.relativeTo frame position |> Point2d.at_ rate)
+                    Debug.log "Modified" <|
+                        (Point2d.relativeTo frame (Debug.log "Position" position) |> Point2d.at_ rate)
                 )
                 model
 
@@ -168,12 +169,6 @@ view model =
 paper : Model -> Element Msg
 paper model =
     let
-        paddedBoundingBox =
-            BoundingBox2d.scaleAbout
-                (BoundingBox2d.centerPoint model.viewArea)
-                1.1
-                model.viewArea
-
         potentialFolds =
             List.map lineToSvg model.potentialFolds
 
@@ -202,6 +197,6 @@ paper model =
             Point2d.at rate >> Point2d.placeIn frame
     in
     Svg.svg
-        (Framework.Svg.boundingBoxAttributes paddedBoundingBox)
+        (Framework.Svg.boundingBoxAttributes model.viewArea)
         svgElements
         |> html

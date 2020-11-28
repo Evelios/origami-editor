@@ -23,7 +23,7 @@ import TypedSvg.Types exposing (Paint(..))
 page :
     List (Svg.Attribute msg)
     ->
-        { onClick : Point2d Pixels SvgYUp -> msg
+        { onClick : Point2d Pixels SvgYDown -> msg
         , size : BoundingBox2d Pixels SvgYDown
         }
     -> Svg msg

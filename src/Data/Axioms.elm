@@ -51,13 +51,12 @@ perform axiom creasePattern =
                 (CreasePattern.vertices creasePattern)
 
         edges =
-            Debug.log "Edges" <|
-                List.foldl
-                    Set.insert
-                    Set.lineSegment2d
-                    (CreasePattern.edges creasePattern
-                        |> List.map (\{ from, to } -> LineSegment2d.from from to)
-                    )
+            List.foldl
+                Set.insert
+                Set.lineSegment2d
+                (CreasePattern.edges creasePattern
+                    |> List.map (\{ from, to } -> LineSegment2d.from from to)
+                )
 
         boundingBox =
             CreasePattern.size creasePattern

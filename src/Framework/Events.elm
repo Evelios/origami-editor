@@ -21,12 +21,12 @@ import Svg.Events as Events
 -- Event Handlers
 
 
-onClick : (Point2d Pixels SvgYUp -> msg) -> Attribute msg
+onClick : (Point2d Pixels SvgYDown -> msg) -> Attribute msg
 onClick =
     onEvent "click"
 
 
-onMouseMove : (Point2d Pixels SvgYUp -> msg) -> Attribute msg
+onMouseMove : (Point2d Pixels SvgYDown -> msg) -> Attribute msg
 onMouseMove =
     onEvent "mousemove"
 
@@ -38,10 +38,10 @@ website][1] and on the [Mozilla documentation][2].
 [2]: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent
 
 -}
-onEvent : String -> (Point2d Pixels SvgYUp -> msg) -> Attribute msg
+onEvent : String -> (Point2d Pixels SvgYDown -> msg) -> Attribute msg
 onEvent event onTrigger =
     let
-        point2dDecoder : Decoder (Point2d Pixels SvgYUp)
+        point2dDecoder : Decoder (Point2d Pixels SvgYDown)
         point2dDecoder =
             Decode.map2
                 Point2d.pixels
