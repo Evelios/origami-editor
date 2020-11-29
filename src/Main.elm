@@ -22,7 +22,6 @@ import Task
 import Util.BoundingBox2d as BoundingBox2d
 import Util.LineSegment2d as LineSegment2d
 import Util.List as List
-import Util.Point2d as Point2d
 
 
 main : Program () Model Msg
@@ -46,7 +45,7 @@ type Selectable
 type alias Model =
     { viewArea : BoundingBox2d Pixels SvgYDown
     , creasePattern : CreasePattern Unitless Cartesian
-    , axiom : Axiom
+    , axioms : List Axiom
     , potentialFolds : List (LineSegment2d Unitless Cartesian)
     , hovered : Maybe Selectable
     }
@@ -64,8 +63,8 @@ init _ =
                     , maxY = Quantity.float 1
                     }
 
-        axiom =
-            First
+        axioms =
+            [ First, Second ]
     in
     ( { viewArea =
             BoundingBox2d.fromExtrema
@@ -75,8 +74,8 @@ init _ =
                 , maxY = Pixels.float 1
                 }
       , creasePattern = creasePattern
-      , axiom = axiom
-      , potentialFolds = Axioms.perform axiom creasePattern
+      , axioms = axioms
+      , potentialFolds = Axioms.perform axioms creasePattern
       , hovered = Nothing
       }
     , Task.attempt ViewAreaResize <|
@@ -158,7 +157,7 @@ update msg model =
             in
             case event of
                 Click ->
-                    case Debug.log "maybefold" maybeNewFold of
+                    case maybeNewFold of
                         Just fold ->
                             update (AddFold (LineSegment2d.inCartesian model.viewArea fold)) model
 

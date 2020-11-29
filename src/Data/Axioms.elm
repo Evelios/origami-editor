@@ -34,15 +34,12 @@ import Util.BoundingBox2d as BoundingBox2d
 {-| -}
 type Axiom
     = First
+    | Second
 
 
-{-| This function due to the lack of a reasonable solution runs in exponential time
-with respect to the number of the current folds of a crease pattern and the
-number of generated folds. This could be optimized in the future if this is
-causing performance issues.
--}
-perform : Axiom -> CreasePattern units coordinates -> List (LineSegment2d units coordinates)
-perform axiom creasePattern =
+{-| -}
+perform : List Axiom -> CreasePattern units coordinates -> List (LineSegment2d units coordinates)
+perform axioms creasePattern =
     let
         vertices =
             List.foldl
@@ -60,26 +57,39 @@ perform axiom creasePattern =
 
         boundingBox =
             CreasePattern.size creasePattern
-    in
-    case axiom of
-        First ->
-            List.foldl
-                (\( p1, p2 ) segments ->
-                    let
-                        crease =
-                            first p1 p2 boundingBox
-                    in
-                    if Set.member crease edges then
-                        segments
 
-                    else
-                        Set.insert
-                            (first p1 p2 boundingBox)
-                            segments
-                )
-                Set.lineSegment2d
-                (List.Extra.uniquePairs (Set.toList vertices))
-                |> Set.toList
+        addCrease axiomFn ( p1, p2 ) segments =
+            let
+                crease =
+                    axiomFn p1 p2 boundingBox
+            in
+            if Set.member crease edges then
+                segments
+
+            else
+                Set.insert
+                    (axiomFn p1 p2 boundingBox)
+                    segments
+
+        performAxiom axiom generated =
+            case axiom of
+                First ->
+                    List.foldl
+                        (addCrease first)
+                        generated
+                        (List.Extra.uniquePairs (Set.toList vertices))
+
+                Second ->
+                    List.foldl
+                        (addCrease second)
+                        generated
+                        (List.Extra.uniquePairs (Set.toList vertices))
+    in
+    List.foldl
+        performAxiom
+        Set.lineSegment2d
+        axioms
+        |> Set.toList
 
 
 {-| Given two distinct points, there is a unique fold that passes through both
@@ -118,6 +128,30 @@ second.
 second :
     Point2d units coordinates
     -> Point2d units coordinates
+    -> BoundingBox2d units coordinates
     -> LineSegment2d units coordinates
-second from to =
-    LineSegment2d.from from to
+second from to boundingBox =
+    let
+        connectingLine =
+            LineSegment2d.from from to
+    in
+    case LineSegment2d.perpendicularDirection connectingLine of
+        Just perpendicularDirection ->
+            let
+                perpendicularAxis =
+                    Axis2d.through (LineSegment2d.midpoint connectingLine) perpendicularDirection
+
+                intersections =
+                    List.filterMap
+                        (LineSegment2d.intersectionWithAxis perpendicularAxis)
+                        (BoundingBox2d.edges boundingBox)
+            in
+            case intersections of
+                pointFrom :: pointTo :: [] ->
+                    LineSegment2d.from pointFrom pointTo
+
+                _ ->
+                    connectingLine
+
+        Nothing ->
+            connectingLine
