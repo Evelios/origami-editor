@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/elm-stuff" />
       <excludeFolder url="file://$MODULE_DIR$/node_modules" />
+      <excludePattern pattern="elm-stuff" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -66,7 +66,7 @@ distanceFrom point line =
                 pointOnLine =
                     Point2d.distanceFrom point startPoint
                         |> Quantity.plus (Point2d.distanceFrom point endPoint)
-                        |> Quantity.equalWithin Geometry.tolerance (LineSegment2d.length line)
+                        |> Quantity.equalWithin Geometry.toleranceQuantity (LineSegment2d.length line)
             in
             case ( maybeIntersection, pointOnLine ) of
                 ( Just closestPoint, _ ) ->

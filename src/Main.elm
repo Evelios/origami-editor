@@ -178,10 +178,14 @@ update msg model =
                     ( model, Cmd.none )
 
         AddFold fold ->
+            let
+                newCreasePattern =
+                    CreasePattern.fold fold Mountain model.creasePattern
+            in
             ( { model
-                | creasePattern =
-                    CreasePattern.fold (Debug.log "fold" fold) Mountain model.creasePattern
-                        |> Debug.log "Crease pattern"
+                | creasePattern = newCreasePattern
+                , potentialFolds =
+                    Axioms.perform model.axioms newCreasePattern
               }
             , Cmd.none
             )

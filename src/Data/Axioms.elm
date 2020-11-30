@@ -29,12 +29,17 @@ import List.Extra
 import Point2d exposing (Point2d)
 import Set.Any as Set
 import Util.BoundingBox2d as BoundingBox2d
+import Util.LineSegment2d as LineSegment2d
 
 
 {-| -}
 type Axiom
     = First
     | Second
+
+
+
+--| Third
 
 
 {-| -}
@@ -155,3 +160,19 @@ second from to boundingBox =
 
         Nothing ->
             connectingLine
+
+
+third :
+    LineSegment2d units coordinates
+    -> LineSegment2d units coordinates
+    -> BoundingBox2d units coordinates
+    -> LineSegment2d units coordinates
+third line1 line2 boundingBox =
+    let
+        axis1 =
+            LineSegment2d.axis line1
+
+        axis2 =
+            LineSegment2d.axis line2
+    in
+    line1
