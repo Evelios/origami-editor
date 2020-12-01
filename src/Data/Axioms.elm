@@ -24,12 +24,12 @@ import Axis2d
 import BoundingBox2d exposing (BoundingBox2d)
 import Data.CreasePattern as CreasePattern exposing (CreasePattern)
 import Data.Set as Set exposing (Set)
+import Geometry.BoundingBox2d as BoundingBox2d
+import Geometry.Line2d as Line2d
 import LineSegment2d exposing (LineSegment2d)
 import List.Extra
 import Point2d exposing (Point2d)
 import Set.Any as Set
-import Util.BoundingBox2d as BoundingBox2d
-import Util.LineSegment2d as LineSegment2d
 
 
 {-| -}
@@ -167,12 +167,10 @@ third :
     -> LineSegment2d units coordinates
     -> BoundingBox2d units coordinates
     -> LineSegment2d units coordinates
-third line1 line2 boundingBox =
-    let
-        axis1 =
-            LineSegment2d.axis line1
+third segment1 segment2 boundingBox =
+    case ( Line2d.fromLineSegment segment1, Line2d.fromLineSegment segment1 ) of
+        ( Just line1, Just line2 ) ->
+            LineSegment2d.from Point2d.origin Point2d.origin
 
-        axis2 =
-            LineSegment2d.axis line2
-    in
-    line1
+        _ ->
+            LineSegment2d.from Point2d.origin Point2d.origin

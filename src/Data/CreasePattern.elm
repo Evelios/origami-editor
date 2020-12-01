@@ -31,10 +31,10 @@ module Data.CreasePattern exposing
 
 import BoundingBox2d exposing (BoundingBox2d)
 import Data.Edge exposing (Edge(..))
+import Geometry.BoundingBox2d as BoundingBox2d
 import Graph exposing (Graph)
 import LineSegment2d exposing (LineSegment2d)
 import Point2d exposing (Point2d)
-import Util.BoundingBox2d as BoundingBox2d
 
 
 

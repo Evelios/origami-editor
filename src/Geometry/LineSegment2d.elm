@@ -1,15 +1,15 @@
-module Util.LineSegment2d exposing (..)
+module Geometry.LineSegment2d exposing (..)
 
 {-| -}
 
 import Axis2d exposing (Axis2d)
 import BoundingBox2d exposing (BoundingBox2d)
-import Data.Coordinates as Coordinates exposing (Cartesian, SvgYDown)
+import Geometry.Coordinates as Coordinates exposing (Cartesian, SvgYDown)
+import Geometry.Tolerance as Tolerance
 import LineSegment2d exposing (LineSegment2d)
 import Pixels exposing (Pixels)
 import Point2d exposing (Point2d)
 import Quantity exposing (Quantity, Unitless)
-import Util.Geometry as Geometry
 
 
 {-| Return the line segment that is closest and is within a particular
@@ -66,7 +66,7 @@ distanceFrom point line =
                 pointOnLine =
                     Point2d.distanceFrom point startPoint
                         |> Quantity.plus (Point2d.distanceFrom point endPoint)
-                        |> Quantity.equalWithin Geometry.toleranceQuantity (LineSegment2d.length line)
+                        |> Quantity.equalWithin Tolerance.quantity (LineSegment2d.length line)
             in
             case ( maybeIntersection, pointOnLine ) of
                 ( Just closestPoint, _ ) ->

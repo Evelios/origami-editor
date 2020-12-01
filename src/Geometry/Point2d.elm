@@ -1,7 +1,7 @@
 module Util.Point2d exposing (..)
 
 import BoundingBox2d exposing (BoundingBox2d)
-import Data.Coordinates as Coordinates exposing (Cartesian, SvgYDown)
+import Geometry.Coordinates as Coordinates exposing (Cartesian, SvgYDown)
 import Pixels exposing (Pixels)
 import Point2d exposing (Point2d)
 import Quantity exposing (Quantity, Unitless)

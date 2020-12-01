@@ -1,12 +1,12 @@
 module Test.BoundingBox2d exposing (..)
 
 import BoundingBox2d
-import Data.AspectRatio as AspectRatio
+import Geometry.AspectRatio as AspectRatio
+import Geometry.BoundingBox2d as BoundingBox2d
 import Geometry.Expect
 import Pixels
 import Point2d
 import Test exposing (Test, describe, test)
-import Util.BoundingBox2d as BoundingBox2d
 import Util.Expect as Expect
 
 

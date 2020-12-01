@@ -9,7 +9,7 @@ module Framework.Events exposing (onClick, onMouseMove, onEnter, onLeave)
 
 -}
 
-import Data.Coordinates exposing (SvgYDown, SvgYUp)
+import Geometry.Coordinates exposing (SvgYDown, SvgYUp)
 import Json.Decode as Decode exposing (Decoder)
 import Pixels exposing (Pixels)
 import Point2d exposing (Point2d)

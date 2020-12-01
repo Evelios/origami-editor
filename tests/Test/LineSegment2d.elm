@@ -1,12 +1,12 @@
 module Test.LineSegment2d exposing (..)
 
 import Geometry.Expect
+import Geometry.LineSegment2d as LineSegment2d
 import Length
 import LineSegment2d
 import Point2d
 import Quantity
 import Test exposing (Test, describe, test)
-import Util.LineSegment2d as LineSegment2d
 
 
 distanceFrom : Test

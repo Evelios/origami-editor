@@ -1,4 +1,4 @@
-module Data.Line2d exposing
+module Geometry.Line2d exposing
     ( through, fromLineSegment
     , intersection
     )
@@ -19,10 +19,10 @@ module Data.Line2d exposing
 
 import Angle
 import Direction2d exposing (Direction2d)
+import Geometry.Tolerance as Tolerance
 import LineSegment2d exposing (LineSegment2d)
 import Point2d exposing (Point2d)
 import Quantity exposing (Quantity)
-import Util.Geometry as Geometry
 
 
 {-| -}
@@ -67,7 +67,7 @@ isVertical (Line2d _ direction) =
         |> Angle.inDegrees
         |> (-) 90
         |> abs
-        |> (>) Geometry.tolerance
+        |> (>) Tolerance.float
 
 
 isHorizontal : Line2d units coordinates -> Bool
@@ -76,13 +76,13 @@ isHorizontal (Line2d _ direction) =
         |> Angle.normalize
         |> Angle.inDegrees
         |> abs
-        |> (>) Geometry.tolerance
+        |> (>) Tolerance.float
 
 
 areParallel : Line2d units coordinates -> Line2d units coordinates -> Bool
 areParallel line1 line2 =
     (isVertical line1 && isVertical line2)
-        || (abs (slope line1 - slope line2) < Geometry.tolerance)
+        || (abs (slope line1 - slope line2) < Tolerance.float)
 
 
 getAtX : Quantity Float units -> Line2d units coordinates -> Point2d units coordinates

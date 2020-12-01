@@ -1,12 +1,12 @@
 module Test.Line2d exposing (..)
 
-import Data.Line2d as Line2d
 import Direction2d
 import Expect
 import Geometry.Expect as Expect
+import Geometry.Line2d as Line2d
+import Geometry.Tolerance as Tolerance
 import Point2d
 import Test exposing (Test, describe, test)
-import Util.Geometry as Geometry
 
 
 intersection : Test
@@ -25,7 +25,7 @@ intersection =
                                 Just pointIntersection ->
                                     pointIntersection
                                         |> Expect.point2dWithin
-                                            Geometry.toleranceQuantity
+                                            Tolerance.quantity
                                             expectedIntersection
 
                                 Nothing ->

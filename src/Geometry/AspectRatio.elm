@@ -1,4 +1,4 @@
-module Data.AspectRatio exposing
+module Geometry.AspectRatio exposing
     ( AspectRatio
     , from
     , x, y

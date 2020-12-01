@@ -1,7 +1,7 @@
 module Framework.Svg exposing (..)
 
 import BoundingBox2d exposing (BoundingBox2d)
-import Data.Coordinates exposing (SvgYDown)
+import Geometry.Coordinates exposing (SvgYDown)
 import Pixels exposing (Pixels)
 import Quantity
 import Quantity.Interval as Interval

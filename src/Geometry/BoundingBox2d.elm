@@ -1,7 +1,7 @@
-module Util.BoundingBox2d exposing (..)
+module Geometry.BoundingBox2d exposing (..)
 
 import BoundingBox2d exposing (BoundingBox2d)
-import Data.AspectRatio as AspectRatio exposing (AspectRatio)
+import Geometry.AspectRatio as AspectRatio exposing (AspectRatio)
 import LineSegment2d exposing (LineSegment2d)
 import Point2d exposing (Point2d)
 import Quantity exposing (Quantity)

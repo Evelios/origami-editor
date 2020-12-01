@@ -1,4 +1,4 @@
-module Data.Coordinates exposing
+module Geometry.Coordinates exposing
     ( Cartesian, SvgYDown, SvgYUp
     , svgYDownToCartesian, svgYUpToCartesian
     )

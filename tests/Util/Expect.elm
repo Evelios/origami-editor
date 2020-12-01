@@ -3,8 +3,8 @@ module Util.Expect exposing (..)
 {-| Utility functions for testing custom data structures.
 -}
 
-import Data.AspectRatio as AspectRatio exposing (AspectRatio)
 import Expect exposing (Expectation, FloatingPointTolerance(..))
+import Geometry.AspectRatio as AspectRatio exposing (AspectRatio)
 
 
 tolerance =

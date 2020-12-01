@@ -3,9 +3,9 @@ module Framework.Origami exposing (..)
 {-| -}
 
 import BoundingBox2d exposing (BoundingBox2d)
-import Data.Coordinates exposing (SvgYDown, SvgYUp)
 import Framework.Color
 import Framework.Events
+import Geometry.Coordinates exposing (SvgYDown, SvgYUp)
 import Geometry.Svg as Svg
 import LineSegment2d exposing (LineSegment2d)
 import Pixels exposing (Pixels)

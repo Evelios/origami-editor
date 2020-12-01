@@ -1,7 +1,7 @@
 module Test.Coordinates exposing (..)
 
 import BoundingBox2d
-import Data.Coordinates as Coordinates
+import Geometry.Coordinates as Coordinates
 import Geometry.Expect
 import Pixels
 import Point2d

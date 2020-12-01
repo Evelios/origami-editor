@@ -5,12 +5,14 @@ import Browser
 import Browser.Dom
 import Browser.Events
 import Data.Axioms as Axioms exposing (Axiom(..))
-import Data.Coordinates as Coordinates exposing (Cartesian, SvgYDown)
 import Data.CreasePattern as CreasePattern exposing (CreasePattern)
 import Data.Edge exposing (Edge(..))
 import Element exposing (..)
 import Framework.Origami as Origami
 import Framework.Svg
+import Geometry.BoundingBox2d as BoundingBox2d
+import Geometry.Coordinates as Coordinates exposing (Cartesian, SvgYDown)
+import Geometry.LineSegment2d as LineSegment2d
 import Html exposing (Html)
 import Html.Attributes
 import LineSegment2d exposing (LineSegment2d)
@@ -19,8 +21,6 @@ import Point2d exposing (Point2d)
 import Quantity exposing (Quantity, Unitless)
 import Svg exposing (Svg)
 import Task
-import Util.BoundingBox2d as BoundingBox2d
-import Util.LineSegment2d as LineSegment2d
 import Util.List as List
 
 
