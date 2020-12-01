@@ -2,7 +2,7 @@ module Data.CreasePattern exposing
     ( CreasePattern
     , new
     , edges, vertices, size
-    , addVertex, fold, foldBetween
+    , fold, foldBetween
     )
 
 {-|
@@ -25,7 +25,7 @@ module Data.CreasePattern exposing
 
 # Modifiers
 
-@docs addVertex, fold, foldBetween
+@docs fold, foldBetween
 
 -}
 
@@ -60,6 +60,15 @@ new boundingBox =
 
 
 
+-- Private Accessors
+
+
+graph : CreasePattern units coordinates -> Graph (Point2d units coordinates) Edge
+graph (CreasePattern _ theGraph) =
+    theGraph
+
+
+
 -- Accessors
 
 
@@ -74,8 +83,8 @@ size (CreasePattern boundingBox _) =
 vertices :
     CreasePattern units coordinates
     -> List (Point2d units coordinates)
-vertices (CreasePattern _ graph) =
-    Graph.vertices graph
+vertices =
+    graph >> Graph.vertices
 
 
 {-| -}
@@ -87,22 +96,12 @@ edges :
             , to : Point2d units coordinates
             , data : Edge
             }
-edges (CreasePattern _ graph) =
-    Graph.edges graph
+edges =
+    graph >> Graph.edges
 
 
 
 -- Modifiers
-
-
-{-| -}
-addVertex :
-    Point2d units coordinates
-    -> CreasePattern units coordinates
-    -> CreasePattern units coordinates
-addVertex point (CreasePattern boundingBox graph) =
-    Graph.addVertex point graph
-        |> CreasePattern boundingBox
 
 
 {-| -}
@@ -111,12 +110,27 @@ fold :
     -> Edge
     -> CreasePattern units coordinates
     -> CreasePattern units coordinates
-fold lineSegment =
+fold line edge (CreasePattern boundingBox theGraph) =
     let
         ( start, end ) =
-            LineSegment2d.endpoints lineSegment
+            LineSegment2d.endpoints line
+
+        addEdge newGraph =
+            if Graph.hasEdge end start newGraph then
+                theGraph
+
+            else
+                Graph.addEdge start end edge newGraph
     in
-    foldBetween start end
+    List.filterMap
+        (\{ from, to } ->
+            LineSegment2d.intersectionPoint line
+                (LineSegment2d.from from to)
+        )
+        (Graph.edges theGraph)
+        |> List.foldl Graph.addVertex theGraph
+        |> addEdge
+        |> CreasePattern boundingBox
 
 
 {-| -}
@@ -126,10 +140,5 @@ foldBetween :
     -> Edge
     -> CreasePattern units coordinates
     -> CreasePattern units coordinates
-foldBetween start end edge (CreasePattern boundingBox graph) =
-    if Graph.hasEdge end start graph then
-        CreasePattern boundingBox graph
-
-    else
-        Graph.addEdge start end edge graph
-            |> CreasePattern boundingBox
+foldBetween from to =
+    fold <| LineSegment2d.from from to
