@@ -2,6 +2,7 @@ module Test.Line2d exposing (..)
 
 import Direction2d
 import Expect
+import Extra.Expect as Expect
 import Geometry.Expect as Expect
 import Geometry.Line2d as Line2d
 import Geometry.Tolerance as Tolerance
@@ -76,5 +77,74 @@ intersection =
               , firstLine = Line2d.through point1 (Direction2d.degrees 45)
               , secondLine = Line2d.through point2 (Direction2d.degrees 45)
               , expectation = Nothing
+              }
+            ]
+
+
+bisectors : Test
+bisectors =
+    let
+        testBisectors { name, firstLine, secondLine, expectation } =
+            test name <|
+                \_ ->
+                    case ( expectation, Line2d.bisectors firstLine secondLine ) of
+                        ( Nothing, Nothing ) ->
+                            Expect.pass
+
+                        ( Just ( firstExpectation, secondExpectation ), Just ( firstBisector, secondBisector ) ) ->
+                            if
+                                (Line2d.equals firstExpectation firstBisector
+                                    && Line2d.equals secondExpectation secondBisector
+                                )
+                                    || (Line2d.equals firstExpectation secondBisector
+                                            && Line2d.equals secondExpectation firstBisector
+                                       )
+                            then
+                                Expect.pass
+
+                            else
+                                Expect.equal expectation (Just ( firstBisector, secondBisector ))
+
+                        ( _, results ) ->
+                            Expect.equal expectation results
+    in
+    describe "Finding line bisectors" <|
+        List.map testBisectors
+            [ { name = "Parallel Lines"
+              , firstLine = Line2d.through Point2d.origin (Direction2d.degrees 30)
+              , secondLine = Line2d.through (Point2d.unitless 1 1) (Direction2d.degrees 30)
+              , expectation = Nothing
+              }
+            , { name = "Overlapping lines"
+              , firstLine = Line2d.through Point2d.origin (Direction2d.degrees 30)
+              , secondLine = Line2d.through Point2d.origin (Direction2d.degrees 30)
+              , expectation = Nothing
+              }
+            , { name = "Cartesian Lines"
+              , firstLine = Line2d.through Point2d.origin (Direction2d.degrees 90)
+              , secondLine = Line2d.through Point2d.origin (Direction2d.degrees 180)
+              , expectation =
+                    Just
+                        ( Line2d.through Point2d.origin (Direction2d.degrees 45)
+                        , Line2d.through Point2d.origin (Direction2d.degrees 135)
+                        )
+              }
+            , { name = "Rotated 45 Cartesian Lines"
+              , firstLine = Line2d.through Point2d.origin (Direction2d.degrees 45)
+              , secondLine = Line2d.through Point2d.origin (Direction2d.degrees 135)
+              , expectation =
+                    Just
+                        ( Line2d.through Point2d.origin (Direction2d.degrees 90)
+                        , Line2d.through Point2d.origin (Direction2d.degrees 180)
+                        )
+              }
+            , { name = "Offset and Rotated 45 Cartesian Lines"
+              , firstLine = Line2d.through Point2d.origin (Direction2d.degrees 45)
+              , secondLine = Line2d.through (Point2d.unitless 1 1) (Direction2d.degrees 135)
+              , expectation =
+                    Just
+                        ( Line2d.through (Point2d.unitless 1 1) (Direction2d.degrees 90)
+                        , Line2d.through (Point2d.unitless 1 1) (Direction2d.degrees 180)
+                        )
               }
             ]

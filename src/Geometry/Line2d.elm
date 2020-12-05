@@ -1,6 +1,9 @@
 module Geometry.Line2d exposing
-    ( through, fromLineSegment
-    , intersection
+    ( Line2d
+    , through, fromLineSegment
+    , directions
+    , intersection, bisectors
+    , equals
     )
 
 {-|
@@ -11,14 +14,23 @@ module Geometry.Line2d exposing
 
 @docs through, fromLineSegment
 
+-- Accessors
+
+@docs directions
+
 -- Intersection
 
-@docs intersection
+@docs intersection, bisectors
+
+-- Queries
+
+@docs equals
 
 -}
 
 import Angle
 import Direction2d exposing (Direction2d)
+import Geometry.Direction2d as Direction2d
 import Geometry.Tolerance as Tolerance
 import LineSegment2d exposing (LineSegment2d)
 import Point2d exposing (Point2d)
@@ -53,6 +65,11 @@ fromLineSegment lineSegment =
 
 
 -- Accessors
+
+
+directions : Line2d units coordinates -> ( Direction2d coordinates, Direction2d coordinates )
+directions (Line2d _ direction) =
+    ( direction, Direction2d.reverse direction )
 
 
 slope : Line2d units coordinates -> Float
@@ -165,3 +182,64 @@ intersection line1 line2 =
                     |> Quantity.divideBy (slope2 - slope1)
         in
         Just <| getAtX xIntersection line1
+
+
+bisectors :
+    Line2d units coordinates
+    -> Line2d units coordinates
+    -> Maybe ( Line2d units coordinates, Line2d units coordinates )
+bisectors first second =
+    if areParallel first second then
+        Nothing
+
+    else
+        let
+            bisectorDirections =
+                case ( first, second ) of
+                    ( Line2d _ firstDirection, Line2d _ secondDirection ) ->
+                        Direction2d.directionsBetween firstDirection secondDirection
+
+            maybeIntersectionPoint =
+                intersection first second
+        in
+        Maybe.map
+            (\intersectionPoint ->
+                Tuple.mapBoth
+                    (through intersectionPoint)
+                    (through intersectionPoint)
+                    bisectorDirections
+            )
+            maybeIntersectionPoint
+
+
+
+-- Queries
+
+
+equals : Line2d units coordinates -> Line2d units coordinates -> Bool
+equals first second =
+    let
+        ( firstDirectionOne, firstDirectionTwo ) =
+            directions first
+
+        ( secondDirection, _ ) =
+            directions second
+
+        directionEquivalence =
+            Direction2d.equalWithin Tolerance.quantity firstDirectionOne secondDirection
+                || Direction2d.equalWithin Tolerance.quantity firstDirectionTwo secondDirection
+
+        interceptEquivalence =
+            if isVertical first || isVertical second then
+                Point2d.equalWithin
+                    Tolerance.quantity
+                    (getAtY Quantity.zero first)
+                    (getAtY Quantity.zero second)
+
+            else
+                Point2d.equalWithin
+                    Tolerance.quantity
+                    (getAtX Quantity.zero first)
+                    (getAtX Quantity.zero second)
+    in
+    directionEquivalence && interceptEquivalence
