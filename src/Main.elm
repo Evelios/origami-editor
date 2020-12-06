@@ -64,7 +64,7 @@ init _ =
                     }
 
         axioms =
-            [ First, Second ]
+            [ Third ]
     in
     ( { viewArea =
             BoundingBox2d.fromExtrema

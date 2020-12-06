@@ -27,32 +27,30 @@ import Data.Set as Set exposing (Set)
 import Geometry.BoundingBox2d as BoundingBox2d
 import Geometry.Line2d as Line2d
 import LineSegment2d exposing (LineSegment2d)
-import List.Extra
 import Point2d exposing (Point2d)
 import Set.Any as Set
+import Util.List
+import Util.Tuple as Tuple
 
 
 {-| -}
 type Axiom
     = First
     | Second
-
-
-
---| Third
+    | Third
 
 
 {-| -}
 perform : List Axiom -> CreasePattern units coordinates -> List (LineSegment2d units coordinates)
 perform axioms creasePattern =
     let
-        vertices =
+        creasePatternVertices =
             List.foldl
                 Set.insert
                 Set.point2d
                 (CreasePattern.vertices creasePattern)
 
-        edges =
+        creasePatternEdges =
             List.foldl
                 Set.insert
                 Set.lineSegment2d
@@ -63,32 +61,38 @@ perform axioms creasePattern =
         boundingBox =
             CreasePattern.size creasePattern
 
-        addCrease axiomFn ( p1, p2 ) segments =
-            let
-                crease =
-                    axiomFn p1 p2 boundingBox
-            in
-            if Set.member crease edges then
-                segments
+        addCrease crease generated =
+            if Set.member crease creasePatternEdges then
+                generated
 
             else
-                Set.insert
-                    (axiomFn p1 p2 boundingBox)
-                    segments
+                Set.insert crease generated
+
+        enumerateAxiom : (a -> b -> BoundingBox2d units coordinates -> c) -> List a -> List b -> List c
+        enumerateAxiom axiom la lb =
+            List.foldl
+                (\( a, b ) lc -> axiom a b boundingBox :: lc)
+                []
+                (Util.List.cartesianProduct la lb)
 
         performAxiom axiom generated =
-            case axiom of
-                First ->
-                    List.foldl
-                        (addCrease first)
-                        generated
-                        (List.Extra.uniquePairs (Set.toList vertices))
+            List.foldl addCrease generated <|
+                case axiom of
+                    First ->
+                        enumerateAxiom first
+                            (Set.toList creasePatternVertices)
+                            (Set.toList creasePatternVertices)
 
-                Second ->
-                    List.foldl
-                        (addCrease second)
-                        generated
-                        (List.Extra.uniquePairs (Set.toList vertices))
+                    Second ->
+                        enumerateAxiom second
+                            (Set.toList creasePatternVertices)
+                            (Set.toList creasePatternVertices)
+
+                    Third ->
+                        enumerateAxiom third
+                            (Set.toList creasePatternEdges)
+                            (Set.toList creasePatternEdges)
+                            |> List.concat
     in
     List.foldl
         performAxiom
@@ -166,11 +170,28 @@ third :
     LineSegment2d units coordinates
     -> LineSegment2d units coordinates
     -> BoundingBox2d units coordinates
-    -> LineSegment2d units coordinates
+    -> List (LineSegment2d units coordinates)
 third segment1 segment2 boundingBox =
-    case ( Line2d.fromLineSegment segment1, Line2d.fromLineSegment segment1 ) of
+    let
+        withinBoundingBox =
+            \line -> Line2d.withinBoundingBox line boundingBox
+    in
+    case ( Line2d.fromLineSegment segment1, Line2d.fromLineSegment segment2 ) of
         ( Just line1, Just line2 ) ->
-            LineSegment2d.from Point2d.origin Point2d.origin
+            case Line2d.bisectors line1 line2 of
+                Just bisectors ->
+                    -- Folds are not parallel
+                    Tuple.mapBoth withinBoundingBox withinBoundingBox bisectors
+                        |> Tuple.justToList
+
+                Nothing ->
+                    -- Folds are parallel
+                    List.filterMap
+                        withinBoundingBox
+                        [ Line2d.through
+                            (Point2d.midpoint (Line2d.yIntercept line1) (Line2d.yIntercept line2))
+                            (Line2d.direction line1)
+                        ]
 
         _ ->
-            LineSegment2d.from Point2d.origin Point2d.origin
+            []

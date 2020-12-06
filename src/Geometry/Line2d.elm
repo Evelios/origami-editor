@@ -1,9 +1,8 @@
 module Geometry.Line2d exposing
     ( Line2d
     , through, fromLineSegment
-    , directions
-    , intersection, bisectors
-    , equals
+    , direction, directions, yIntercept, xIntercept
+    , intersection, bisectors, withinBoundingBox, equals
     )
 
 {-|
@@ -16,20 +15,19 @@ module Geometry.Line2d exposing
 
 -- Accessors
 
-@docs directions
-
--- Intersection
-
-@docs intersection, bisectors
+@docs direction, directions, yIntercept, xIntercept
 
 -- Queries
 
-@docs equals
+@docs intersection, bisectors, withinBoundingBox, equals
 
 -}
 
 import Angle
+import Axis2d exposing (Axis2d)
+import BoundingBox2d exposing (BoundingBox2d)
 import Direction2d exposing (Direction2d)
+import Geometry.BoundingBox2d as BoundingBox2d
 import Geometry.Direction2d as Direction2d
 import Geometry.Tolerance as Tolerance
 import LineSegment2d exposing (LineSegment2d)
@@ -67,19 +65,29 @@ fromLineSegment lineSegment =
 -- Accessors
 
 
+direction : Line2d units coordinates -> Direction2d coordinates
+direction (Line2d _ theDirection) =
+    theDirection
+
+
 directions : Line2d units coordinates -> ( Direction2d coordinates, Direction2d coordinates )
-directions (Line2d _ direction) =
-    ( direction, Direction2d.reverse direction )
+directions (Line2d _ theDirection) =
+    ( theDirection, Direction2d.reverse theDirection )
+
+
+axis : Line2d units coordinates -> Axis2d units coordinates
+axis (Line2d point theDirection) =
+    Axis2d.through point theDirection
 
 
 slope : Line2d units coordinates -> Float
-slope (Line2d _ direction) =
-    Angle.tan <| Direction2d.toAngle direction
+slope (Line2d _ theDirection) =
+    Angle.tan <| Direction2d.toAngle theDirection
 
 
 isVertical : Line2d units coordinates -> Bool
-isVertical (Line2d _ direction) =
-    Direction2d.toAngle direction
+isVertical (Line2d _ theDirection) =
+    Direction2d.toAngle theDirection
         |> Angle.normalize
         |> Angle.inDegrees
         |> (-) 90
@@ -88,8 +96,8 @@ isVertical (Line2d _ direction) =
 
 
 isHorizontal : Line2d units coordinates -> Bool
-isHorizontal (Line2d _ direction) =
-    Direction2d.toAngle direction
+isHorizontal (Line2d _ theDirection) =
+    Direction2d.toAngle theDirection
         |> Angle.normalize
         |> Angle.inDegrees
         |> abs
@@ -100,6 +108,16 @@ areParallel : Line2d units coordinates -> Line2d units coordinates -> Bool
 areParallel line1 line2 =
     (isVertical line1 && isVertical line2)
         || (abs (slope line1 - slope line2) < Tolerance.float)
+
+
+yIntercept : Line2d units coordinates -> Point2d units coordinates
+yIntercept =
+    getAtX Quantity.zero
+
+
+xIntercept : Line2d units coordinates -> Point2d units coordinates
+xIntercept =
+    getAtY Quantity.zero
 
 
 getAtX : Quantity Float units -> Line2d units coordinates -> Point2d units coordinates
@@ -136,7 +154,7 @@ coordinates (Line2d point _) =
 
 
 
--- Intersection
+-- Queries
 
 
 {-| -}
@@ -212,8 +230,23 @@ bisectors first second =
             maybeIntersectionPoint
 
 
+withinBoundingBox :
+    Line2d units coordinates
+    -> BoundingBox2d units coordinates
+    -> Maybe (LineSegment2d units coordinates)
+withinBoundingBox line boundingBox =
+    let
+        intersections =
+            List.filterMap
+                (LineSegment2d.intersectionWithAxis (axis line))
+                (BoundingBox2d.edges boundingBox)
+    in
+    case intersections of
+        start :: end :: [] ->
+            Just <| LineSegment2d.from start end
 
--- Queries
+        _ ->
+            Nothing
 
 
 equals : Line2d units coordinates -> Line2d units coordinates -> Bool
@@ -233,13 +266,13 @@ equals first second =
             if isVertical first || isVertical second then
                 Point2d.equalWithin
                     Tolerance.quantity
-                    (getAtY Quantity.zero first)
-                    (getAtY Quantity.zero second)
+                    (xIntercept first)
+                    (xIntercept second)
 
             else
                 Point2d.equalWithin
                     Tolerance.quantity
-                    (getAtX Quantity.zero first)
-                    (getAtX Quantity.zero second)
+                    (yIntercept first)
+                    (yIntercept second)
     in
     directionEquivalence && interceptEquivalence

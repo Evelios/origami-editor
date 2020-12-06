@@ -1,10 +1,12 @@
-module Util.List exposing (appendIf)
+module Util.List exposing (appendIf, cartesianProduct)
 
 {-|
 
-@docs appendIf
+@docs appendIf, cartesianProduct
 
 -}
+
+import List.Extra
 
 
 {-| -}
@@ -16,3 +18,13 @@ appendIf maybe list =
 
         Nothing ->
             list
+
+
+cartesianProduct : List a -> List b -> List ( a, b )
+cartesianProduct first second =
+    first
+        |> List.Extra.andThen
+            (\x ->
+                second
+                    |> List.Extra.andThen (\y -> [ ( x, y ) ])
+            )
