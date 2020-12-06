@@ -1,7 +1,6 @@
 module Data.Axioms exposing
     ( Axiom(..)
     , perform
-    , first
     )
 
 {-|
@@ -15,8 +14,6 @@ module Data.Axioms exposing
 # Axiom Actions
 
 @docs perform
-
-@docs first
 
 -}
 

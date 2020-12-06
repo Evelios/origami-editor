@@ -1,6 +1,27 @@
-module Geometry.LineSegment2d exposing (..)
+module Geometry.LineSegment2d exposing
+    ( axis
+    , distanceFrom, within
+    , inCartesian, inSvgYDown
+    )
 
-{-| -}
+{-|
+
+
+# Accessors
+
+@docs axis
+
+
+# Queries
+
+@docs distanceFrom, within
+
+
+# Conversions
+
+@docs inCartesian, inSvgYDown
+
+-}
 
 import Axis2d exposing (Axis2d)
 import BoundingBox2d exposing (BoundingBox2d)
@@ -12,30 +33,8 @@ import Point2d exposing (Point2d)
 import Quantity exposing (Quantity, Unitless)
 
 
-{-| Return the line segment that is closest and is within a particular
-distance. If there is no such point, return Nothing.
--}
-within :
-    Quantity Float units
-    -> Point2d units coordinates
-    -> List (LineSegment2d units coordinates)
-    -> Maybe (LineSegment2d units coordinates)
-within distance testPoint candidates =
-    let
-        sortedPoints =
-            candidates
-                |> List.sortBy (distanceFrom testPoint >> Quantity.unwrap)
-    in
-    case sortedPoints of
-        closest :: _ ->
-            if distanceFrom testPoint closest |> Quantity.lessThanOrEqualTo distance then
-                Just closest
 
-            else
-                Nothing
-
-        _ ->
-            Nothing
+-- Accessors
 
 
 {-| Get the axis that is made from a line segment.
@@ -43,6 +42,10 @@ within distance testPoint candidates =
 axis : LineSegment2d units coordinates -> Maybe (Axis2d units coordinates)
 axis line =
     Axis2d.throughPoints (LineSegment2d.startPoint line) (LineSegment2d.endPoint line)
+
+
+
+-- Queries
 
 
 {-| Get the distance from a line segment to a point.
@@ -84,10 +87,37 @@ distanceFrom point line =
             Quantity.infinity
 
 
+{-| Return the line segment that is closest and is within a particular
+distance. If there is no such point, return Nothing.
+-}
+within :
+    Quantity Float units
+    -> Point2d units coordinates
+    -> List (LineSegment2d units coordinates)
+    -> Maybe (LineSegment2d units coordinates)
+within distance testPoint candidates =
+    let
+        sortedPoints =
+            candidates
+                |> List.sortBy (distanceFrom testPoint >> Quantity.unwrap)
+    in
+    case sortedPoints of
+        closest :: _ ->
+            if distanceFrom testPoint closest |> Quantity.lessThanOrEqualTo distance then
+                Just closest
+
+            else
+                Nothing
+
+        _ ->
+            Nothing
+
+
 
 -- Conversions
 
 
+{-| -}
 inCartesian : BoundingBox2d Pixels SvgYDown -> LineSegment2d Pixels SvgYDown -> LineSegment2d Unitless Cartesian
 inCartesian boundingBox =
     let
@@ -97,6 +127,7 @@ inCartesian boundingBox =
     LineSegment2d.relativeTo frame >> LineSegment2d.at_ rate
 
 
+{-| -}
 inSvgYDown : BoundingBox2d Pixels SvgYDown -> LineSegment2d Unitless Cartesian -> LineSegment2d Pixels SvgYDown
 inSvgYDown boundingBox =
     let

@@ -1,6 +1,16 @@
-module Util.Tuple exposing (..)
+module Util.Tuple exposing (justToList)
+
+{-|
 
 
+# Helper Functions
+
+@docs justToList
+
+-}
+
+
+{-| -}
 justToList : ( Maybe a, Maybe a ) -> List a
 justToList tuple =
     case tuple of

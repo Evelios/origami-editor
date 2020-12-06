@@ -1,6 +1,21 @@
-module Framework.Origami exposing (..)
+module Framework.Origami exposing
+    ( page
+    , crease, mountainFold, valleyFold, potentialFold, hoveredPotentialFold
+    )
 
-{-| -}
+{-|
+
+
+# Paper
+
+@docs page
+
+
+# Creases
+
+@docs crease, mountainFold, valleyFold, potentialFold, hoveredPotentialFold
+
+-}
 
 import BoundingBox2d exposing (BoundingBox2d)
 import Framework.Color
@@ -20,6 +35,7 @@ import TypedSvg.Types exposing (Paint(..))
 -- Paper
 
 
+{-| -}
 page :
     List (Svg.Attribute msg)
     ->
@@ -47,6 +63,7 @@ page attributes options =
 -- Edges
 
 
+{-| -}
 thickness =
     { thin = 1
     , medium = 2

@@ -1,4 +1,21 @@
-module Util.Point2d exposing (..)
+module Geometry.Point2d exposing
+    ( within
+    , inCartesian, inSvgYDown
+    )
+
+{-|
+
+
+# Queries
+
+@docs within
+
+
+# Conversions
+
+@docs inCartesian, inSvgYDown
+
+-}
 
 import BoundingBox2d exposing (BoundingBox2d)
 import Geometry.Coordinates as Coordinates exposing (Cartesian, SvgYDown)
@@ -7,6 +24,11 @@ import Point2d exposing (Point2d)
 import Quantity exposing (Quantity, Unitless)
 
 
+
+-- Queries
+
+
+{-| -}
 within :
     Quantity Float units
     -> Point2d units coordinates
@@ -34,6 +56,7 @@ within distance testPoint candidates =
 -- Conversions
 
 
+{-| -}
 inCartesian : BoundingBox2d Pixels SvgYDown -> Point2d Pixels SvgYDown -> Point2d Unitless Cartesian
 inCartesian boundingBox =
     let
@@ -43,6 +66,7 @@ inCartesian boundingBox =
     Point2d.relativeTo frame >> Point2d.at_ rate
 
 
+{-| -}
 inSvgYDown : BoundingBox2d Pixels SvgYDown -> Point2d Unitless Cartesian -> Point2d Pixels SvgYDown
 inSvgYDown boundingBox =
     let

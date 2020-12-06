@@ -1,12 +1,20 @@
-module Geometry.Direction2d exposing (..)
+module Geometry.Direction2d exposing (directionsBetween)
 
-{-| -}
+{-|
+
+@docs directionsBetween
+
+-}
 
 import Angle
 import Direction2d exposing (Direction2d)
 import Quantity
 
 
+{-| Get the two directions which are between the given directions. The first
+direction is the direction clockwise between the first and second directions.
+The second is the direction counter-clockwise.
+-}
 directionsBetween :
     Direction2d coordinates
     -> Direction2d coordinates

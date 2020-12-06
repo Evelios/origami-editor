@@ -1,4 +1,27 @@
-module Geometry.BoundingBox2d exposing (..)
+module Geometry.BoundingBox2d exposing
+    ( withTopLeft
+    , dimensions, edges, aspectRatio
+    , shrinkToAspectRatio
+    )
+
+{-|
+
+
+# Builders
+
+@docs withTopLeft
+
+
+# Accessors
+
+@docs dimensions, edges, aspectRatio
+
+
+# Modifiers
+
+@docs shrinkToAspectRatio
+
+-}
 
 import BoundingBox2d exposing (BoundingBox2d)
 import Geometry.AspectRatio as AspectRatio exposing (AspectRatio)
@@ -7,6 +30,32 @@ import Point2d exposing (Point2d)
 import Quantity exposing (Quantity)
 import Quantity.Interval as Interval exposing (Interval)
 import Vector2d
+
+
+
+-- Builders
+
+
+{-| -}
+withTopLeft :
+    Point2d units coordinates
+    -> BoundingBox2d units coordinates
+    -> BoundingBox2d units coordinates
+withTopLeft topLeft boundingBox =
+    let
+        ( width, height ) =
+            dimensions boundingBox
+
+        center =
+            topLeft
+                |> Point2d.translateBy
+                    (Vector2d.xy (Quantity.half width) (Quantity.half height))
+    in
+    BoundingBox2d.withDimensions ( width, height ) center
+
+
+
+-- Accessors
 
 
 {-| -}
@@ -48,6 +97,10 @@ aspectRatio boundingBox =
             AspectRatio.from width height
 
 
+
+-- Modifiers
+
+
 {-| Change the aspect ratio of the current size but make sure that the new size remains in the same bounding box as the
 original size object. The bounding box is shrunk around it's center point.
 -}
@@ -83,21 +136,3 @@ shrinkToAspectRatio newRatio boundingBox =
                 (Quantity.ratio height unscaledHeight)
     in
     BoundingBox2d.scaleAbout centerPoint scaleRatio unscaledBoundingBox
-
-
-{-| -}
-withTopLeft :
-    Point2d units coordinates
-    -> BoundingBox2d units coordinates
-    -> BoundingBox2d units coordinates
-withTopLeft topLeft boundingBox =
-    let
-        ( width, height ) =
-            dimensions boundingBox
-
-        center =
-            topLeft
-                |> Point2d.translateBy
-                    (Vector2d.xy (Quantity.half width) (Quantity.half height))
-    in
-    BoundingBox2d.withDimensions ( width, height ) center

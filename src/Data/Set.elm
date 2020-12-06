@@ -24,6 +24,7 @@ import Quantity exposing (Quantity)
 import Set.Any as Set exposing (AnySet)
 
 
+{-| -}
 type alias Set geometry =
     AnySet String geometry
 

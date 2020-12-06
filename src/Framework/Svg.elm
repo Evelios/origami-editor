@@ -1,4 +1,10 @@
-module Framework.Svg exposing (..)
+module Framework.Svg exposing (boundingBoxAttributes)
+
+{-|
+
+@docs boundingBoxAttributes
+
+-}
 
 import BoundingBox2d exposing (BoundingBox2d)
 import Geometry.Coordinates exposing (SvgYDown)

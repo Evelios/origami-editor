@@ -1,5 +1,5 @@
 module Data.CreasePattern exposing
-    ( CreasePattern
+    ( CreasePattern, Edge(..)
     , new
     , edges, vertices, size
     , fold, foldBetween
@@ -10,7 +10,7 @@ module Data.CreasePattern exposing
 
 # Types
 
-@docs CreasePattern
+@docs CreasePattern, Edge
 
 
 # Builders
@@ -30,7 +30,6 @@ module Data.CreasePattern exposing
 -}
 
 import BoundingBox2d exposing (BoundingBox2d)
-import Data.Edge exposing (Edge(..))
 import Geometry.BoundingBox2d as BoundingBox2d
 import Graph exposing (Graph)
 import LineSegment2d exposing (LineSegment2d)
@@ -44,6 +43,13 @@ import Point2d exposing (Point2d)
 {-| -}
 type CreasePattern units coordinates
     = CreasePattern (BoundingBox2d units coordinates) (Graph (Point2d units coordinates) Edge)
+
+
+{-| -}
+type Edge
+    = Mountain
+    | Valley
+    | Boundary
 
 
 

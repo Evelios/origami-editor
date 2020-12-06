@@ -40,6 +40,7 @@ type SvgYDown
     = SvgYDown
 
 
+{-| -}
 type SvgYUp
     = SvgYUp
 

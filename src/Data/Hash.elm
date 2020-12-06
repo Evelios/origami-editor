@@ -1,11 +1,31 @@
-module Data.Hash exposing (..)
+module Data.Hash exposing
+    ( Hash
+    , fromInt, fromFloat, fromString
+    , toString
+    , independent, dependent
+    )
 
 {-|
+
+
+# Types
+
+@docs Hash
 
 
 # Builders
 
 @docs fromInt, fromFloat, fromString
+
+
+# Accessors
+
+@docs toString
+
+
+# Combiners
+
+@docs independent, dependent
 
 -}
 
@@ -14,6 +34,7 @@ import Murmur3
 import Round
 
 
+{-| -}
 type Hash
     = Hash Integer
 

@@ -1,0 +1,26 @@
+{
+  "name": "Evelios/crease-pattern-editor",
+  "summary": "An origami crease pattern editor",
+  "version": "1.0.0",
+  "exposed-modules": [
+    "Data.Axioms",
+    "Data.CreasePattern",
+    "Data.Hash",
+    "Data.Set",
+    "Framework.Color.Extra",
+    "Framework.Color",
+    "Framework.Events",
+    "Framework.Origami",
+    "Framework.Svg",
+    "Geometry.AspectRatio",
+    "Geometry.BoundingBox2d",
+    "Geometry.Coordinates",
+    "Geometry.Direction2d",
+    "Geometry.Line2d",
+    "Geometry.LineSegment2d",
+    "Geometry.Point2d",
+    "Geometry.Tolerance",
+    "Util.List",
+    "Util.Tuple"
+  ]
+}

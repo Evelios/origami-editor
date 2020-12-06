@@ -20,6 +20,7 @@ appendIf maybe list =
             list
 
 
+{-| -}
 cartesianProduct : List a -> List b -> List ( a, b )
 cartesianProduct first second =
     first

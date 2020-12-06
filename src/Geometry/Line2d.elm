@@ -7,17 +7,23 @@ module Geometry.Line2d exposing
 
 {-|
 
+
+# Types
+
 @docs Line2d
 
--- Builders
+
+# Builders
 
 @docs through, fromLineSegment
 
--- Accessors
+
+# Accessors
 
 @docs direction, directions, yIntercept, xIntercept
 
--- Queries
+
+# Queries
 
 @docs intersection, bisectors, withinBoundingBox, equals
 
@@ -65,26 +71,31 @@ fromLineSegment lineSegment =
 -- Accessors
 
 
+{-| -}
 direction : Line2d units coordinates -> Direction2d coordinates
 direction (Line2d _ theDirection) =
     theDirection
 
 
+{-| -}
 directions : Line2d units coordinates -> ( Direction2d coordinates, Direction2d coordinates )
 directions (Line2d _ theDirection) =
     ( theDirection, Direction2d.reverse theDirection )
 
 
+{-| -}
 axis : Line2d units coordinates -> Axis2d units coordinates
 axis (Line2d point theDirection) =
     Axis2d.through point theDirection
 
 
+{-| -}
 slope : Line2d units coordinates -> Float
 slope (Line2d _ theDirection) =
     Angle.tan <| Direction2d.toAngle theDirection
 
 
+{-| -}
 isVertical : Line2d units coordinates -> Bool
 isVertical (Line2d _ theDirection) =
     Direction2d.toAngle theDirection
@@ -95,6 +106,7 @@ isVertical (Line2d _ theDirection) =
         |> (>) Tolerance.float
 
 
+{-| -}
 isHorizontal : Line2d units coordinates -> Bool
 isHorizontal (Line2d _ theDirection) =
     Direction2d.toAngle theDirection
@@ -104,22 +116,26 @@ isHorizontal (Line2d _ theDirection) =
         |> (>) Tolerance.float
 
 
+{-| -}
 areParallel : Line2d units coordinates -> Line2d units coordinates -> Bool
 areParallel line1 line2 =
     (isVertical line1 && isVertical line2)
         || (abs (slope line1 - slope line2) < Tolerance.float)
 
 
+{-| -}
 yIntercept : Line2d units coordinates -> Point2d units coordinates
 yIntercept =
     getAtX Quantity.zero
 
 
+{-| -}
 xIntercept : Line2d units coordinates -> Point2d units coordinates
 xIntercept =
     getAtY Quantity.zero
 
 
+{-| -}
 getAtX : Quantity Float units -> Line2d units coordinates -> Point2d units coordinates
 getAtX xLoc line =
     let
@@ -133,6 +149,7 @@ getAtX xLoc line =
         |> Point2d.xy xLoc
 
 
+{-| -}
 getAtY : Quantity Float units -> Line2d units coordinates -> Point2d units coordinates
 getAtY yLoc line =
     let
@@ -202,6 +219,7 @@ intersection line1 line2 =
         Just <| getAtX xIntersection line1
 
 
+{-| -}
 bisectors :
     Line2d units coordinates
     -> Line2d units coordinates
@@ -230,6 +248,7 @@ bisectors first second =
             maybeIntersectionPoint
 
 
+{-| -}
 withinBoundingBox :
     Line2d units coordinates
     -> BoundingBox2d units coordinates
@@ -249,6 +268,7 @@ withinBoundingBox line boundingBox =
             Nothing
 
 
+{-| -}
 equals : Line2d units coordinates -> Line2d units coordinates -> Bool
 equals first second =
     let
