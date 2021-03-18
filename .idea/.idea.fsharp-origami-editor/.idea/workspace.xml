@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6dc352fa-72a6-44f7-849e-62562e90329a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Origami/Library.fs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Origami/Origami.fsproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fsharp-origami-editor.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fsharp-origami-editor.sln" beforeDir="false" afterPath="$PROJECT_DIR$/fsharp-origami-editor.sln" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,11 +14,20 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
   <component name="IdeDocumentHistory">
     <changedPaths>
       <option value="$PROJECT_DIR$/../Origami/Origami/Edge.fs" />
       <option value="$PROJECT_DIR$/../Origami/Origami/Library.fs" />
       <option value="$PROJECT_DIR$/Origami/Library.fs" />
+      <option value="$PROJECT_DIR$/Fold/Fold.fs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1po7nmpBZlMOkcgU4qskm73X6DD" />
@@ -45,6 +53,8 @@
       <updated>1615837758423</updated>
       <workItem from="1615837760367" duration="637000" />
       <workItem from="1615915117590" duration="533000" />
+      <workItem from="1616077593576" duration="424000" />
+      <workItem from="1616078040899" duration="1115000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1615915403364</created>
@@ -71,6 +81,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
