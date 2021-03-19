@@ -14,7 +14,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="File.fs" />
+        <Compile Include="Util.fs" />
+        <Compile Include="StringMapTests.fs" />
+        <Compile Include="FrameTests.fs" />
+        <Compile Include="FileTests.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 

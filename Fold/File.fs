@@ -3,13 +3,28 @@ namespace Fold
 open FSharp.Json
 
 
+module FileMetadata =
+    type FileClass =
+        | SingleModel = 0
+        | MultiModel = 1
+        | Animation = 2
+        | Diagrams = 3
 
-type FileClass =
-    | singleModel = 0
-    | multiModel = 1
-    | animation = 2
-    | diagrams = 3
-    | custom = 4
+    let private fileClassConverter =
+        StringMap [ FileClass.SingleModel, "singleModel"
+                    FileClass.MultiModel, "multiModel"
+                    FileClass.Animation, "animation"
+                    FileClass.Diagrams, "diagrams" ]
+
+    type FileClassTransform =
+        interface ITypeTransform with
+            member this.targetType() = (fun _ -> typeof<string>) ()
+
+            member this.fromTargetType text =
+                text.ToString() |> fileClassConverter.FromString :> obj
+
+            member this.toTargetType fileClass =
+                fileClassConverter.ToString(fileClass :?> FileClass) :> obj
 
 type File =
     { [<JsonField(Transform = typeof<Version.Transform>)>]
@@ -18,7 +33,8 @@ type File =
       author: string option
       title: string option
       description: string option
-      classes: FileClass list option }
+      [<JsonField(Transform = typeof<FileMetadata.FileClassTransform>)>]
+      classes: FileMetadata.FileClass list option }
 
 module File =
 
@@ -36,8 +52,9 @@ module File =
 
     (* Json *)
 
+
     let private jsonConfig =
-        JsonConfig.create (jsonFieldNaming = (+) "file_", serializeNone = SerializeNone.Omit, enumValue = EnumMode.Name)
+        JsonConfig.create (jsonFieldNaming = (+) "file_", serializeNone = SerializeNone.Omit)
 
     let private jsonConfigUnformatted =
         JsonConfig.create

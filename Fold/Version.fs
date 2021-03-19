@@ -44,10 +44,10 @@ module Version =
     /// Transform a version to and from the string representation
     type Transform() =
         interface ITypeTransform with
-            member x.targetType() = (fun _ -> typeof<string>) ()
-            member x.toTargetType value = ToString(value :?> Version) :> obj
+            member this.targetType() = (fun _ -> typeof<string>) ()
+            member this.toTargetType value = ToString(value :?> Version) :> obj
 
-            member x.fromTargetType value =
+            member this.fromTargetType value =
                 value.ToString()
                 |> FromString
                 |> Option.defaultValue (CreateWithMajor 1) :> obj
