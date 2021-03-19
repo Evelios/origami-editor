@@ -5,6 +5,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="StringConverter.fs" />
+        <Compile Include="Version.fs" />
+        <Compile Include="File.fs" />
         <Compile Include="Fold.fs" />
     </ItemGroup>
 

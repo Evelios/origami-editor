@@ -2,19 +2,12 @@
 
 open FSharp.Json
 
-type Version = { major: int; minor: int; patch: int }
+module FoldModule =
 
-type File =
-    { spec: Version Option
-      creator: string
-      author: string
-      title: string
-      description: string }
+    type Fold = { file: File }
 
-type Fold = { file: File }
+    let create file: Fold = file
 
-module Fold =
-
-    let toJson (fold: Fold) = Json.serialize fold
+    let toJson (fold: Fold): string = Json.serialize fold
 
     let fromJson = Json.deserialize<Fold>

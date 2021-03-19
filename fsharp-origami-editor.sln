@@ -4,6 +4,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Origami", "Origami\Origami.
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Fold", "Fold\Fold.fsproj", "{8FECB05E-0A2F-4FAB-9A76-E5E8A99DEABD}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FoldTests", "FoldTests\FoldTests.fsproj", "{1163E348-D80F-487A-95EE-EA2B530BE9D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{8FECB05E-0A2F-4FAB-9A76-E5E8A99DEABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FECB05E-0A2F-4FAB-9A76-E5E8A99DEABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FECB05E-0A2F-4FAB-9A76-E5E8A99DEABD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1163E348-D80F-487A-95EE-EA2B530BE9D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1163E348-D80F-487A-95EE-EA2B530BE9D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1163E348-D80F-487A-95EE-EA2B530BE9D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1163E348-D80F-487A-95EE-EA2B530BE9D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
