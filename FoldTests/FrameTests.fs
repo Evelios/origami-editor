@@ -22,18 +22,18 @@ let testCases =
       """{"frame_classes":["creasePattern","graph"]}""",
       { Frame.Empty with
             classes =
-                Some [ FrameMetadata.FrameClass.CreasePattern
-                       FrameMetadata.FrameClass.Graph ] }
+                Some [ FrameClass.CreasePattern
+                       FrameClass.Graph ] }
 
       """{"frame_attributes":["2D","orientable"]}""",
       { Frame.Empty with
             attributes =
-                Some [ FrameMetadata.FrameAttribute.Geo2D
-                       FrameMetadata.FrameAttribute.Orientable ] }
+                Some [ FrameAttribute.Geo2D
+                       FrameAttribute.Orientable ] }
 
       """{"frame_unit":"unit"}""",
       { Frame.Empty with
-            unit = Some FrameMetadata.Unit.Unitless } ]
+            unit = Some Unit.Unitless } ]
 
 let deserializationTestCases = Util.toTest testCases
 

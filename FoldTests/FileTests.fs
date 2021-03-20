@@ -37,7 +37,7 @@ let testCases =
 
       """{"file_classes":["singleModel"]}""",
       { File.Empty with
-            classes = Some [ FileMetadata.FileClass.SingleModel ] } ]
+            classes = Some [ FileClass.SingleModel ] } ]
 
 
 let deserializationTestCases = Util.toTest testCases
