@@ -5,13 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6dc352fa-72a6-44f7-849e-62562e90329a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Fold/Edges.fs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Fold/Faces.fs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Fold/Vertices.fs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FoldTests/EdgesTests.fs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FoldTests/FacesTest.fs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FoldTests/VerticesTests.fs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Fold/File.fs" beforeDir="false" afterPath="$PROJECT_DIR$/Fold/File.fs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fold/Fold.fsproj" beforeDir="false" afterPath="$PROJECT_DIR$/Fold/Fold.fsproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Fold/Frame.fs" beforeDir="false" afterPath="$PROJECT_DIR$/Fold/Frame.fs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FoldTests/FileTests.fs" beforeDir="false" afterPath="$PROJECT_DIR$/FoldTests/FileTests.fs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FoldTests/FrameTests.fs" beforeDir="false" afterPath="$PROJECT_DIR$/FoldTests/FrameTests.fs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fsharp-origami-editor.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/fsharp-origami-editor.sln.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FoldTests/FoldTests.fsproj" beforeDir="false" afterPath="$PROJECT_DIR$/FoldTests/FoldTests.fsproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +25,14 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
   <component name="IdeDocumentHistory">
     <changedPaths>
       <option value="$PROJECT_DIR$/../Origami/Origami/Edge.fs" />
@@ -28,12 +40,20 @@
       <option value="$PROJECT_DIR$/Origami/Library.fs" />
       <option value="$PROJECT_DIR$/FoldTests/FileTests.fs" />
       <option value="$PROJECT_DIR$/Fold/File.fs" />
-      <option value="$PROJECT_DIR$/Fold/Frame.fs" />
       <option value="$PROJECT_DIR$/FoldTests/FrameTests.fs" />
+      <option value="$PROJECT_DIR$/Fold/Frame.fs" />
+      <option value="$PROJECT_DIR$/Fold/Edges.fs" />
+      <option value="$PROJECT_DIR$/Fold/Faces.fs" />
+      <option value="$PROJECT_DIR$/FoldTests/FacesTest.fs" />
+      <option value="$PROJECT_DIR$/FoldTests/VerticesTests.fs" />
+      <option value="$PROJECT_DIR$/Fold/Vertices.fs" />
+      <option value="$PROJECT_DIR$/FoldTests/EdgesTests.fs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1po7nmpBZlMOkcgU4qskm73X6DD" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -83,7 +103,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615915403364</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Proper frame serialization">
+      <created>1616253303494</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1616253303494</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -106,6 +133,7 @@
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Initial Commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="Initial Commit" />
+    <MESSAGE value="Proper frame serialization" />
+    <option name="LAST_COMMIT_MESSAGE" value="Proper frame serialization" />
   </component>
 </project>

@@ -9,6 +9,8 @@
     <e p="$USER_HOME$/.nuget/packages/nunit3testadapter/3.16.1/build/netcoreapp2.1/nunit.engine.dll" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="Fold" t="IncludeRecursive">
+        <e p="Edges.fs" t="Include" />
+        <e p="Faces.fs" t="Include" />
         <e p="File.fs" t="Include" />
         <e p="Fold.fs" t="Include" />
         <e p="Fold.fsproj" t="IncludeRecursive" />
@@ -16,16 +18,20 @@
         <e p="StringConverter.fs" t="Include" />
         <e p="StringMap.fs" t="Include" />
         <e p="Version.fs" t="Include" />
+        <e p="Vertices.fs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="FoldTests" t="IncludeRecursive">
+        <e p="EdgesTests.fs" t="Include" />
+        <e p="FacesTest.fs" t="Include" />
         <e p="FileTests.fs" t="Include" />
         <e p="FoldTests.fsproj" t="IncludeRecursive" />
         <e p="FrameTests.fs" t="Include" />
         <e p="Program.fs" t="Include" />
         <e p="StringMapTests.fs" t="Include" />
         <e p="Util.fs" t="Include" />
+        <e p="VerticesTests.fs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
       </e>

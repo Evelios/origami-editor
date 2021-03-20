@@ -56,7 +56,7 @@ module Frame =
     let private jsonConfigUnformatted =
         JsonConfig.create (jsonFieldNaming = (+) "frame_", serializeNone = SerializeNone.Omit, unformatted = true)
 
-    let ToJson (fold: Frame): string = Json.serializeEx jsonConfig fold
+    let ToJson (frame: Frame): string = Json.serializeEx jsonConfig frame
 
     let ToJsonUnformatted (frame: Frame): string =
         Json.serializeEx jsonConfigUnformatted frame

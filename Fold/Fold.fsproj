@@ -8,6 +8,9 @@
         <Compile Include="StringConverter.fs" />
         <Compile Include="StringMap.fs" />
         <Compile Include="Version.fs" />
+        <Compile Include="Vertices.fs" />
+        <Compile Include="Edges.fs" />
+        <Compile Include="Faces.fs" />
         <Compile Include="Frame.fs" />
         <Compile Include="File.fs" />
         <Compile Include="Fold.fs" />
