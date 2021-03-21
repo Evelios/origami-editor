@@ -7,7 +7,9 @@ open Fold
 let Setup () = ()
 
 let testCases =
-    [ """{"file_spec":"1"}""",
+    [ (* Unit Tests *)
+      
+      """{"file_spec":"1"}""",
       { File.Empty with
             spec = Some(Version.CreateWithMajor 1) }
 

@@ -36,9 +36,14 @@ type Frame =
       description: string option
       classes: FrameClass list option
       attributes: FrameAttribute list option
-      unit: Unit option }
+      unit: Unit option
+      vertices: Vertices option
+      edges: Edges option
+      faces: Faces option }
 
 module Frame =
+
+    let Create a: Frame = a
 
     let Empty =
         { author = None
@@ -46,7 +51,10 @@ module Frame =
           description = None
           classes = None
           attributes = None
-          unit = None }
+          unit = None
+          vertices = None
+          edges = None
+          faces = None }
 
 
     (* Json *)
@@ -61,4 +69,18 @@ module Frame =
     let ToJsonUnformatted (frame: Frame): string =
         Json.serializeEx jsonConfigUnformatted frame
 
-    let FromJson = Json.deserializeEx<Frame> jsonConfig
+    let FromJson json =
+        let frame =
+            Json.deserializeEx<Frame> jsonConfig json
+
+        let edges = Edges.FromJson json
+        let vertices = Vertices.FromJson json
+        let faces = Faces.FromJson json
+
+        let maybe record empty =
+            if record = empty then None else Some record
+
+        { frame with
+              edges = maybe edges Edges.Empty
+              vertices = maybe vertices Vertices.Empty
+              faces = maybe faces Faces.Empty }

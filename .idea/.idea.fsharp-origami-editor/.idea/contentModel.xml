@@ -23,6 +23,7 @@
         <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="FoldTests" t="IncludeRecursive">
+        <e p="BasicIntegrationTest.fs" t="Include" />
         <e p="EdgesTests.fs" t="Include" />
         <e p="FacesTest.fs" t="Include" />
         <e p="FileTests.fs" t="Include" />
@@ -32,6 +33,7 @@
         <e p="StringMapTests.fs" t="Include" />
         <e p="Util.fs" t="Include" />
         <e p="VerticesTests.fs" t="Include" />
+        <e p="basic-integration.json" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
       </e>

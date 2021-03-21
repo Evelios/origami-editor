@@ -5,16 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6dc352fa-72a6-44f7-849e-62562e90329a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Fold/Edges.fs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Fold/Faces.fs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Fold/Vertices.fs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FoldTests/EdgesTests.fs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FoldTests/FacesTest.fs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FoldTests/VerticesTests.fs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FoldTests/BasicIntegrationTest.fs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FoldTests/basic-integration.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Fold/Fold.fsproj" beforeDir="false" afterPath="$PROJECT_DIR$/Fold/Fold.fsproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fold/Edges.fs" beforeDir="false" afterPath="$PROJECT_DIR$/Fold/Edges.fs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fold/Faces.fs" beforeDir="false" afterPath="$PROJECT_DIR$/Fold/Faces.fs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fold/File.fs" beforeDir="false" afterPath="$PROJECT_DIR$/Fold/File.fs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Fold/Frame.fs" beforeDir="false" afterPath="$PROJECT_DIR$/Fold/Frame.fs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fold/Vertices.fs" beforeDir="false" afterPath="$PROJECT_DIR$/Fold/Vertices.fs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FoldTests/EdgesTests.fs" beforeDir="false" afterPath="$PROJECT_DIR$/FoldTests/EdgesTests.fs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FoldTests/FileTests.fs" beforeDir="false" afterPath="$PROJECT_DIR$/FoldTests/FileTests.fs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FoldTests/FoldTests.fsproj" beforeDir="false" afterPath="$PROJECT_DIR$/FoldTests/FoldTests.fsproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -38,16 +39,18 @@
       <option value="$PROJECT_DIR$/../Origami/Origami/Edge.fs" />
       <option value="$PROJECT_DIR$/../Origami/Origami/Library.fs" />
       <option value="$PROJECT_DIR$/Origami/Library.fs" />
-      <option value="$PROJECT_DIR$/FoldTests/FileTests.fs" />
-      <option value="$PROJECT_DIR$/Fold/File.fs" />
       <option value="$PROJECT_DIR$/FoldTests/FrameTests.fs" />
-      <option value="$PROJECT_DIR$/Fold/Frame.fs" />
-      <option value="$PROJECT_DIR$/Fold/Edges.fs" />
-      <option value="$PROJECT_DIR$/Fold/Faces.fs" />
       <option value="$PROJECT_DIR$/FoldTests/FacesTest.fs" />
       <option value="$PROJECT_DIR$/FoldTests/VerticesTests.fs" />
+      <option value="$PROJECT_DIR$/FoldTests/FileTests.fs" />
       <option value="$PROJECT_DIR$/Fold/Vertices.fs" />
+      <option value="$PROJECT_DIR$/Fold/Faces.fs" />
+      <option value="$PROJECT_DIR$/FoldTests/basic-integration.json" />
+      <option value="$PROJECT_DIR$/Fold/Edges.fs" />
+      <option value="$PROJECT_DIR$/FoldTests/BasicIntegrationTest.fs" />
       <option value="$PROJECT_DIR$/FoldTests/EdgesTests.fs" />
+      <option value="$PROJECT_DIR$/Fold/File.fs" />
+      <option value="$PROJECT_DIR$/Fold/Frame.fs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1po7nmpBZlMOkcgU4qskm73X6DD" />
@@ -95,6 +98,8 @@
       <updated>1615837758423</updated>
       <workItem from="1615837760367" duration="637000" />
       <workItem from="1615915117590" duration="533000" />
+      <workItem from="1616275516445" duration="1955000" />
+      <workItem from="1616331254575" duration="2854000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1615915403364</created>
@@ -110,7 +115,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616253303494</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Basic Spec">
+      <created>1616257466360</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1616257466360</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -134,6 +146,7 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Initial Commit" />
     <MESSAGE value="Proper frame serialization" />
-    <option name="LAST_COMMIT_MESSAGE" value="Proper frame serialization" />
+    <MESSAGE value="Basic Spec" />
+    <option name="LAST_COMMIT_MESSAGE" value="Basic Spec" />
   </component>
 </project>

@@ -15,7 +15,9 @@ type File =
       author: string option
       title: string option
       description: string option
-      classes: FileClass list option }
+      classes: FileClass list option
+      keyFrame: Frame option
+      frames: Frame list option }
 
 module File =
 
@@ -28,7 +30,9 @@ module File =
               author = None
               title = None
               description = None
-              classes = None }
+              classes = None
+              keyFrame = None
+              frames = None }
 
 
     (* Json *)
@@ -49,4 +53,10 @@ module File =
     let ToJsonUnformatted (fold: File): string =
         Json.serializeEx jsonConfigUnformatted fold
 
-    let FromJson = Json.deserializeEx<File> jsonConfig
+    let FromJson json =
+        let file = Json.deserializeEx<File> jsonConfig json
+        let keyFrame = Frame.FromJson json
+
+        { file with
+              keyFrame = if keyFrame = Frame.Empty then None else Some keyFrame
+        }

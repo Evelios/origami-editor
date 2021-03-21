@@ -14,7 +14,7 @@ let testCases =
       """{"edges_faces":[[1,2,3,4],[5,6,7,8]]}""",
       { Edges.Empty with
             faces = Some [ (1, 2, 3, 4); (5, 6, 7, 8) ] }
-      """{"edges_assignment":["boundary","unassigned"]}""",
+      """{"edges_assignment":["B","U"]}""",
       { Edges.Empty with
             assignment =
                 Some [ EdgeAssignment.Boundary

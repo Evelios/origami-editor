@@ -8,6 +8,9 @@ type Faces =
       orders: ((int (*face id*)  * int (*face id*)  * int (*order*)) list ) option}
 
 module Faces =
+    
+    let Create a: Faces = a
+    
     let Empty: Faces =
         { vertices = None
           edges = None

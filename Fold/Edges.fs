@@ -3,11 +3,11 @@ namespace Fold
 open FSharp.Json
 
 type EdgeAssignment =
-    | [<JsonUnionCase("boundary")>] Boundary
-    | [<JsonUnionCase("mountain")>] Mountain
-    | [<JsonUnionCase("valley")>] Valley
-    | [<JsonUnionCase("flat")>] Flat
-    | [<JsonUnionCase("unassigned")>] Unassigned
+    | [<JsonUnionCase("B")>] Boundary
+    | [<JsonUnionCase("M")>] Mountain
+    | [<JsonUnionCase("V")>] Valley
+    | [<JsonUnionCase("F")>] Flat
+    | [<JsonUnionCase("U")>] Unassigned
 
 type Edges =
     { vertices: ((int * int) list) option
@@ -18,6 +18,9 @@ type Edges =
       orders: ((int (*edge id*)  * int (*edge id*)  * int (*order*) ) list) option }
 
 module Edges =
+    
+    let Create a: Edges = a
+    
     let Empty: Edges =
         { vertices = None
           faces = None

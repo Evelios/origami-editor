@@ -8,6 +8,9 @@ type Vertices =
       faces: int list list option }
 
 module Vertices =
+    
+    let Create a: Vertices = a
+    
     let Empty: Vertices =
         { coords = None
           vertices = None
