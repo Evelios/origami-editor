@@ -1,0 +1,335 @@
+[gd_scene format=2]
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Background" type="Panel" parent="."]
+margin_left = 0.890869
+margin_right = 1024.89
+margin_bottom = 600.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Gui Container" type="VSplitContainer" parent="Background"]
+margin_left = 12.0
+margin_top = 12.0
+margin_right = 40.0
+margin_bottom = 40.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Header Menu" type="HBoxContainer" parent="Background/Gui Container"]
+margin_right = 808.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+size_flags_vertical = 5
+
+[node name="File Button" type="MenuButton" parent="Background/Gui Container/Header Menu"]
+margin_right = 35.0
+margin_bottom = 20.0
+text = "File"
+
+[node name="Gui Body" type="HBoxContainer" parent="Background/Gui Container"]
+margin_top = 32.0
+margin_right = 808.0
+margin_bottom = 451.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="File Panel" type="VBoxContainer" parent="Background/Gui Container/Gui Body"]
+margin_right = 200.0
+margin_bottom = 419.0
+rect_min_size = Vector2( 200, 0 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="File Metadata Label" type="RichTextLabel" parent="Background/Gui Container/Gui Body/File Panel"]
+margin_right = 200.0
+margin_bottom = 15.0
+text = "File Metadata"
+fit_content_height = true
+
+[node name="Spec" type="HSplitContainer" parent="Background/Gui Container/Gui Body/File Panel"]
+margin_top = 19.0
+margin_right = 200.0
+margin_bottom = 43.0
+
+[node name="Spec Label" type="Label" parent="Background/Gui Container/Gui Body/File Panel/Spec"]
+margin_top = 5.0
+margin_right = 30.0
+margin_bottom = 19.0
+text = "Spec"
+
+[node name="Spec Edit" type="LineEdit" parent="Background/Gui Container/Gui Body/File Panel/Spec"]
+margin_left = 42.0
+margin_right = 200.0
+margin_bottom = 24.0
+
+[node name="Creator" type="HSplitContainer" parent="Background/Gui Container/Gui Body/File Panel"]
+margin_top = 47.0
+margin_right = 200.0
+margin_bottom = 71.0
+
+[node name="Creator Label" type="Label" parent="Background/Gui Container/Gui Body/File Panel/Creator"]
+margin_top = 5.0
+margin_right = 46.0
+margin_bottom = 19.0
+text = "Creator"
+
+[node name="Creator Edit" type="LineEdit" parent="Background/Gui Container/Gui Body/File Panel/Creator"]
+margin_left = 58.0
+margin_right = 200.0
+margin_bottom = 24.0
+
+[node name="Author" type="HSplitContainer" parent="Background/Gui Container/Gui Body/File Panel"]
+margin_top = 75.0
+margin_right = 200.0
+margin_bottom = 99.0
+
+[node name="Author Label" type="Label" parent="Background/Gui Container/Gui Body/File Panel/Author"]
+margin_top = 5.0
+margin_right = 43.0
+margin_bottom = 19.0
+text = "Author"
+
+[node name="Author Edit" type="LineEdit" parent="Background/Gui Container/Gui Body/File Panel/Author"]
+margin_left = 55.0
+margin_right = 200.0
+margin_bottom = 24.0
+
+[node name="Title" type="HSplitContainer" parent="Background/Gui Container/Gui Body/File Panel"]
+margin_top = 103.0
+margin_right = 200.0
+margin_bottom = 127.0
+
+[node name="Title Label" type="Label" parent="Background/Gui Container/Gui Body/File Panel/Title"]
+margin_top = 5.0
+margin_right = 28.0
+margin_bottom = 19.0
+text = "Title"
+
+[node name="Title Edit" type="LineEdit" parent="Background/Gui Container/Gui Body/File Panel/Title"]
+margin_left = 40.0
+margin_right = 200.0
+margin_bottom = 24.0
+
+[node name="Description" type="VSplitContainer" parent="Background/Gui Container/Gui Body/File Panel"]
+margin_top = 131.0
+margin_right = 200.0
+margin_bottom = 224.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Description Label" type="Label" parent="Background/Gui Container/Gui Body/File Panel/Description"]
+margin_right = 200.0
+margin_bottom = 14.0
+text = "Description"
+
+[node name="Description Edit" type="TextEdit" parent="Background/Gui Container/Gui Body/File Panel/Description"]
+margin_top = 26.0
+margin_right = 200.0
+margin_bottom = 93.0
+
+[node name="Classes" type="VSplitContainer" parent="Background/Gui Container/Gui Body/File Panel"]
+margin_top = 228.0
+margin_right = 200.0
+margin_bottom = 321.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Classes Label" type="Label" parent="Background/Gui Container/Gui Body/File Panel/Classes"]
+margin_right = 200.0
+margin_bottom = 14.0
+text = "Classes"
+
+[node name="Classes List" type="ItemList" parent="Background/Gui Container/Gui Body/File Panel/Classes"]
+margin_top = 26.0
+margin_right = 200.0
+margin_bottom = 93.0
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Frames" type="VSplitContainer" parent="Background/Gui Container/Gui Body/File Panel"]
+margin_top = 325.0
+margin_right = 200.0
+margin_bottom = 419.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Frames Label" type="Label" parent="Background/Gui Container/Gui Body/File Panel/Frames"]
+margin_right = 200.0
+margin_bottom = 14.0
+text = "Frames"
+
+[node name="Frames List" type="ItemList" parent="Background/Gui Container/Gui Body/File Panel/Frames"]
+margin_top = 26.0
+margin_right = 200.0
+margin_bottom = 94.0
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Crease Pattern Panel" type="VBoxContainer" parent="Background/Gui Container/Gui Body"]
+margin_left = 204.0
+margin_right = 604.0
+margin_bottom = 419.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Crease Pattern Label" type="RichTextLabel" parent="Background/Gui Container/Gui Body/Crease Pattern Panel"]
+margin_right = 400.0
+margin_bottom = 15.0
+text = "Crease Pattern"
+fit_content_height = true
+
+[node name="Crease Pattern" type="TextureRect" parent="Background/Gui Container/Gui Body/Crease Pattern Panel"]
+margin_top = 19.0
+margin_right = 400.0
+margin_bottom = 419.0
+rect_min_size = Vector2( 400, 400 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 5.0
+
+[node name="Frame Panel" type="VBoxContainer" parent="Background/Gui Container/Gui Body"]
+margin_left = 608.0
+margin_right = 808.0
+margin_bottom = 419.0
+rect_min_size = Vector2( 200, 0 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Frame Metadata Panel" type="RichTextLabel" parent="Background/Gui Container/Gui Body/Frame Panel"]
+margin_right = 200.0
+margin_bottom = 15.0
+text = "Frame Metadata"
+fit_content_height = true
+
+[node name="Autor" type="HSplitContainer" parent="Background/Gui Container/Gui Body/Frame Panel"]
+margin_top = 19.0
+margin_right = 200.0
+margin_bottom = 43.0
+
+[node name="Author Label" type="Label" parent="Background/Gui Container/Gui Body/Frame Panel/Autor"]
+margin_top = 5.0
+margin_right = 43.0
+margin_bottom = 19.0
+text = "Author"
+
+[node name="Author Edit" type="LineEdit" parent="Background/Gui Container/Gui Body/Frame Panel/Autor"]
+margin_left = 55.0
+margin_right = 200.0
+margin_bottom = 24.0
+
+[node name="Title" type="HSplitContainer" parent="Background/Gui Container/Gui Body/Frame Panel"]
+margin_top = 47.0
+margin_right = 200.0
+margin_bottom = 71.0
+
+[node name="Title Label" type="Label" parent="Background/Gui Container/Gui Body/Frame Panel/Title"]
+margin_top = 5.0
+margin_right = 28.0
+margin_bottom = 19.0
+text = "Title"
+
+[node name="Title Edit" type="LineEdit" parent="Background/Gui Container/Gui Body/Frame Panel/Title"]
+margin_left = 40.0
+margin_right = 200.0
+margin_bottom = 24.0
+
+[node name="Description" type="VSplitContainer" parent="Background/Gui Container/Gui Body/Frame Panel"]
+margin_top = 75.0
+margin_right = 200.0
+margin_bottom = 158.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Description Label" type="Label" parent="Background/Gui Container/Gui Body/Frame Panel/Description"]
+margin_right = 200.0
+margin_bottom = 14.0
+text = "Description"
+
+[node name="Description Edit" type="TextEdit" parent="Background/Gui Container/Gui Body/Frame Panel/Description"]
+margin_top = 26.0
+margin_right = 200.0
+margin_bottom = 83.0
+
+[node name="Classes" type="VSplitContainer" parent="Background/Gui Container/Gui Body/Frame Panel"]
+margin_top = 162.0
+margin_right = 200.0
+margin_bottom = 245.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Classes Label" type="Label" parent="Background/Gui Container/Gui Body/Frame Panel/Classes"]
+margin_right = 200.0
+margin_bottom = 14.0
+text = "Classes"
+
+[node name="Classes List" type="ItemList" parent="Background/Gui Container/Gui Body/Frame Panel/Classes"]
+margin_top = 26.0
+margin_right = 200.0
+margin_bottom = 83.0
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Attributes" type="VSplitContainer" parent="Background/Gui Container/Gui Body/Frame Panel"]
+margin_top = 249.0
+margin_right = 200.0
+margin_bottom = 332.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Attributes Label" type="Label" parent="Background/Gui Container/Gui Body/Frame Panel/Attributes"]
+margin_right = 200.0
+margin_bottom = 14.0
+text = "Attributes"
+
+[node name="Attribute List" type="ItemList" parent="Background/Gui Container/Gui Body/Frame Panel/Attributes"]
+margin_top = 26.0
+margin_right = 200.0
+margin_bottom = 83.0
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Unit" type="VSplitContainer" parent="Background/Gui Container/Gui Body/Frame Panel"]
+margin_top = 336.0
+margin_right = 200.0
+margin_bottom = 419.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Unit Label" type="Label" parent="Background/Gui Container/Gui Body/Frame Panel/Unit"]
+margin_right = 200.0
+margin_bottom = 14.0
+text = "Unit"
+
+[node name="Unit List" type="ItemList" parent="Background/Gui Container/Gui Body/Frame Panel/Unit"]
+margin_top = 26.0
+margin_right = 200.0
+margin_bottom = 83.0
+__meta__ = {
+"_editor_description_": ""
+}
