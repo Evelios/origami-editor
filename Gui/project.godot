@@ -19,6 +19,14 @@ config/name="Gui"
 run/main_scene="res://Gui.tscn"
 config/icon="res://icon.png"
 
+[display]
+
+window/energy_saving/keep_screen_on=false
+
+[mono]
+
+debugger_agent/wait_for_debugger=true
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"
