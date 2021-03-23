@@ -1,6 +1,26 @@
+# Jetbrains & Dot Net Files
+
 bin/
 obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
 contentModel.xml
+
+# Mono-specific ignores
+.mono/
+data_*/
+mono_crash.*.json
+
+# Godot Files
+.import/
+.godot/
+export.cfg
+export_presets.cfg
+
+# Imported translations (automatically generated from CSV files)
+*.translation
+
+# System/tool-specific ignores
+.directory
+*~

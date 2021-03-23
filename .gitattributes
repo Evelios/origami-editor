@@ -1,0 +1,25 @@
+# Normalize files to be checked out based on the system
+* text=auto
+
+# Properly detect languages on Github
+*.h linguist-language=cpp
+*.inc linguist-language=cpp
+thirdparty/* linguist-vendored
+
+# Explicitly declare text files you want to always be normalized and converted
+# to native line endings on checkout.
+*.cpp text
+*.c text
+*.h text
+*.gd text
+*.cs text
+
+# The above only works properly for Git 2.10+, so for older versions
+# we need to manually list the binary files we don't want modified.
+*.icns binary
+*.ico binary
+*.jar binary
+*.png binary
+*.ttf binary
+*.tza binary
+*.hdr binary

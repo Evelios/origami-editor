@@ -5,18 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6dc352fa-72a6-44f7-849e-62562e90329a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/FoldTests/BasicIntegrationTest.fs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FoldTests/basic-integration.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Fold/Edges.fs" beforeDir="false" afterPath="$PROJECT_DIR$/Fold/Edges.fs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Fold/Faces.fs" beforeDir="false" afterPath="$PROJECT_DIR$/Fold/Faces.fs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Fold/File.fs" beforeDir="false" afterPath="$PROJECT_DIR$/Fold/File.fs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Fold/Frame.fs" beforeDir="false" afterPath="$PROJECT_DIR$/Fold/Frame.fs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Fold/Vertices.fs" beforeDir="false" afterPath="$PROJECT_DIR$/Fold/Vertices.fs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FoldTests/EdgesTests.fs" beforeDir="false" afterPath="$PROJECT_DIR$/FoldTests/EdgesTests.fs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FoldTests/FileTests.fs" beforeDir="false" afterPath="$PROJECT_DIR$/FoldTests/FileTests.fs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FoldTests/FoldTests.fsproj" beforeDir="false" afterPath="$PROJECT_DIR$/FoldTests/FoldTests.fsproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +59,7 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="RunManager" selected=".NET Project.FoldTests">
+  <component name="RunManager">
     <configuration name="FoldTests" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -100,6 +91,7 @@
       <workItem from="1615915117590" duration="533000" />
       <workItem from="1616275516445" duration="1955000" />
       <workItem from="1616331254575" duration="2854000" />
+      <workItem from="1616459635916" duration="312000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1615915403364</created>
