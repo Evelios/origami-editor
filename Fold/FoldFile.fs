@@ -34,8 +34,20 @@ module FoldFile =
               frames = None }
 
 
-    (* Json *)
+    (* Modifiers *)
 
+    let setSpec spec file: FoldFile = { file with spec = spec }
+
+    let setCreator creator file: FoldFile = { file with creator = creator }
+    let setAuthor author file: FoldFile = { file with author = author }
+    let setTitle title file: FoldFile = { file with title = title }
+    let setDescription description file: FoldFile = { file with description = description }
+    let setClasses classes file: FoldFile = { file with classes = classes }
+    let setKeyframe keyFrame file: FoldFile = { file with keyFrame = keyFrame }
+    let setFrames frames file: FoldFile = { file with frames = frames }
+
+
+    (* Json *)
 
     let private jsonConfig =
         JsonConfig.create (jsonFieldNaming = (+) "file_", serializeNone = SerializeNone.Omit)

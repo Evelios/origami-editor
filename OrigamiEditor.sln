@@ -8,6 +8,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FoldTests", "FoldTests\Fold
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GuiLibrary", "GuiLibrary\GuiLibrary.fsproj", "{7A9CC0D9-9387-4180-A00C-83CACBD3724B}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Utilities", "Utilities\Utilities.fsproj", "{C2E36D54-47EB-4F04-B2FC-7B58ECBBC379}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 	Debug|Any CPU = Debug|Any CPU
@@ -39,5 +41,11 @@ Global
 		{7A9CC0D9-9387-4180-A00C-83CACBD3724B}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
 		{7A9CC0D9-9387-4180-A00C-83CACBD3724B}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{7A9CC0D9-9387-4180-A00C-83CACBD3724B}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+		{C2E36D54-47EB-4F04-B2FC-7B58ECBBC379}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2E36D54-47EB-4F04-B2FC-7B58ECBBC379}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2E36D54-47EB-4F04-B2FC-7B58ECBBC379}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2E36D54-47EB-4F04-B2FC-7B58ECBBC379}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{C2E36D54-47EB-4F04-B2FC-7B58ECBBC379}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2E36D54-47EB-4F04-B2FC-7B58ECBBC379}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal

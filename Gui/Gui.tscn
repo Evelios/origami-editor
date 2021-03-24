@@ -372,3 +372,8 @@ __meta__ = {
 margin_right = 48.0
 margin_bottom = 40.0
 [connection signal="file_selected" from="Gui Container/Header Menu/File Button/FileDialog" to="." method="_on_FileDialog_file_selected"]
+[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Spec/Spec Edit" to="." method="_on_Spec_Edit_text_changed"]
+[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Creator/Creator Edit" to="." method="_on_Creator_Edit_text_changed"]
+[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Author/Author Edit" to="." method="_on_Author_Edit_text_changed"]
+[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Title/Title Edit" to="." method="_on_Title_Edit_text_changed"]
+[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Description/Description Edit" to="." method="_on_Description_Edit_text_changed"]
