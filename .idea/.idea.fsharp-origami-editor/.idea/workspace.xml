@@ -9,12 +9,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6dc352fa-72a6-44f7-849e-62562e90329a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Gui/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/contentModel.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Gui/.idea/.idea.Gui/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Gui/.idea/.idea.Gui/.idea/projectSettingsUpdater.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.fsharp-origami-editor/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gui/Gui.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/Gui/Gui.tscn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gui/.idea/.idea.Gui/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gui/.idea/.idea.Gui/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gui/Gui.sln" beforeDir="false" afterPath="$PROJECT_DIR$/Gui/Gui.sln" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Gui/project.godot" beforeDir="false" afterPath="$PROJECT_DIR$/Gui/project.godot" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fsharp-origami-editor.sln" beforeDir="false" afterPath="$PROJECT_DIR$/fsharp-origami-editor.sln" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fsharp-origami-editor.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/fsharp-origami-editor.sln.DotSettings.user" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -34,8 +35,8 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/.mono/temp/obj/Debug/.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Gui/MainPanel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/.mono/temp/obj/Debug/.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <changedPaths>
@@ -67,14 +68,16 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.34983498" />
+    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.0" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="coverage" />
+    <property name="settings.editor.selected.configurable" value="SolutionBuilderGeneralOptionsPageId" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="RunManager" selected="Start and Debug.Run">
+  <component name="RunManager" selected="Start and Debug.Editor">
     <configuration name="FoldTests" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="$PROJECT_DIR$/FoldTests/bin/Debug/netcoreapp3.1/FoldTests.dll" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -93,28 +96,20 @@
         <option name="Build" />
       </method>
     </configuration>
-    <configuration name="Gui" type="DotNetProject" factoryName=".NET Project">
-      <option name="EXE_PATH" value="" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
+    <configuration name="Editor" type="GODOT_DEBUG_RUN_CONFIGURATION" factoryName="Start and Debug">
+      <option name="EXE_PATH" value="$PROJECT_DIR$/../../../../../Tools/Godot_v3.2.3-stable_mono_win64/Godot_v3.2.3-stable_mono_win64/Godot_v3.2.3-stable_mono_win64.exe" />
+      <option name="PROGRAM_PARAMETERS" value="--path &quot;C:\Users\twaters\Programs\Other\fsharp-origami-editor\Gui&quot; --editor" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../../../../Tools/Godot_v3.2.3-stable_mono_win64/Godot_v3.2.3-stable_mono_win64" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
-      <option name="USE_MONO" value="0" />
-      <option name="RUNTIME_ARGUMENTS" value="" />
-      <option name="PROJECT_PATH" value="$PROJECT_DIR$/Gui/Gui.csproj" />
-      <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
-      <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
-      <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
-      <option name="PROJECT_KIND" value="DotNetCore" />
-      <option name="PROJECT_TFM" value="" />
       <method v="2">
-        <option name="Build" />
+        <option name="Build Solution" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Run" type="GODOT_DEBUG_RUN_CONFIGURATION" factoryName="Start and Debug">
-      <option name="EXE_PATH" value="" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
+    <configuration name="Gui" type="GODOT_DEBUG_RUN_CONFIGURATION" factoryName="Start and Debug">
+      <option name="EXE_PATH" value="$PROJECT_DIR$/../../../../../Tools/Godot_v3.2.3-stable_mono_win64/Godot_v3.2.3-stable_mono_win64/Godot_v3.2.3-stable_mono_win64.exe" />
+      <option name="PROGRAM_PARAMETERS" value="--path &quot;C:\Users\twaters\Programs\Other\fsharp-origami-editor\Gui&quot;" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../../../../Tools/Godot_v3.2.3-stable_mono_win64/Godot_v3.2.3-stable_mono_win64" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <method v="2">
@@ -123,8 +118,8 @@
     </configuration>
     <list>
       <item itemvalue=".NET Project.FoldTests" />
-      <item itemvalue="Start and Debug.Run" />
-      <item itemvalue=".NET Project.Gui" />
+      <item itemvalue="Start and Debug.Gui" />
+      <item itemvalue="Start and Debug.Editor" />
     </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -142,6 +137,7 @@
       <workItem from="1616459635916" duration="312000" />
       <workItem from="1616525631309" duration="2442000" />
       <workItem from="1616530104933" duration="520000" />
+      <workItem from="1616589648135" duration="440000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1615915403364</created>
