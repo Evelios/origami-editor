@@ -8,7 +8,7 @@ type FileClass =
     | [<JsonUnionCase("animation")>] Animation
     | [<JsonUnionCase("diagrams")>] Diagrams
 
-type File =
+type FoldFile =
     { [<JsonField(Transform = typeof<Version.Transform>)>]
       spec: Version option
       creator: string option
@@ -19,9 +19,9 @@ type File =
       keyFrame: Frame option
       frames: Frame list option }
 
-module File =
+module FoldFile =
 
-    let Create a: File = a
+    let Create a: FoldFile = a
 
     let Empty =
         Create
@@ -48,15 +48,16 @@ module File =
              enumValue = EnumMode.Name,
              unformatted = true)
 
-    let ToJson (fold: File): string = Json.serializeEx jsonConfig fold
+    let ToJson (fold: FoldFile): string = Json.serializeEx jsonConfig fold
 
-    let ToJsonUnformatted (fold: File): string =
+    let ToJsonUnformatted (fold: FoldFile): string =
         Json.serializeEx jsonConfigUnformatted fold
 
     let FromJson json =
-        let file = Json.deserializeEx<File> jsonConfig json
+        let file =
+            Json.deserializeEx<FoldFile> jsonConfig json
+
         let keyFrame = Frame.FromJson json
 
         { file with
-              keyFrame = if keyFrame = Frame.Empty then None else Some keyFrame
-        }
+              keyFrame = if keyFrame = Frame.Empty then None else Some keyFrame }

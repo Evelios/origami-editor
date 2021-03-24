@@ -10,12 +10,12 @@ let Setup () = ()
 [<Test>]
 let BasicIntegration () =
     let actual =
-        File.FromJson
+        FoldFile.FromJson
             (File.ReadAllText
-             <| Path.Join(__SOURCE_DIRECTORY__, "basic-integration.json"))
+             <| Path.Combine(__SOURCE_DIRECTORY__, "basic-integration.json"))
 
     let expected =
-        File.Create
+        FoldFile.Create
             { spec = Some(Version.Create 0 0 1)
               creator = Some "Thomas Waters"
               author = Some "Thomas Waters"

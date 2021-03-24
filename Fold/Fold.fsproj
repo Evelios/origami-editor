@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFrameworks>net472;netstandard2.1</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,12 +12,12 @@
         <Compile Include="Edges.fs" />
         <Compile Include="Faces.fs" />
         <Compile Include="Frame.fs" />
-        <Compile Include="File.fs" />
-        <Compile Include="Fold.fs" />
+        <Compile Include="FoldFile.fs" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="FSharp.Json" Version="0.4.0" />
+      <PackageReference Include="System.Runtime" Version="4.3.1" />
     </ItemGroup>
 
 </Project>

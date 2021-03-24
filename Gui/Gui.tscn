@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://MainPanel.cs" type="Script" id=1]
+[ext_resource path="res://Gui/MainPanel.cs" type="Script" id=1]
+[ext_resource path="res://Gui/FileMenu.cs" type="Script" id=2]
 
 [node name="PanelContainer" type="PanelContainer"]
 margin_right = 1024.0
@@ -31,6 +32,7 @@ size_flags_vertical = 5
 margin_right = 35.0
 margin_bottom = 20.0
 text = "File"
+script = ExtResource( 2 )
 
 [node name="Gui Body" type="HBoxContainer" parent="Gui Container"]
 margin_top = 32.0

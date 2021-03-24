@@ -1,5 +1,6 @@
-module FoldTests.FileTests
+module FoldFileTests.FileTests
 
+open FoldTests
 open NUnit.Framework
 open Fold
 
@@ -10,42 +11,42 @@ let testCases =
     [ (* Unit Tests *)
       
       """{"file_spec":"1"}""",
-      { File.Empty with
+      { FoldFile.Empty with
             spec = Some(Version.CreateWithMajor 1) }
 
       """{"file_spec":"1.1"}""",
-      { File.Empty with
+      { FoldFile.Empty with
             spec = Some(Version.CreateWithMinor 1 1) }
 
       """{"file_spec":"1.1.1"}""",
-      { File.Empty with
+      { FoldFile.Empty with
             spec = Some(Version.Create 1 1 1) }
 
       """{"file_creator":"The Creator"}""",
-      { File.Empty with
+      { FoldFile.Empty with
             creator = Some "The Creator" }
 
       """{"file_author":"The Author"}""",
-      { File.Empty with
+      { FoldFile.Empty with
             author = Some "The Author" }
 
       """{"file_title":"The Title"}""",
-      { File.Empty with
+      { FoldFile.Empty with
             title = Some "The Title" }
 
       """{"file_description":"The Description"}""",
-      { File.Empty with
+      { FoldFile.Empty with
             description = Some "The Description" }
 
       """{"file_classes":["singleModel"]}""",
-      { File.Empty with
+      { FoldFile.Empty with
             classes = Some [ FileClass.SingleModel ] } ]
 
 
 let deserializationTestCases = Util.toTest testCases
 [<TestCaseSource("deserializationTestCases")>]
-let Deserialization source = File.FromJson source
+let Deserialization source = FoldFile.FromJson source
 
 let serializationTestCases = Util.toTestReverse testCases
 [<TestCaseSource("serializationTestCases")>]
-let Serialization source = File.ToJsonUnformatted source
+let Serialization source = FoldFile.ToJsonUnformatted source
