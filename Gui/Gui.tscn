@@ -34,6 +34,26 @@ margin_bottom = 20.0
 text = "File"
 script = ExtResource( 2 )
 
+[node name="FileDialog" type="FileDialog" parent="Gui Container/Header Menu/File Button"]
+margin_left = 101.836
+margin_top = 44.9194
+margin_right = 947.836
+margin_bottom = 546.919
+window_title = "Open a File"
+mode = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FileDialogSave" type="FileDialog" parent="Gui Container/Header Menu/File Button"]
+margin_left = 101.836
+margin_top = 44.9194
+margin_right = 947.836
+margin_bottom = 546.919
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Gui Body" type="HBoxContainer" parent="Gui Container"]
 margin_top = 32.0
 margin_right = 1010.0
@@ -351,3 +371,4 @@ __meta__ = {
 [node name="WindowDialog" type="WindowDialog" parent="."]
 margin_right = 48.0
 margin_bottom = 40.0
+[connection signal="file_selected" from="Gui Container/Header Menu/File Button/FileDialog" to="." method="_on_FileDialog_file_selected"]

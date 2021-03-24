@@ -24,7 +24,13 @@
         <Compile Include="FileTests.fs" />
         <Content Include="basic-integration.json" />
         <Compile Include="BasicIntegrationTest.fs" />
+        <Compile Include="ExampleFileReading.fs" />
         <Compile Include="Program.fs" />
+        <Content Include="Examples\squaretwist.fold" />
+        <Content Include="Examples\simple.fold" />
+        <Content Include="Examples\diagonal-folded.fold" />
+        <Content Include="Examples\diagonal-cp.fold" />
+        <Content Include="Examples\box.fold" />
     </ItemGroup>
 
     <ItemGroup>

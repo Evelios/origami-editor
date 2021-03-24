@@ -8,19 +8,7 @@ open Fold
 let Setup () = ()
 
 let testCases =
-    [ (* Unit Tests *)
-      
-      """{"file_spec":"1"}""",
-      { FoldFile.Empty with
-            spec = Some(Version.CreateWithMajor 1) }
-
-      """{"file_spec":"1.1"}""",
-      { FoldFile.Empty with
-            spec = Some(Version.CreateWithMinor 1 1) }
-
-      """{"file_spec":"1.1.1"}""",
-      { FoldFile.Empty with
-            spec = Some(Version.Create 1 1 1) }
+    [ """{"file_spec":1}""", { FoldFile.Empty with spec = Some 1 }
 
       """{"file_creator":"The Creator"}""",
       { FoldFile.Empty with
@@ -44,9 +32,11 @@ let testCases =
 
 
 let deserializationTestCases = Util.toTest testCases
+
 [<TestCaseSource("deserializationTestCases")>]
 let Deserialization source = FoldFile.FromJson source
 
 let serializationTestCases = Util.toTestReverse testCases
+
 [<TestCaseSource("serializationTestCases")>]
 let Serialization source = FoldFile.ToJsonUnformatted source

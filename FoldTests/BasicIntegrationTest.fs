@@ -16,7 +16,7 @@ let BasicIntegration () =
 
     let expected =
         FoldFile.Create
-            { spec = Some(Version.Create 0 0 1)
+            { spec = Some 1
               creator = Some "Thomas Waters"
               author = Some "Thomas Waters"
               title = Some "Fold Spec v0.0.1"
@@ -42,28 +42,28 @@ let BasicIntegration () =
                                         { vertices = Some [ 0; 1; 2; 3 ]
                                           faces = Some [ [ 0; 1 ]; [ 1; 2 ]; [ 2; 3 ] ]
                                           coords =
-                                              Some [ (0., 0.)
-                                                     (0., 1.)
-                                                     (1., 0.)
-                                                     (1., 1.) ] })
+                                              Some [ Vertex.in2d 0.f 0.f
+                                                     Vertex.in2d 0.f 1.f
+                                                     Vertex.in2d 1.f 0.f
+                                                     Vertex.in2d 1.f 1.f ] })
                             edges =
                                 Some
                                     (Edges.Create
                                         { vertices = Some [ (0, 1); (1, 2); (2, 3) ]
-                                          faces = Some [ (0, 1, 2, 3); (2, 3, 4, 5) ]
+                                          faces = Some [ (1, Some 2); (2, None)]
                                           assignment =
                                               Some [ EdgeAssignment.Boundary
                                                      EdgeAssignment.Boundary
                                                      EdgeAssignment.Mountain
                                                      EdgeAssignment.Valley ]
-                                          foldAngle = Some [90.;90.;90.]
-                                          length = Some [1.; 1.; 1.]
+                                          foldAngle = Some [ 90.; 90.; 90. ]
+                                          length = Some [ 1.; 1.; 1. ]
                                           orders = None })
                             faces =
                                 Some
                                     (Faces.Create
-                                        { vertices = Some [[0;1;2];[1;2;3;]]
-                                          edges = Some [[0;1;2];[1;2;3]]
+                                        { vertices = Some [ [ 0; 1; 2 ]; [ 1; 2; 3 ] ]
+                                          edges = Some [ [ 0; 1; 2 ]; [ 1; 2; 3 ] ]
                                           orders = None }) })
               frames = None }
 

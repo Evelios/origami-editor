@@ -1,5 +1,5 @@
 {
-  "file_spec": "0.0.1",
+  "file_spec": 1,
   "file_creator": "Thomas Waters",
   "file_author": "Thomas Waters",
   "file_title": "Fold Spec v0.0.1",
@@ -74,16 +74,12 @@
   ],
   "edges_faces": [
     [
-      0,
       1,
-      2,
-      3
+      2
     ],
     [
       2,
-      3,
-      4,
-      5
+      null
     ]
   ],
   "edges_assignment": [

@@ -11,7 +11,7 @@ type EdgeAssignment =
 
 type Edges =
     { vertices: ((int * int) list) option
-      faces: ((int * int * int * int) list) option
+      faces: ((int * int option) list) option
       assignment: EdgeAssignment list option
       foldAngle: float list option // should be angle
       length: float list option

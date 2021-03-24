@@ -2,9 +2,14 @@ namespace GuiLibrary
 
 open Godot
 
-type FileMenuFs() =
+type FileMenuFs() as this =
     inherit MenuButton()
 
+    let fileDialog =
+        lazy (this.GetNode<FileDialog>(new NodePath("FileDialog")))
+
+    let fileDialogSave =
+        lazy (this.GetNode<FileDialog>(new NodePath("FileDialog")))
 
     member this.MenuItems =
         [ ("Open Fold File", this.Open)
@@ -28,7 +33,6 @@ type FileMenuFs() =
         | Some action -> action ()
         | _ -> failwith $"Could not find menu action for {text}"
 
-
-    member this.Open() = GD.Print("Open New")
-    member this.SaveAs() = GD.Print("Save New")
+    member this.Open() = fileDialog.Value.Popup_()
+    member this.SaveAs() = fileDialogSave.Value.Popup_()
     member this.Quit() = this.GetTree().Quit()

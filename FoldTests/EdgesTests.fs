@@ -11,9 +11,12 @@ let testCases =
     [ """{"edges_vertices":[[1,0],[0,2]]}""",
       { Edges.Empty with
             vertices = Some [ (1, 0); (0, 2) ] }
-      """{"edges_faces":[[1,2,3,4],[5,6,7,8]]}""",
+      """{"edges_faces":[[1,2],[2,3]]}""",
       { Edges.Empty with
-            faces = Some [ (1, 2, 3, 4); (5, 6, 7, 8) ] }
+            faces = Some [ (1, Some 2); (2, Some 3) ] }
+      """{"edges_faces":[[1,null],[2,null]]}""",
+      { Edges.Empty with
+            faces = Some [ (1, None); (2, None) ] }
       """{"edges_assignment":["B","U"]}""",
       { Edges.Empty with
             assignment =

@@ -9,8 +9,7 @@ type FileClass =
     | [<JsonUnionCase("diagrams")>] Diagrams
 
 type FoldFile =
-    { [<JsonField(Transform = typeof<Version.Transform>)>]
-      spec: Version option
+    { spec: int option
       creator: string option
       author: string option
       title: string option
