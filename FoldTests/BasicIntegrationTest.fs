@@ -12,7 +12,7 @@ let BasicIntegration () =
     let actual =
         FoldFile.FromJson
             (File.ReadAllText
-             <| Path.Combine(__SOURCE_DIRECTORY__, "basic-integration.json"))
+             <| Path.Combine(__SOURCE_DIRECTORY__, "basic-integration.fold"))
 
     let expected =
         FoldFile.Create

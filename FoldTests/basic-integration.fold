@@ -1,0 +1,57 @@
+{
+  "file_spec": 1,
+  "file_creator": "Thomas Waters",
+  "file_author": "Thomas Waters",
+  "file_title": "Fold Spec v0.0.1",
+  "file_description": "Fold Integration Test",
+  "file_classes": [
+    "diagrams"
+  ],
+  "frame_author": "Thomas Waters",
+  "frame_title": "Key Frame",
+  "frame_description": "The Mainframe",
+  "frame_classes": [
+    "graph",
+    "linkage"
+  ],
+  "frame_attributes": [
+    "2D",
+    "manifold",
+    "nonSelfIntersecting"
+  ],
+  "frame_unit": "unit",
+  "vertices_vertices": [ 0, 1, 2, 3 ],
+  "vertices_faces": [
+    [ 0, 1 ],
+    [ 1, 2 ],
+    [ 2, 3 ]
+  ],
+  "vertices_coords": [
+    [ 0, 0 ],
+    [ 0, 1 ],
+    [ 1, 0 ],
+    [ 1, 1 ]
+  ],
+  "edges_vertices": [
+    [ 0, 1 ],
+    [ 1, 2 ],
+    [ 2, 3 ]
+  ],
+  "edges_faces": [
+    [ 1, 2 ],
+    [ 2, null ]
+  ],
+  "edges_assignment": [ "B", "B", "M", "V" ],
+  "edges_foldAngle": [ 90, 90, 90 ],
+  "edges_length": [ 1, 1, 1 ],
+  "faces_vertices": [
+    [ 0, 1, 2 ],
+    [ 1, 2, 3 ]
+  ],
+  "faces_edges": [
+    [ 0, 1, 2 ],
+    [ 1, 2, 3 ]
+  ],
+  "faceOrders": [],
+  "edgeOrders": []
+}

@@ -22,7 +22,7 @@
         <Compile Include="EdgesTests.fs" />
         <Compile Include="FrameTests.fs" />
         <Compile Include="FileTests.fs" />
-        <Content Include="basic-integration.json" />
+        <Content Include="basic-integration.fold" />
         <Compile Include="BasicIntegrationTest.fs" />
         <Compile Include="ExampleFileReading.fs" />
         <Compile Include="Program.fs" />

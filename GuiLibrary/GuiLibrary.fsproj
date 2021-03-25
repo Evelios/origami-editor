@@ -5,8 +5,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="MainPanel.fs" />
+        <Compile Include="FileClasses.fs" />
         <Compile Include="FileMenuFs.fs" />
+        <Compile Include="MainPanel.fs" />
     </ItemGroup>
 
     <ItemGroup>

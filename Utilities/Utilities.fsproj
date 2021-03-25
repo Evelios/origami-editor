@@ -7,6 +7,9 @@
 
     <ItemGroup>
         <Compile Include="TryParse.fs" />
+        <Compile Include="DiscriminatedUnion.fs" />
+        <Compile Include="NamingConventions.fs" />
+        <Compile Include="MapExtensions.fs" />
     </ItemGroup>
 
 </Project>

@@ -21,10 +21,10 @@ type MainPanelFs() =
     (* Functions *)
 
     member this.propagateFoldToFields() =
-        let withDefault d = Option.defaultWith (fun () -> d)
-        let orEmpty = withDefault ""
-        let or0 = withDefault 0
+        let orEmpty = Option.defaultValue ""
+        let or0 = Option.defaultValue 0
 
+        // Single Line Text
         let lineEditItems =
             [ ("Gui Container/Gui Body/File Panel/HBox/Spec/Spec Edit", (Fold.spec |> or0).ToString())
               ("Gui Container/Gui Body/File Panel/HBox/Creator/Creator Edit", Fold.creator |> orEmpty)
@@ -34,6 +34,32 @@ type MainPanelFs() =
         for (nodePath, updatedValue) in lineEditItems do
             this.GetNode<LineEdit>(new NodePath(nodePath)).Text <- updatedValue
 
+        // Description Updating
+        let descriptionPath =
+            "Gui Container/Gui Body/File Panel/HBox/Description/Description Edit"
+
+        this.GetNode<TextEdit>(new NodePath(descriptionPath)).Text <- (Fold.description |> orEmpty)
+
+        // Classes
+        let classesNode =
+            this.GetNode<FileClassesFs>(new NodePath("Gui Container/Gui Body/File Panel/HBox/Classes/Classes List"))
+
+        for fileClass in Option.defaultValue [] Fold.classes do
+            classesNode.Select fileClass
+
+        // Frames
+        let framesNode =
+            this.GetNode<ItemList>(new NodePath("Gui Container/Gui Body/File Panel/HBox/Frames/Frames List"))
+
+        let frames =
+            Option.defaultValue [] Fold.frames
+            |> List.mapi (fun i frame -> Option.defaultValue $"Frame {i + 1}" frame.title)
+            |> (fun frames -> "Key Frame" :: frames)
+
+        for (frame) in frames do
+            framesNode.AddItem(frame)
+
+        framesNode.Select(0)
 
     (* Signals *)
 
