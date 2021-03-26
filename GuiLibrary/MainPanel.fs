@@ -13,6 +13,7 @@ type MainPanelFs() =
     let mutable Fold = FoldFile.Empty
 
     let mutable FoldFilePath: string option = None
+    let mutable FrameIndex = 0
 
 
     (* Constructor *)
@@ -21,6 +22,10 @@ type MainPanelFs() =
 
 
     (* Functions *)
+
+    member this.propagateToFields() =
+        this.propagateFoldToFields ()
+        this.propagateFrameToFields ()
 
     member this.propagateFoldToFields() =
         let orEmpty = Option.defaultValue ""
@@ -64,12 +69,56 @@ type MainPanelFs() =
 
         framesNode.Select(0)
 
+    member this.propagateFrameToFields() =
+        let orEmpty = Option.defaultValue ""
+
+        let frame =
+            if FrameIndex = 0
+            then Option.defaultValue Frame.Empty Fold.keyFrame
+            else List.tryItem (FrameIndex - 1) (Option.defaultValue [] Fold.frames) |> Option.defaultValue Frame.Empty
+
+
+        // Single Line Text
+        let lineEditItems =
+            [ ("Gui Container/Gui Body/Frame Panel/Hbox/Author/Author Edit", frame.author |> orEmpty)
+              ("Gui Container/Gui Body/Frame Panel/Hbox/Title/Title Edit", frame.title |> orEmpty) ]
+
+        for (nodePath, updatedValue) in lineEditItems do
+            this.GetNode<LineEdit>(new NodePath(nodePath)).Text <- updatedValue
+
+        // Description Update
+        let descriptionPath =
+            "Gui Container/Gui Body/Frame Panel/Hbox/Description/Description Edit"
+
+        this.GetNode<TextEdit>(new NodePath(descriptionPath)).Text <- (frame.description |> orEmpty)
+
+        // Classes
+        let classesNode =
+            this.GetNode<FrameClassesFs>
+                (new NodePath("Gui Container/Gui Body/Frame Panel/Hbox/Classes/Classes List"))
+
+        for frameClass in frame.classes |> Option.defaultValue [] do
+            classesNode.Select frameClass
+
+        // Attributes
+        let attributesNode =
+            this.GetNode<FrameAttributesFs>
+                (new NodePath("Gui Container/Gui Body/Frame Panel/Hbox/Attributes/Attribute List"))
+
+        for frameAttribute in frame.attributes |> Option.defaultValue [] do
+            attributesNode.Select frameAttribute
+
+        // Units
+        let unitNode =
+            this.GetNode<FrameUnitFs>(new NodePath("Gui Container/Gui Body/Frame Panel/Hbox/Unit/Unit List"))
+
+        unitNode.Select(frame.unit |> Option.defaultValue Unit.Unitless)
+
     (* File Dialog Signals *)
     member this._on_File_Button_CreateNewFile() =
-        GD.Print("Handle New File")
         Fold <- FoldFile.Empty
         FoldFilePath <- None
-        this.propagateFoldToFields ()
+        this.propagateToFields ()
 
     member this._on_FileDialog_file_selected(path: string) =
         FoldFilePath <- Some path
@@ -77,7 +126,7 @@ type MainPanelFs() =
         file.Open(path, File.ModeFlags.Read) |> ignore
         Fold <- FoldFile.FromJson(file.GetAsText())
         file.Close()
-        this.propagateFoldToFields ()
+        this.propagateToFields ()
 
     member this._on_FileDialogSave_file_selected(path: string) =
         FoldFilePath <- Some path

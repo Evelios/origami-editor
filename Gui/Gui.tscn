@@ -1,8 +1,11 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Gui/MainPanel.cs" type="Script" id=1]
 [ext_resource path="res://Gui/FileMenu.cs" type="Script" id=2]
 [ext_resource path="res://Gui/FileClasses.cs" type="Script" id=3]
+[ext_resource path="res://Gui/FrameClasses.cs" type="Script" id=4]
+[ext_resource path="res://Gui/FrameAttributes.cs" type="Script" id=5]
+[ext_resource path="res://Gui/FrameUnit.cs" type="Script" id=6]
 
 [node name="PanelContainer" type="PanelContainer"]
 margin_right = 1024.0
@@ -185,7 +188,6 @@ margin_top = 26.0
 margin_right = 200.0
 margin_bottom = 134.0
 select_mode = 1
-allow_rmb_select = true
 script = ExtResource( 3 )
 __meta__ = {
 "_editor_description_": ""
@@ -213,36 +215,36 @@ __meta__ = {
 
 [node name="Crease Pattern Panel" type="PanelContainer" parent="Gui Container/Gui Body"]
 margin_left = 218.0
-margin_right = 632.0
+margin_right = 732.0
 margin_bottom = 554.0
 
 [node name="Hbox" type="VBoxContainer" parent="Gui Container/Gui Body/Crease Pattern Panel"]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 407.0
+margin_right = 507.0
 margin_bottom = 547.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Crease Pattern Label" type="RichTextLabel" parent="Gui Container/Gui Body/Crease Pattern Panel/Hbox"]
-margin_right = 400.0
+margin_right = 500.0
 margin_bottom = 15.0
 text = "Crease Pattern"
 fit_content_height = true
 
 [node name="Crease Pattern" type="TextureRect" parent="Gui Container/Gui Body/Crease Pattern Panel/Hbox"]
 margin_top = 19.0
-margin_right = 400.0
+margin_right = 500.0
 margin_bottom = 540.0
-rect_min_size = Vector2( 400, 400 )
+rect_min_size = Vector2( 500, 500 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 5.0
 
 [node name="Frame Panel" type="PanelContainer" parent="Gui Container/Gui Body"]
-margin_left = 636.0
-margin_right = 850.0
+margin_left = 736.0
+margin_right = 950.0
 margin_bottom = 554.0
 
 [node name="Hbox" type="VBoxContainer" parent="Gui Container/Gui Body/Frame Panel"]
@@ -263,18 +265,18 @@ margin_bottom = 15.0
 text = "Frame Metadata"
 fit_content_height = true
 
-[node name="Autor" type="HSplitContainer" parent="Gui Container/Gui Body/Frame Panel/Hbox"]
+[node name="Author" type="HSplitContainer" parent="Gui Container/Gui Body/Frame Panel/Hbox"]
 margin_top = 19.0
 margin_right = 200.0
 margin_bottom = 43.0
 
-[node name="Author Label" type="Label" parent="Gui Container/Gui Body/Frame Panel/Hbox/Autor"]
+[node name="Author Label" type="Label" parent="Gui Container/Gui Body/Frame Panel/Hbox/Author"]
 margin_top = 5.0
 margin_right = 43.0
 margin_bottom = 19.0
 text = "Author"
 
-[node name="Author Edit" type="LineEdit" parent="Gui Container/Gui Body/Frame Panel/Hbox/Autor"]
+[node name="Author Edit" type="LineEdit" parent="Gui Container/Gui Body/Frame Panel/Hbox/Author"]
 margin_left = 55.0
 margin_right = 200.0
 margin_bottom = 24.0
@@ -328,6 +330,8 @@ text = "Classes"
 margin_top = 26.0
 margin_right = 200.0
 margin_bottom = 113.0
+select_mode = 1
+script = ExtResource( 4 )
 __meta__ = {
 "_editor_description_": ""
 }
@@ -348,6 +352,8 @@ text = "Attributes"
 margin_top = 26.0
 margin_right = 200.0
 margin_bottom = 113.0
+select_mode = 1
+script = ExtResource( 5 )
 __meta__ = {
 "_editor_description_": ""
 }
@@ -368,6 +374,7 @@ text = "Unit"
 margin_top = 26.0
 margin_right = 200.0
 margin_bottom = 114.0
+script = ExtResource( 6 )
 __meta__ = {
 "_editor_description_": ""
 }

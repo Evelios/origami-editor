@@ -5,7 +5,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="FileClasses.fs" />
+        <Compile Include="EnumItemWidget.fs" />
+        <Compile Include="EnumItemWidgets.fs" />
         <Compile Include="FileMenuFs.fs" />
         <Compile Include="MainPanel.fs" />
     </ItemGroup>

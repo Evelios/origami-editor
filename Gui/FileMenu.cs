@@ -8,7 +8,6 @@ public class FileMenu : FileMenuFs
 
 	public override void NewFile()
 	{
-		GD.Print(nameof(CreateNewFile));
 		EmitSignal(nameof(CreateNewFile));
 	}
 }
