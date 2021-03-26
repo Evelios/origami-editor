@@ -15,6 +15,9 @@ type MainPanelFs() =
     let mutable FoldFilePath: string option = None
     let mutable FrameIndex = 0
 
+    let updateFrame update =
+        Fold <- FoldFile.updateFrame FrameIndex update Fold
+
 
     (* Constructor *)
 
@@ -73,9 +76,11 @@ type MainPanelFs() =
         let orEmpty = Option.defaultValue ""
 
         let frame =
-            if FrameIndex = 0
-            then Option.defaultValue Frame.Empty Fold.keyFrame
-            else List.tryItem (FrameIndex - 1) (Option.defaultValue [] Fold.frames) |> Option.defaultValue Frame.Empty
+            if FrameIndex = 0 then
+                Option.defaultValue Frame.Empty Fold.keyFrame
+            else
+                List.tryItem (FrameIndex - 1) (Option.defaultValue [] Fold.frames)
+                |> Option.defaultValue Frame.Empty
 
 
         // Single Line Text
@@ -94,8 +99,7 @@ type MainPanelFs() =
 
         // Classes
         let classesNode =
-            this.GetNode<FrameClassesFs>
-                (new NodePath("Gui Container/Gui Body/Frame Panel/Hbox/Classes/Classes List"))
+            this.GetNode<FrameClassesFs>(new NodePath("Gui Container/Gui Body/Frame Panel/Hbox/Classes/Classes List"))
 
         for frameClass in frame.classes |> Option.defaultValue [] do
             classesNode.Select frameClass
@@ -138,21 +142,21 @@ type MainPanelFs() =
 
     (* File Metadata Signals *)
 
-    member this._on_Spec_Edit_text_changed(specString: string) =
+    member this._on_File_Spec_Edit_text_changed(specString: string) =
         match specString with
         | TryParser.Int spec -> (Fold <- FoldFile.setSpec (Some spec) Fold)
         | _ -> ()
 
-    member this._on_Creator_Edit_text_changed(creator: string) =
+    member this._on_File_Creator_Edit_text_changed(creator: string) =
         Fold <- FoldFile.setCreator (Some creator) Fold
 
-    member this._on_Author_Edit_text_changed(author: string) =
+    member this._on_File_Author_Edit_text_changed(author: string) =
         Fold <- FoldFile.setAuthor (Some author) Fold
 
-    member this._on_Title_Edit_text_changed(title: string) =
+    member this._on_File_Title_Edit_text_changed(title: string) =
         Fold <- FoldFile.setTitle (Some title) Fold
 
-    member this._on_Description_Edit_text_changed() =
+    member this._on_File_Description_Edit_text_changed() =
         let descriptionPath =
             "Gui Container/Gui Body/File Panel/HBox/Description/Description Edit"
 
@@ -160,3 +164,51 @@ type MainPanelFs() =
             this.GetNode<LineEdit>(new NodePath(descriptionPath))
 
         Fold <- FoldFile.setDescription (Some descriptionNode.Text) Fold
+
+    member this._on_File_Classes_List_item_selected(index: int) =
+        let selected =
+            DiscriminatedUnion.fromIndex<FileClass> index
+
+        let newClasses =
+            Fold.classes
+            |> Option.defaultValue []
+            |> (fun classes -> selected :: classes)
+            |> Some
+
+        Fold <- FoldFile.setClasses newClasses Fold
+
+    member this._on_File_Frames_List_item_selected(index: int) =
+        let frames = Fold.frames |> Option.defaultValue []
+        let numFrames = 1 + List.length frames
+
+        // Update current frame
+        if index < numFrames then
+            FrameIndex <- index
+            this.propagateToFields ()
+
+        // Create new frame
+        else
+            let newFrames = List.append frames [ Frame.Empty ]
+            Fold <- FoldFile.setFrames (Some newFrames) Fold
+
+    (* File Metadata Signals *)
+    member this._on_Frame_Author_Edit_text_changed(author: string) =
+        updateFrame (Frame.setAuthor (Some author))
+
+    member this._on_Frame_Title_Edit_text_changed(title: string) =
+        updateFrame (Frame.setTitle (Some title))
+
+    member this._on_Frame_Frame_Description_Edit_text_changed() =
+        let descriptionNode =
+            this.GetNode<TextEdit>(new NodePath("Gui Container/Gui Body/Frame Panel/Hbox/Description/Description Edit"))
+
+        updateFrame (Frame.setDescription (Some descriptionNode.Text))
+
+    member this._on_Frame_Classes_List_item_selected(index: int) = failwith "Unimplemented"
+
+    member this._on_Frame_Attribute_List_item_selected(index: int) = failwith "Unimplemented"
+
+
+    member this._on_Frame_Unit_List_item_selected(index: int) =
+        let unit = DiscriminatedUnion.fromIndex index
+        updateFrame (Frame.setUnit (Some unit))

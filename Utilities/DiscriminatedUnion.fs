@@ -12,3 +12,6 @@ module DiscriminatedUnion =
         |> Seq.mapi (fun i e -> e, i)
         |> Seq.toList
         |> Map.ofList
+
+    let fromIndex<'T> (index:int): 'T =
+        Seq.item index (allCases<'T>())

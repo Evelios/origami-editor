@@ -14,7 +14,7 @@ type FoldFile =
       author: string option
       title: string option
       description: string option
-      classes: FileClass list option
+      classes: FileClass Set option
       keyFrame: Frame option
       frames: Frame list option }
 
@@ -45,6 +45,18 @@ module FoldFile =
     let setClasses classes file: FoldFile = { file with classes = classes }
     let setKeyframe keyFrame file: FoldFile = { file with keyFrame = keyFrame }
     let setFrames frames file: FoldFile = { file with frames = frames }
+
+
+    (**
+    Try to update a particular frame. If an index is not contained within the frame, then nothing happens
+    This functions existence probably indicates that a dictionary structure is a better representation
+    of the fold fold frames.
+    *)
+    let updateFrame (frameIndex: int) (update: Frame -> Frame) (fold: FoldFile): FoldFile =
+        let frames =
+            Option.map (List.mapi (fun i frame -> if i = frameIndex then update frame else frame)) fold.frames
+
+        setFrames frames fold
 
 
     (* Json *)

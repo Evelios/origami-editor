@@ -34,8 +34,8 @@ type Frame =
     { author: string option
       title: string option
       description: string option
-      classes: FrameClass list option
-      attributes: FrameAttribute list option
+      classes: FrameClass Set option
+      attributes: FrameAttribute Set option
       unit: Unit option
       vertices: Vertices option
       edges: Edges option
@@ -55,6 +55,15 @@ module Frame =
           vertices = None
           edges = None
           faces = None }
+
+    (* Accessors *)
+
+    let setAuthor author file: Frame = { file with author = author }
+    let setTitle title file: Frame = { file with title = title }
+    let setDescription description file: Frame = { file with description = description }
+    let setClasses classes file: Frame = { file with classes = classes }
+    let setAttributes attributes file: Frame = { file with attributes = attributes }
+    let setUnit unit file: Frame = { file with unit = unit }
 
 
     (* Json *)
