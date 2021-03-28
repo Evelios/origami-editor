@@ -8,27 +8,27 @@ open Fold
 let Setup () = ()
 
 let testCases =
-    [ """{"file_spec":1}""", { FoldFile.Empty with spec = Some 1 }
+    [ """{"file_spec":1,"file_keyFrame":{"file_unit":"unit"}}""", { FoldFile.Empty with spec = 1 }
 
-      """{"file_creator":"The Creator"}""",
+      """{"file_spec":1,"file_creator":"The Creator","file_keyFrame":{"file_unit":"unit"}}""",
       { FoldFile.Empty with
-            creator = Some "The Creator" }
+            creator = "The Creator" }
 
-      """{"file_author":"The Author"}""",
+      """{"file_spec":1,"file_author":"The Author","file_keyFrame":{"file_unit":"unit"}}""",
       { FoldFile.Empty with
-            author = Some "The Author" }
+            author = "The Author" }
 
-      """{"file_title":"The Title"}""",
+      """{"file_spec":1,"file_title":"The Title","file_keyFrame":{"file_unit":"unit"}}""",
       { FoldFile.Empty with
-            title = Some "The Title" }
+            title = "The Title" }
 
-      """{"file_description":"The Description"}""",
+      """{"file_spec":1,"file_description":"The Description","file_keyFrame":{"file_unit":"unit"}}""",
       { FoldFile.Empty with
-            description = Some "The Description" }
+            description = "The Description" }
 
-      """{"file_classes":["singleModel"]}""",
+      """{"file_spec":1,"file_classes":["singleModel"],"file_keyFrame":{"file_unit":"unit"}}""",
       { FoldFile.Empty with
-            classes = Some [ FileClass.SingleModel ] } ]
+            classes = Set.ofList [ FileClass.SingleModel ] } ]
 
 
 let deserializationTestCases = Util.toTest testCases

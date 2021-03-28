@@ -31,11 +31,22 @@ type Unit =
     | [<JsonUnionCase("nm")>] Nanometers
 
 type Frame =
+    { author: string
+      title: string
+      description: string
+      classes: FrameClass Set
+      attributes: FrameAttribute Set
+      unit: Unit
+      vertices: Vertices
+      edges: Edges
+      faces: Faces }
+
+type FrameJson =
     { author: string option
       title: string option
       description: string option
-      classes: FrameClass Set option
-      attributes: FrameAttribute Set option
+      classes: FrameClass list option
+      attributes: FrameAttribute list option
       unit: Unit option
       vertices: Vertices option
       edges: Edges option
@@ -45,20 +56,21 @@ module Frame =
 
     let Create a: Frame = a
 
-    let Empty =
-        { author = None
-          title = None
-          description = None
-          classes = None
-          attributes = None
-          unit = None
-          vertices = None
-          edges = None
-          faces = None }
+    let Empty: Frame =
+        { author = ""
+          title = ""
+          description = ""
+          classes = Set.empty
+          attributes = Set.empty
+          unit = Unit.Unitless
+          vertices = Vertices.Empty
+          edges = Edges.Empty
+          faces = Faces.Empty }
 
     (* Accessors *)
 
     let setAuthor author file: Frame = { file with author = author }
+
     let setTitle title file: Frame = { file with title = title }
     let setDescription description file: Frame = { file with description = description }
     let setClasses classes file: Frame = { file with classes = classes }
@@ -67,29 +79,75 @@ module Frame =
 
 
     (* Json *)
+
+    /// Convert the frame type to a json serializable type
+    let toJsonType (frame: Frame): FrameJson =
+        let stringWithDefault =
+            function
+            | "" -> None
+            | str -> Some str
+
+        let (|EmptySet|_|) a = if Set.isEmpty a then Some() else None
+
+        let setWithDefault =
+            function
+            | EmptySet -> None
+            | set -> Some(Set.toList set)
+
+        let withNoneIf empty value =
+            if value = empty then None else Some value
+
+        { author = stringWithDefault frame.author
+          title = stringWithDefault frame.title
+          description = stringWithDefault frame.description
+          classes = setWithDefault frame.classes
+          attributes = setWithDefault frame.attributes
+          unit = Some frame.unit
+          vertices = frame.vertices |> withNoneIf Vertices.Empty
+          edges = frame.edges |> withNoneIf Edges.Empty
+          faces = frame.faces |> withNoneIf Faces.Empty }
+
+    /// Convert the json serializable type to the frame type
+    let fromJsonType (frameJson: FrameJson): Frame =
+        let orEmptyString = Option.defaultValue ""
+
+        let toSet =
+            function
+            | None -> Set.empty
+            | Some list -> Set.ofList list
+
+        { author = orEmptyString frameJson.author
+          title = orEmptyString frameJson.title
+          description = orEmptyString frameJson.description
+          classes = frameJson.classes |> toSet
+          attributes = frameJson.attributes |> toSet
+          unit = Option.defaultValue Unit.Unitless frameJson.unit
+          vertices = Option.defaultValue Vertices.Empty frameJson.vertices
+          edges = frameJson.edges |> Option.defaultValue Edges.Empty
+          faces = frameJson.faces |> Option.defaultValue Faces.Empty }
+
     let private jsonConfig =
         JsonConfig.create (jsonFieldNaming = (+) "frame_", serializeNone = SerializeNone.Omit)
 
     let private jsonConfigUnformatted =
         JsonConfig.create (jsonFieldNaming = (+) "frame_", serializeNone = SerializeNone.Omit, unformatted = true)
 
-    let ToJson (frame: Frame): string = Json.serializeEx jsonConfig frame
+    let ToJson (frame: Frame): string =
+        Json.serializeEx jsonConfig (toJsonType frame)
 
     let ToJsonUnformatted (frame: Frame): string =
-        Json.serializeEx jsonConfigUnformatted frame
+        Json.serializeEx jsonConfigUnformatted (toJsonType frame)
 
-    let FromJson json =
+    let FromJson json: Frame =
         let frame =
-            Json.deserializeEx<Frame> jsonConfig json
+            Json.deserializeEx<FrameJson> jsonConfig json
 
         let edges = Edges.FromJson json
         let vertices = Vertices.FromJson json
         let faces = Faces.FromJson json
 
-        let maybe record empty =
-            if record = empty then None else Some record
-
         { frame with
-              edges = maybe edges Edges.Empty
-              vertices = maybe vertices Vertices.Empty
-              faces = maybe faces Faces.Empty }
+              edges = Some edges
+              vertices = Some vertices
+              faces = Some faces }
+        |> fromJsonType

@@ -9,14 +9,24 @@ type FileClass =
     | [<JsonUnionCase("diagrams")>] Diagrams
 
 type FoldFile =
+    { spec: int
+      creator: string
+      author: string
+      title: string
+      description: string
+      classes: FileClass Set
+      keyFrame: Frame
+      frames: Frame list }
+
+type FoldFileJson =
     { spec: int option
       creator: string option
       author: string option
       title: string option
       description: string option
-      classes: FileClass Set option
-      keyFrame: Frame option
-      frames: Frame list option }
+      classes: FileClass list option
+      keyFrame: FrameJson option
+      frames: FrameJson list option }
 
 module FoldFile =
 
@@ -24,14 +34,14 @@ module FoldFile =
 
     let Empty =
         Create
-            { spec = None
-              creator = None
-              author = None
-              title = None
-              description = None
-              classes = None
-              keyFrame = None
-              frames = None }
+            { spec = 1
+              creator = ""
+              author = ""
+              title = ""
+              description = ""
+              classes = Set.empty
+              keyFrame = Frame.Empty
+              frames = [] }
 
 
     (* Modifiers *)
@@ -43,6 +53,7 @@ module FoldFile =
     let setTitle title file: FoldFile = { file with title = title }
     let setDescription description file: FoldFile = { file with description = description }
     let setClasses classes file: FoldFile = { file with classes = classes }
+    let addClass theClass file: FoldFile = { file with classes = Set.add theClass file.classes } 
     let setKeyframe keyFrame file: FoldFile = { file with keyFrame = keyFrame }
     let setFrames frames file: FoldFile = { file with frames = frames }
 
@@ -54,12 +65,66 @@ module FoldFile =
     *)
     let updateFrame (frameIndex: int) (update: Frame -> Frame) (fold: FoldFile): FoldFile =
         let frames =
-            Option.map (List.mapi (fun i frame -> if i = frameIndex then update frame else frame)) fold.frames
+            (List.mapi (fun i frame -> if i = frameIndex then update frame else frame)) fold.frames
 
         setFrames frames fold
 
 
     (* Json *)
+
+    // Convert the fold file to a json serializable type
+    let toJsonType (fold: FoldFile): FoldFileJson =
+        let stringWithDefault =
+            function
+            | "" -> None
+            | str -> Some str
+
+        let (|EmptySet|_|) a = if Set.isEmpty a then Some() else None
+
+        let setWithDefault =
+            function
+            | EmptySet -> None
+            | set -> Some(Set.toList set)
+
+        let listWithDefault =
+            function
+            | [] -> None
+            | list -> Some list
+
+        { spec = Some fold.spec
+          creator = stringWithDefault fold.creator
+          author = stringWithDefault fold.author
+          title = stringWithDefault fold.title
+          description = stringWithDefault fold.description
+          classes = setWithDefault fold.classes
+          keyFrame = Some(Frame.toJsonType fold.keyFrame)
+          frames = listWithDefault (List.map Frame.toJsonType fold.frames) }
+
+    /// Convert the json serializable type to the foldFile type
+    let fromJsonType (foldJson: FoldFileJson): FoldFile =
+        let orEmptyString = Option.defaultValue ""
+
+        let toSet =
+            function
+            | None -> Set.empty
+            | Some list -> Set.ofList list
+
+        { spec = foldJson.spec |> Option.defaultValue 1
+          creator = foldJson.creator |> orEmptyString
+          author = foldJson.author |> orEmptyString
+          title = foldJson.title |> orEmptyString
+          description = foldJson.description |> orEmptyString
+          classes = foldJson.classes |> toSet
+          keyFrame =
+              foldJson.keyFrame
+              |> Option.map Frame.fromJsonType
+              |> Option.defaultValue Frame.Empty
+          frames =
+              foldJson.frames
+              |> Option.defaultValue []
+              |> List.map Frame.fromJsonType }
+
+
 
     let private jsonConfig =
         JsonConfig.create (jsonFieldNaming = (+) "file_", serializeNone = SerializeNone.Omit)
@@ -71,16 +136,16 @@ module FoldFile =
              enumValue = EnumMode.Name,
              unformatted = true)
 
-    let ToJson (fold: FoldFile): string = Json.serializeEx jsonConfig fold
+    let ToJson (fold: FoldFile): string =
+        Json.serializeEx jsonConfig (toJsonType fold)
 
     let ToJsonUnformatted (fold: FoldFile): string =
-        Json.serializeEx jsonConfigUnformatted fold
+        Json.serializeEx jsonConfigUnformatted (toJsonType fold)
 
-    let FromJson json =
+    let FromJson json: FoldFile =
         let file =
-            Json.deserializeEx<FoldFile> jsonConfig json
-
-        let keyFrame = Frame.FromJson json
+            Json.deserializeEx<FoldFileJson> jsonConfig json
 
         { file with
-              keyFrame = if keyFrame = Frame.Empty then None else Some keyFrame }
+              keyFrame = Frame.FromJson json |> Frame.toJsonType |> Some }
+        |> fromJsonType

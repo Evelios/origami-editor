@@ -7,33 +7,31 @@ open Fold
 let Setup () = ()
 
 let testCases =
-    [ """{"frame_author":"The Author"}""",
+    [ """{"frame_unit":"unit"}""",
       { Frame.Empty with
-            author = Some "The Author" }
-
-      """{"frame_title":"The Title"}""",
+            unit = Unit.Unitless }
+      """{"frame_author":"The Author","frame_unit":"unit"}""",
       { Frame.Empty with
-            title = Some "The Title" }
+            author = "The Author" }
 
-      """{"frame_description":"The Description"}""",
+      """{"frame_title":"The Title","frame_unit":"unit"}""", { Frame.Empty with title = "The Title" }
+
+      """{"frame_description":"The Description","frame_unit":"unit"}""",
       { Frame.Empty with
-            description = Some "The Description" }
+            description = "The Description" }
 
-      """{"frame_classes":["creasePattern","graph"]}""",
+      """{"frame_classes":["creasePattern","graph"],"frame_unit":"unit"}""",
       { Frame.Empty with
             classes =
-                Some [ FrameClass.CreasePattern
-                       FrameClass.Graph ] }
+                Set.ofList [ FrameClass.CreasePattern
+                             FrameClass.Graph ] }
 
-      """{"frame_attributes":["2D","orientable"]}""",
+      """{"frame_attributes":["2D","orientable"],"frame_unit":"unit"}""",
       { Frame.Empty with
             attributes =
-                Some [ FrameAttribute.Geo2D
-                       FrameAttribute.Orientable ] }
+                Set.ofList [ FrameAttribute.Geo2D
+                             FrameAttribute.Orientable ] } ]
 
-      """{"frame_unit":"unit"}""",
-      { Frame.Empty with
-            unit = Some Unit.Unitless } ]
 
 let deserializationTestCases = Util.toTest testCases
 

@@ -10,6 +10,13 @@
         <Compile Include="DiscriminatedUnion.fs" />
         <Compile Include="NamingConventions.fs" />
         <Compile Include="MapExtensions.fs" />
+        <Compile Include="Transforms.fs" />
+        <Compile Include="StringMap.fs" />
+        <Compile Include="StringConverter.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FSharp.Json" Version="0.4.0" />
     </ItemGroup>
 
 </Project>
