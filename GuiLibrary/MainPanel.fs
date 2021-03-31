@@ -11,13 +11,13 @@ type MainPanelFs() =
 
     let title = "Origami Editor"
 
-    let mutable Fold = Fold.Empty
+    let mutable FoldFile = Fold.Empty
 
     let mutable FoldFilePath: string option = None
     let mutable FrameIndex = 0
 
     let updateFrame update =
-        Fold <- Fold.updateFrame FrameIndex update Fold
+        FoldFile <- Fold.updateFrame FrameIndex update FoldFile
 
 
     (* Constructor *)
@@ -34,10 +34,10 @@ type MainPanelFs() =
     member this.propagateFoldToFields() =
         // Single Line Text
         let lineEditItems =
-            [ ("Gui Container/Gui Body/File Panel/HBox/Spec/Spec Edit", Fold.spec.ToString())
-              ("Gui Container/Gui Body/File Panel/HBox/Creator/Creator Edit", Fold.creator)
-              ("Gui Container/Gui Body/File Panel/HBox/Author/Author Edit", Fold.author)
-              ("Gui Container/Gui Body/File Panel/HBox/Title/Title Edit", Fold.title) ]
+            [ ("Gui Container/Gui Body/File Panel/HBox/Spec/Spec Edit", FoldFile.spec.ToString())
+              ("Gui Container/Gui Body/File Panel/HBox/Creator/Creator Edit", FoldFile.creator)
+              ("Gui Container/Gui Body/File Panel/HBox/Author/Author Edit", FoldFile.author)
+              ("Gui Container/Gui Body/File Panel/HBox/Title/Title Edit", FoldFile.title) ]
 
         for (nodePath, updatedValue) in lineEditItems do
             this.GetNode<LineEdit>(new NodePath(nodePath)).Text <- updatedValue
@@ -46,13 +46,13 @@ type MainPanelFs() =
         let descriptionPath =
             "Gui Container/Gui Body/File Panel/HBox/Description/Description Edit"
 
-        this.GetNode<TextEdit>(new NodePath(descriptionPath)).Text <- Fold.description
+        this.GetNode<TextEdit>(new NodePath(descriptionPath)).Text <- FoldFile.description
 
         // Classes
         let classesNode =
             this.GetNode<FileClassesFs>(new NodePath("Gui Container/Gui Body/File Panel/HBox/Classes/Classes List"))
 
-        for fileClass in Fold.classes do
+        for fileClass in FoldFile.classes do
             classesNode.Select fileClass
 
         // Frames
@@ -60,7 +60,7 @@ type MainPanelFs() =
             this.GetNode<ItemList>(new NodePath("Gui Container/Gui Body/File Panel/HBox/Frames/Frames List"))
 
         let frames =
-            Fold.frames
+            FoldFile.frames
             |> List.mapi (fun i frame -> if frame.title = "" then $"Frame {i}" else frame.title)
             |> (fun frames -> "Key Frame" :: frames)
 
@@ -74,9 +74,9 @@ type MainPanelFs() =
     member this.propagateFrameToFields() =
         let frame =
             if FrameIndex = 0 then
-                Fold.keyFrame
+                FoldFile.keyFrame
             else
-                List.tryItem (FrameIndex - 1) (Fold.frames)
+                List.tryItem (FrameIndex - 1) (FoldFile.frames)
                 |> Option.defaultValue Frame.Empty
 
 
@@ -117,7 +117,7 @@ type MainPanelFs() =
 
     (* File Dialog Signals *)
     member this._on_File_Button_CreateNewFile() =
-        Fold <- Fold.Empty
+        FoldFile <- Fold.Empty
         FoldFilePath <- None
         this.propagateToFields ()
 
@@ -125,7 +125,7 @@ type MainPanelFs() =
         FoldFilePath <- Some path
         let file = new File()
         file.Open(path, File.ModeFlags.Read) |> ignore
-        Fold <- Fold.FromJson(file.GetAsText())
+        FoldFile <- FoldJson.FromJson(file.GetAsText())
         file.Close()
         this.propagateToFields ()
 
@@ -133,7 +133,7 @@ type MainPanelFs() =
         FoldFilePath <- Some path
         let file = new File()
         file.Open(path, File.ModeFlags.Write) |> ignore
-        file.StoreString(Fold.ToJson Fold)
+        file.StoreString(FoldJson.ToJson FoldFile)
         file.Close()
 
 
@@ -141,14 +141,14 @@ type MainPanelFs() =
 
     member this._on_File_Spec_Edit_text_changed(specString: string) =
         match specString with
-        | TryParser.Int spec -> (Fold <- Fold.setSpec spec Fold)
+        | TryParser.Int spec -> (FoldFile <- Fold.setSpec spec FoldFile)
         | _ -> ()
 
-    member this._on_File_Creator_Edit_text_changed(creator: string) = Fold <- Fold.setCreator creator Fold
+    member this._on_File_Creator_Edit_text_changed(creator: string) = FoldFile <- Fold.setCreator creator FoldFile
 
-    member this._on_File_Author_Edit_text_changed(author: string) = Fold <- Fold.setAuthor author Fold
+    member this._on_File_Author_Edit_text_changed(author: string) = FoldFile <- Fold.setAuthor author FoldFile
 
-    member this._on_File_Title_Edit_text_changed(title: string) = Fold <- Fold.setTitle title Fold
+    member this._on_File_Title_Edit_text_changed(title: string) = FoldFile <- Fold.setTitle title FoldFile
 
     member this._on_File_Description_Edit_text_changed() =
         let descriptionPath =
@@ -157,7 +157,7 @@ type MainPanelFs() =
         let descriptionNode =
             this.GetNode<TextEdit>(new NodePath(descriptionPath))
 
-        Fold <- Fold.setDescription descriptionNode.Text Fold
+        FoldFile <- Fold.setDescription descriptionNode.Text FoldFile
 
 
     member this._on_File_Classes_List_multi_selected(index: int, selected: bool) =
@@ -167,12 +167,12 @@ type MainPanelFs() =
         let foldModifier =
             if selected then Fold.addClass else Fold.removeClass
 
-        Fold <- foldModifier selectedClass Fold
+        FoldFile <- foldModifier selectedClass FoldFile
 
-    member this._on_File_Classes_List_nothing_selected() = Fold <- Fold.withoutClasses Fold
+    member this._on_File_Classes_List_nothing_selected() = FoldFile <- Fold.withoutClasses FoldFile
 
     member this._on_File_Frames_List_item_selected(index: int) =
-        let numFrames = 1 + List.length Fold.frames
+        let numFrames = 1 + List.length FoldFile.frames
 
         // Update current frame
         if index < numFrames then
@@ -181,8 +181,8 @@ type MainPanelFs() =
 
         // Create new frame
         else
-            let newFrames = List.append Fold.frames [ Frame.Empty ]
-            Fold <- Fold.setFrames newFrames Fold
+            let newFrames = List.append FoldFile.frames [ Frame.Empty ]
+            FoldFile <- Fold.setFrames newFrames FoldFile
 
     (* File Metadata Signals *)
     member this._on_Frame_Author_Edit_text_changed(author: string) = updateFrame (Frame.setAuthor author)
