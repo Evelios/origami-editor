@@ -63,18 +63,18 @@ module FoldJson =
           frameClasses = fold.keyFrame.classes |> setWithDefault
           frameAttributes = fold.keyFrame.attributes |> setWithDefault
           frameUnit = Some fold.keyFrame.unit
-          verticesCoords = fold.keyFrame.vertices.coords
-          verticesVertices = fold.keyFrame.vertices.vertices
-          verticesFaces = fold.keyFrame.vertices.faces
-          edgesVertices = fold.keyFrame.edges.vertices
-          edgesFaces = fold.keyFrame.edges.faces
-          edgesAssignment = fold.keyFrame.edges.assignment
-          edgesFoldAngle = fold.keyFrame.edges.foldAngle
-          edgesLength = fold.keyFrame.edges.length
-          edgeOrders = fold.keyFrame.edges.orders
-          facesVertices = fold.keyFrame.faces.vertices
-          facesEdges = fold.keyFrame.faces.edges
-          faceOrders = fold.keyFrame.faces.orders }
+          verticesCoords = fold.keyFrame.vertices.coords |> listWithDefault
+          verticesVertices = fold.keyFrame.vertices.vertices |> listWithDefault
+          verticesFaces = fold.keyFrame.vertices.faces |> listWithDefault
+          edgesVertices = fold.keyFrame.edges.vertices |> listWithDefault
+          edgesFaces = fold.keyFrame.edges.faces |> listWithDefault
+          edgesAssignment = fold.keyFrame.edges.assignment |> listWithDefault
+          edgesFoldAngle = fold.keyFrame.edges.foldAngle |> listWithDefault
+          edgesLength = fold.keyFrame.edges.length |> listWithDefault
+          edgeOrders = fold.keyFrame.edges.orders |> listWithDefault
+          facesVertices = fold.keyFrame.faces.vertices |> listWithDefault
+          facesEdges = fold.keyFrame.faces.edges |> listWithDefault
+          faceOrders = fold.keyFrame.faces.orders |> listWithDefault }
 
     /// Convert the json serializable type to the foldFile type
     let fromJsonType (foldJson: FoldFileJson): Fold =
@@ -91,25 +91,26 @@ module FoldJson =
           title = foldJson.fileTitle |> orEmptyString
           description = foldJson.fileDescription |> orEmptyString
           classes = foldJson.fileClasses |> toSet
-          keyFrame = FrameJson.fromJsonType
-            { frameAuthor = foldJson.frameAuthor
-              frameTitle = foldJson.frameTitle
-              frameDescription = foldJson.frameDescription
-              frameClasses = foldJson.frameClasses
-              frameAttributes = foldJson.frameAttributes
-              frameUnit = foldJson.frameUnit
-              verticesCoords = foldJson.verticesCoords
-              verticesVertices = foldJson.verticesVertices
-              verticesFaces = foldJson.verticesFaces
-              edgesVertices = foldJson.edgesVertices
-              edgesFaces = foldJson.edgesFaces
-              edgesAssignment = foldJson.edgesAssignment
-              edgesFoldAngle = foldJson.edgesFoldAngle
-              edgesLength = foldJson.edgesLength
-              edgeOrders = foldJson.edgeOrders
-              facesVertices = foldJson.facesVertices
-              facesEdges = foldJson.facesEdges
-              faceOrders = foldJson.faceOrders }
+          keyFrame =
+              FrameJson.fromJsonType
+                  { frameAuthor = foldJson.frameAuthor
+                    frameTitle = foldJson.frameTitle
+                    frameDescription = foldJson.frameDescription
+                    frameClasses = foldJson.frameClasses
+                    frameAttributes = foldJson.frameAttributes
+                    frameUnit = foldJson.frameUnit
+                    verticesCoords = foldJson.verticesCoords
+                    verticesVertices = foldJson.verticesVertices
+                    verticesFaces = foldJson.verticesFaces
+                    edgesVertices = foldJson.edgesVertices
+                    edgesFaces = foldJson.edgesFaces
+                    edgesAssignment = foldJson.edgesAssignment
+                    edgesFoldAngle = foldJson.edgesFoldAngle
+                    edgesLength = foldJson.edgesLength
+                    edgeOrders = foldJson.edgeOrders
+                    facesVertices = foldJson.facesVertices
+                    facesEdges = foldJson.facesEdges
+                    faceOrders = foldJson.faceOrders }
           frames =
               foldJson.fileFrames
               |> Option.defaultValue []
@@ -119,7 +120,8 @@ module FoldJson =
         JsonConfig.create (jsonFieldNaming = FrameJson.nameConversion, serializeNone = SerializeNone.Omit)
 
     let private jsonConfigUnformatted =
-        JsonConfig.create (jsonFieldNaming = FrameJson.nameConversion, serializeNone = SerializeNone.Omit, unformatted = true)
+        JsonConfig.create
+            (jsonFieldNaming = FrameJson.nameConversion, serializeNone = SerializeNone.Omit, unformatted = true)
 
     let ToJson (fold: Fold): string =
         Json.serializeEx jsonConfig (toJsonType fold)

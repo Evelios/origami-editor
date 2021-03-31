@@ -24,7 +24,8 @@ type FrameJson =
       faceOrders: ((int (*face id*)  * int (*face id*)  * int (*order*) ) list) option }
 
 module FrameJson =
-    let nameConversion  = function
+    let nameConversion =
+        function
         | "edgesFoldAngle" -> "edges_foldAngle"
         | "faceOrders" -> "faceOrders"
         | "edgeOrders" -> "edgeOrders"
@@ -38,12 +39,17 @@ module FrameJson =
             | "" -> None
             | str -> Some str
 
-        let (|EmptySet|_|) a = if Set.isEmpty a then Some() else None
-
         let setWithDefault =
+            let (|EmptySet|_|) a = if Set.isEmpty a then Some() else None
+
             function
             | EmptySet -> None
             | set -> Some(Set.toList set)
+
+        let listWithDefault =
+            function
+            | [] -> None
+            | list -> Some list
 
         { frameAuthor = stringWithDefault frame.author
           frameTitle = stringWithDefault frame.title
@@ -51,18 +57,18 @@ module FrameJson =
           frameClasses = setWithDefault frame.classes
           frameAttributes = setWithDefault frame.attributes
           frameUnit = Some frame.unit
-          verticesCoords = frame.vertices.coords
-          verticesVertices = frame.vertices.vertices
-          verticesFaces = frame.vertices.faces
-          edgesVertices = frame.edges.vertices
-          edgesFaces = frame.edges.faces
-          edgesAssignment = frame.edges.assignment
-          edgesFoldAngle = frame.edges.foldAngle
-          edgesLength = frame.edges.length
-          edgeOrders = frame.edges.orders
-          facesVertices = frame.faces.vertices
-          facesEdges = frame.faces.edges
-          faceOrders = frame.faces.orders }
+          verticesCoords = frame.vertices.coords |> listWithDefault
+          verticesVertices = frame.vertices.vertices |> listWithDefault
+          verticesFaces = frame.vertices.faces |> listWithDefault
+          edgesVertices = frame.edges.vertices |> listWithDefault
+          edgesFaces = frame.edges.faces |> listWithDefault
+          edgesAssignment = frame.edges.assignment |> listWithDefault
+          edgesFoldAngle = frame.edges.foldAngle |> listWithDefault
+          edgesLength = frame.edges.length |> listWithDefault
+          edgeOrders = frame.edges.orders |> listWithDefault
+          facesVertices = frame.faces.vertices |> listWithDefault
+          facesEdges = frame.faces.edges |> listWithDefault
+          faceOrders = frame.faces.orders |> listWithDefault }
 
     /// Convert the json serializable type to the frame type
     let fromJsonType (frameJson: FrameJson): Frame =
@@ -83,22 +89,26 @@ module FrameJson =
               |> Option.defaultValue Unit.Unitless
           vertices =
               Vertices.Create
-                  { coords = frameJson.verticesCoords
-                    vertices = frameJson.verticesVertices
-                    faces = frameJson.verticesFaces }
+                  { coords = frameJson.verticesCoords |> Option.defaultValue []
+                    vertices =
+                        frameJson.verticesVertices
+                        |> Option.defaultValue []
+                    faces = frameJson.verticesFaces |> Option.defaultValue [] }
           edges =
               Edges.Create
-                  { vertices = frameJson.edgesVertices
-                    faces = frameJson.edgesFaces
-                    assignment = frameJson.edgesAssignment
-                    foldAngle = frameJson.edgesFoldAngle
-                    length = frameJson.edgesLength
-                    orders = frameJson.edgeOrders }
+                  { vertices = frameJson.edgesVertices |> Option.defaultValue []
+                    faces = frameJson.edgesFaces |> Option.defaultValue []
+                    assignment =
+                        frameJson.edgesAssignment
+                        |> Option.defaultValue []
+                    foldAngle = frameJson.edgesFoldAngle |> Option.defaultValue []
+                    length = frameJson.edgesLength |> Option.defaultValue []
+                    orders = frameJson.edgeOrders |> Option.defaultValue [] }
           faces =
               Faces.Create
-                  { vertices = frameJson.facesVertices
-                    edges = frameJson.facesEdges
-                    orders = frameJson.faceOrders } }
+                  { vertices = frameJson.facesVertices |> Option.defaultValue []
+                    edges = frameJson.facesEdges |> Option.defaultValue []
+                    orders = frameJson.faceOrders |> Option.defaultValue [] } }
 
 
     let private jsonConfig =
