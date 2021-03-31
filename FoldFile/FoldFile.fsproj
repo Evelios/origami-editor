@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFrameworks>net472;netstandard2.1</TargetFrameworks>
+        <RootNamespace>Fold</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -10,7 +11,9 @@
         <Compile Include="Edges.fs" />
         <Compile Include="Faces.fs" />
         <Compile Include="Frame.fs" />
-        <Compile Include="FoldFile.fs" />
+        <Compile Include="Fold.fs" />
+        <Compile Include="FrameJson.fs" />
+        <Compile Include="FoldJson.fs" />
     </ItemGroup>
 
     <ItemGroup>

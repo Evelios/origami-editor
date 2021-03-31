@@ -8,35 +8,44 @@ open Fold
 let Setup () = ()
 
 let testCases =
-    [ """{"file_spec":1,"file_keyFrame":{"file_unit":"unit"}}""", { FoldFile.Empty with spec = 1 }
+    [ """{"file_spec":1,"frame_unit":"unit"}""", { Fold.Empty with spec = 1 }
 
-      """{"file_spec":1,"file_creator":"The Creator","file_keyFrame":{"file_unit":"unit"}}""",
-      { FoldFile.Empty with
+      """{"file_spec":1,"file_creator":"The Creator","frame_unit":"unit"}""",
+      { Fold.Empty with
             creator = "The Creator" }
 
-      """{"file_spec":1,"file_author":"The Author","file_keyFrame":{"file_unit":"unit"}}""",
-      { FoldFile.Empty with
+      """{"file_spec":1,"file_author":"The Author","frame_unit":"unit"}""",
+      { Fold.Empty with
             author = "The Author" }
 
-      """{"file_spec":1,"file_title":"The Title","file_keyFrame":{"file_unit":"unit"}}""",
-      { FoldFile.Empty with
+      """{"file_spec":1,"file_title":"The Title","frame_unit":"unit"}""",
+      { Fold.Empty with
             title = "The Title" }
 
-      """{"file_spec":1,"file_description":"The Description","file_keyFrame":{"file_unit":"unit"}}""",
-      { FoldFile.Empty with
+      """{"file_spec":1,"file_description":"The Description","frame_unit":"unit"}""",
+      { Fold.Empty with
             description = "The Description" }
 
-      """{"file_spec":1,"file_classes":["singleModel"],"file_keyFrame":{"file_unit":"unit"}}""",
-      { FoldFile.Empty with
-            classes = Set.ofList [ FileClass.SingleModel ] } ]
-
+      """{"file_spec":1,"file_classes":["singleModel"],"frame_unit":"unit"}""",
+      { Fold.Empty with
+            classes = Set.ofList [ FileClass.SingleModel ] }
+      """{"file_spec":1,"frame_author":"The Author","frame_unit":"unit"}""",
+      { Fold.Empty with
+            keyFrame =
+                { Frame.Empty with
+                      author = "The Author" } }
+      """{"file_spec":1,"file_frames":[{"frame_author":"The Author","frame_unit":"unit"}],"frame_unit":"unit"}""",
+      { Fold.Empty with
+            frames =
+                [ { Frame.Empty with
+                        author = "The Author" } ] } ]
 
 let deserializationTestCases = Util.toTest testCases
 
 [<TestCaseSource("deserializationTestCases")>]
-let Deserialization source = FoldFile.FromJson source
+let Deserialization source = FoldJson.FromJson source
 
 let serializationTestCases = Util.toTestReverse testCases
 
 [<TestCaseSource("serializationTestCases")>]
-let Serialization source = FoldFile.ToJsonUnformatted source
+let Serialization source = FoldJson.ToJsonUnformatted source

@@ -17,7 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Fold\Fold.fsproj" />
+      <ProjectReference Include="..\FoldFile\FoldFile.fsproj" />
       <ProjectReference Include="..\Utilities\Utilities.fsproj" />
     </ItemGroup>
 

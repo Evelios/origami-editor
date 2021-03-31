@@ -6,6 +6,7 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 contentModel.xml
+OrigamiEditor.sln.DotSettings.user
 
 # Mono-specific ignores
 .mono/

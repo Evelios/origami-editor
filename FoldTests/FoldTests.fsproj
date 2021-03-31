@@ -17,9 +17,6 @@
     <ItemGroup>
         <Compile Include="Util.fs" />
         <Compile Include="StringMapTests.fs" />
-        <Compile Include="VerticesTests.fs" />
-        <Compile Include="FacesTest.fs" />
-        <Compile Include="EdgesTests.fs" />
         <Compile Include="FrameTests.fs" />
         <Compile Include="FileTests.fs" />
         <Content Include="basic-integration.fold" />
@@ -34,7 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Fold\Fold.fsproj" />
+      <ProjectReference Include="..\FoldFile\FoldFile.fsproj" />
       <ProjectReference Include="..\Utilities\Utilities.fsproj" />
     </ItemGroup>
 

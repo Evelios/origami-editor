@@ -20,38 +20,120 @@
     "nonSelfIntersecting"
   ],
   "frame_unit": "unit",
-  "vertices_vertices": [ 0, 1, 2, 3 ],
-  "vertices_faces": [
-    [ 0, 1 ],
-    [ 1, 2 ],
-    [ 2, 3 ]
-  ],
   "vertices_coords": [
-    [ 0, 0 ],
-    [ 0, 1 ],
-    [ 1, 0 ],
-    [ 1, 1 ]
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      0
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "vertices_vertices": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "vertices_faces": [
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ]
   ],
   "edges_vertices": [
-    [ 0, 1 ],
-    [ 1, 2 ],
-    [ 2, 3 ]
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ]
   ],
   "edges_faces": [
-    [ 1, 2 ],
-    [ 2, null ]
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      null
+    ]
   ],
-  "edges_assignment": [ "B", "B", "M", "V" ],
-  "edges_foldAngle": [ 90, 90, 90 ],
-  "edges_length": [ 1, 1, 1 ],
+  "edges_assignment": [
+    "B",
+    "B",
+    "M",
+    "V"
+  ],
+  "edges_foldAngle": [
+    90,
+    90,
+    90
+  ],
+  "edges_length": [
+    1,
+    1,
+    1
+  ],
+  "edgeOrders": [
+    [
+      2,
+      1,
+      -1
+    ]
+  ],
   "faces_vertices": [
-    [ 0, 1, 2 ],
-    [ 1, 2, 3 ]
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      1,
+      2,
+      3
+    ]
   ],
   "faces_edges": [
-    [ 0, 1, 2 ],
-    [ 1, 2, 3 ]
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      1,
+      2,
+      3
+    ]
   ],
-  "faceOrders": [],
-  "edgeOrders": []
+  "faceOrders": [
+    [
+      1,
+      2,
+      0
+    ]
+  ]
 }

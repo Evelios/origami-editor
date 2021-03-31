@@ -4,7 +4,6 @@ open FSharp.Json
 
 type Vertices =
     {
-      [<JsonField(Transform = typeof<Vertex.ListTransform>)>]
       coords: (Vertex list) option
       vertices: int list option
       faces: int list list option }

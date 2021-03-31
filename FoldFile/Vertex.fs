@@ -1,6 +1,5 @@
 ﻿namespace Fold
 
-open System
 open System.Numerics
 open FSharp.Json
 
