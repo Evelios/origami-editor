@@ -7,6 +7,39 @@ open Fold
 [<SetUp>]
 let Setup () = ()
 
+
+[<TestCase>]
+let UpdateKeyFrame () =
+    let expected =
+        { Fold.Empty with
+              keyFrame =
+                  { Frame.Empty with
+                        author = "The Author" } }
+
+    let actual =
+        Fold.updateFrame 0 (Frame.setAuthor "The Author") Fold.Empty
+
+    Assert.AreEqual(expected, actual)
+
+[<TestCase>]
+let UpdateFirstFrame () =
+    let expected =
+        { Fold.Empty with
+              frames =
+                  [ { Frame.Empty with
+                          author = "The Author" } ] }
+
+    let actual =
+        Fold.updateFrame
+            1
+            (Frame.setAuthor "The Author")
+            { Fold.Empty with
+                  frames = [ Frame.Empty ] }
+
+    Assert.AreEqual(expected, actual)
+
+(* Serialization and Deserialization *)
+
 let testCases =
     [ """{"file_spec":1,"frame_unit":"unit"}""", { Fold.Empty with spec = 1 }
 
@@ -18,9 +51,7 @@ let testCases =
       { Fold.Empty with
             author = "The Author" }
 
-      """{"file_spec":1,"file_title":"The Title","frame_unit":"unit"}""",
-      { Fold.Empty with
-            title = "The Title" }
+      """{"file_spec":1,"file_title":"The Title","frame_unit":"unit"}""", { Fold.Empty with title = "The Title" }
 
       """{"file_spec":1,"file_description":"The Description","frame_unit":"unit"}""",
       { Fold.Empty with

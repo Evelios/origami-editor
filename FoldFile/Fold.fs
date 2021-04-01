@@ -63,7 +63,15 @@ module Fold =
     of the fold fold frames.
     *)
     let updateFrame (frameIndex: int) (update: Frame -> Frame) (fold: Fold): Fold =
-        let frames =
-            (List.mapi (fun i frame -> if i = frameIndex then update frame else frame)) fold.frames
+        if frameIndex = 0 then
+            { fold with
+                  keyFrame = update fold.keyFrame }
 
-        setFrames frames fold
+        elif frameIndex - 1 >= fold.frames.Length then
+            fold
+
+        else
+            let frames =
+                (List.mapi (fun i frame -> if i = (frameIndex - 1) then update frame else frame)) fold.frames
+
+            setFrames frames fold

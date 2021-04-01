@@ -45,7 +45,6 @@ type MainPanelFs() =
         // Description Updating
         let descriptionPath =
             "Gui Container/Gui Body/File Panel/HBox/Description/Description Edit"
-
         this.GetNode<TextEdit>(new NodePath(descriptionPath)).Text <- FoldFile.description
 
         // Classes
@@ -91,7 +90,6 @@ type MainPanelFs() =
         // Description Update
         let descriptionPath =
             "Gui Container/Gui Body/Frame Panel/Hbox/Description/Description Edit"
-
         this.GetNode<TextEdit>(new NodePath(descriptionPath)).Text <- frame.description
 
         // Classes
@@ -144,9 +142,11 @@ type MainPanelFs() =
         | TryParser.Int spec -> (FoldFile <- Fold.setSpec spec FoldFile)
         | _ -> ()
 
-    member this._on_File_Creator_Edit_text_changed(creator: string) = FoldFile <- Fold.setCreator creator FoldFile
+    member this._on_File_Creator_Edit_text_changed(creator: string) =
+        FoldFile <- Fold.setCreator creator FoldFile
 
-    member this._on_File_Author_Edit_text_changed(author: string) = FoldFile <- Fold.setAuthor author FoldFile
+    member this._on_File_Author_Edit_text_changed(author: string) =
+        FoldFile <- Fold.setAuthor author FoldFile
 
     member this._on_File_Title_Edit_text_changed(title: string) = FoldFile <- Fold.setTitle title FoldFile
 
@@ -159,6 +159,11 @@ type MainPanelFs() =
 
         FoldFile <- Fold.setDescription descriptionNode.Text FoldFile
 
+    member this._on_File_Classes_List_item_selected(index: int) =
+        let selectedClass =
+            DiscriminatedUnion.fromIndex<FileClass> index
+
+        FoldFile <- Fold.setClasses (Set.ofList [ selectedClass ]) FoldFile
 
     member this._on_File_Classes_List_multi_selected(index: int, selected: bool) =
         let selectedClass =
@@ -181,10 +186,13 @@ type MainPanelFs() =
 
         // Create new frame
         else
-            let newFrames = List.append FoldFile.frames [ Frame.Empty ]
+            let newFrames =
+                List.append FoldFile.frames [ Frame.Empty ]
+
             FoldFile <- Fold.setFrames newFrames FoldFile
 
-    (* File Metadata Signals *)
+
+    (* Frame Metadata Signals *)
     member this._on_Frame_Author_Edit_text_changed(author: string) = updateFrame (Frame.setAuthor author)
 
     member this._on_Frame_Title_Edit_text_changed(title: string) = updateFrame (Frame.setTitle title)
@@ -194,6 +202,12 @@ type MainPanelFs() =
             this.GetNode<TextEdit>(new NodePath("Gui Container/Gui Body/Frame Panel/Hbox/Description/Description Edit"))
 
         updateFrame (Frame.setDescription descriptionNode.Text)
+
+    member this._on_Frame_Classes_List_item_selected(index: int) =
+        let selectedClass =
+            DiscriminatedUnion.fromIndex<FrameClass> index
+
+        updateFrame (Frame.setClasses <| Set.ofList [ selectedClass ])
 
     member this._on_Frame_Classes_List_multi_selected(index: int, selected: bool) =
         let selectedClass =
@@ -205,6 +219,14 @@ type MainPanelFs() =
         updateFrame (frameModifier selectedClass)
 
     member this._on_Frame_Classes_List_nothing_selected() = updateFrame Frame.withoutClasses
+
+    member this._on_Frame_Attribute_List_item_selected index =
+        let selectedAttribute =
+            DiscriminatedUnion.fromIndex<FrameAttribute> index
+
+        updateFrame
+            (Frame.setAttributes
+             <| Set.ofList [ selectedAttribute ])
 
     member this._on_Frame_Attribute_List_multi_selected(index: int, selected: bool) =
         let selectedAttribute =
