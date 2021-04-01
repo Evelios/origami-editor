@@ -7,8 +7,10 @@
     <ItemGroup>
         <Compile Include="EnumItemWidget.fs" />
         <Compile Include="EnumItemWidgets.fs" />
-        <Compile Include="FileMenuFs.fs" />
-        <Compile Include="MainPanel.fs" />
+        <Compile Include="FileMenu.fs" />
+        <Compile Include="RootNode.fs" />
+        <Compile Include="FoldFile.fs" />
+        <Compile Include="Palette.fs" />
     </ItemGroup>
 
     <ItemGroup>

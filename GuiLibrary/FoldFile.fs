@@ -4,13 +4,10 @@ open Godot
 open Fold
 open Utilities
 
-type MainPanelFs() =
-    inherit PanelContainer()
+type FoldFileFs() =
+    inherit Node()
 
     (* Members *)
-
-    let title = "Origami Editor"
-
     let mutable FoldFile = Fold.Empty
 
     let mutable FoldFilePath: string option = None
@@ -19,12 +16,6 @@ type MainPanelFs() =
     let updateFrame update =
         FoldFile <- Fold.updateFrame FrameIndex update FoldFile
 
-
-    (* Constructor *)
-
-    override this._Ready() = OS.SetWindowTitle title
-
-
     (* Functions *)
 
     member this.propagateToFields() =
@@ -32,31 +23,30 @@ type MainPanelFs() =
         this.propagateFrameToFields ()
 
     member this.propagateFoldToFields() =
+        let root = RootNodeFs.get this
+
         // Single Line Text
         let lineEditItems =
-            [ ("Gui Container/Gui Body/File Panel/HBox/Spec/Spec Edit", FoldFile.spec.ToString())
-              ("Gui Container/Gui Body/File Panel/HBox/Creator/Creator Edit", FoldFile.creator)
-              ("Gui Container/Gui Body/File Panel/HBox/Author/Author Edit", FoldFile.author)
-              ("Gui Container/Gui Body/File Panel/HBox/Title/Title Edit", FoldFile.title) ]
+            [ (MetadataNode.FileSpec, FoldFile.spec.ToString())
+              (MetadataNode.FileCreator, FoldFile.creator)
+              (MetadataNode.FileAuthor, FoldFile.author)
+              (MetadataNode.FileTitle, FoldFile.title) ]
 
-        for (nodePath, updatedValue) in lineEditItems do
-            this.GetNode<LineEdit>(new NodePath(nodePath)).Text <- updatedValue
+        for (nodeType, updatedValue) in lineEditItems do
+            (root.nodeOf nodeType :?> LineEdit).Text <- updatedValue
 
-        // Description Updating
-        let descriptionPath =
-            "Gui Container/Gui Body/File Panel/HBox/Description/Description Edit"
-        this.GetNode<TextEdit>(new NodePath(descriptionPath)).Text <- FoldFile.description
+        (root.nodeOf MetadataNode.FileDescription :?> TextEdit).Text <- FoldFile.description
 
         // Classes
         let classesNode =
-            this.GetNode<FileClassesFs>(new NodePath("Gui Container/Gui Body/File Panel/HBox/Classes/Classes List"))
+            (root.nodeOf MetadataNode.FileClasses :?> FileClassesFs)
 
         for fileClass in FoldFile.classes do
             classesNode.Select fileClass
 
         // Frames
         let framesNode =
-            this.GetNode<ItemList>(new NodePath("Gui Container/Gui Body/File Panel/HBox/Frames/Frames List"))
+            (root.nodeOf MetadataNode.FileFrames :?> ItemList)
 
         let frames =
             FoldFile.frames
@@ -71,6 +61,8 @@ type MainPanelFs() =
         framesNode.Select(0)
 
     member this.propagateFrameToFields() =
+        let root = RootNodeFs.get this
+
         let frame =
             if FrameIndex = 0 then
                 FoldFile.keyFrame
@@ -78,40 +70,33 @@ type MainPanelFs() =
                 List.tryItem (FrameIndex - 1) (FoldFile.frames)
                 |> Option.defaultValue Frame.Empty
 
-
         // Single Line Text
         let lineEditItems =
-            [ ("Gui Container/Gui Body/Frame Panel/Hbox/Author/Author Edit", frame.author)
-              ("Gui Container/Gui Body/Frame Panel/Hbox/Title/Title Edit", frame.title) ]
+            [ (MetadataNode.FrameAuthor, frame.author)
+              (MetadataNode.FrameTitle, frame.title) ]
 
-        for (nodePath, updatedValue) in lineEditItems do
-            this.GetNode<LineEdit>(new NodePath(nodePath)).Text <- updatedValue
+        for (nodeType, updatedValue) in lineEditItems do
+            (root.nodeOf nodeType :?> LineEdit).Text <- updatedValue
 
-        // Description Update
-        let descriptionPath =
-            "Gui Container/Gui Body/Frame Panel/Hbox/Description/Description Edit"
-        this.GetNode<TextEdit>(new NodePath(descriptionPath)).Text <- frame.description
+        (root.nodeOf MetadataNode.FrameDescription :?> TextEdit).Text <- frame.description
 
         // Classes
         let classesNode =
-            this.GetNode<FrameClassesFs>(new NodePath("Gui Container/Gui Body/Frame Panel/Hbox/Classes/Classes List"))
+            root.nodeOf MetadataNode.FrameClasses :?> FrameClassesFs
 
         for frameClass in frame.classes do
             classesNode.Select frameClass
 
         // Attributes
         let attributesNode =
-            this.GetNode<FrameAttributesFs>
-                (new NodePath("Gui Container/Gui Body/Frame Panel/Hbox/Attributes/Attribute List"))
+            root.nodeOf MetadataNode.FrameAttributes :?> FrameAttributesFs
 
         for frameAttribute in frame.attributes do
             attributesNode.Select frameAttribute
 
         // Units
-        let unitNode =
-            this.GetNode<FrameUnitFs>(new NodePath("Gui Container/Gui Body/Frame Panel/Hbox/Unit/Unit List"))
-
-        unitNode.Select(frame.unit)
+        (root.nodeOf MetadataNode.FrameUnit :?> FrameUnitFs)
+            .Select(frame.unit)
 
     (* File Dialog Signals *)
     member this._on_File_Button_CreateNewFile() =
@@ -151,11 +136,8 @@ type MainPanelFs() =
     member this._on_File_Title_Edit_text_changed(title: string) = FoldFile <- Fold.setTitle title FoldFile
 
     member this._on_File_Description_Edit_text_changed() =
-        let descriptionPath =
-            "Gui Container/Gui Body/File Panel/HBox/Description/Description Edit"
-
         let descriptionNode =
-            this.GetNode<TextEdit>(new NodePath(descriptionPath))
+            (RootNodeFs.get this).nodeOf MetadataNode.FileDescription :?> TextEdit
 
         FoldFile <- Fold.setDescription descriptionNode.Text FoldFile
 
@@ -199,7 +181,7 @@ type MainPanelFs() =
 
     member this._on_Frame_Description_Edit_text_changed() =
         let descriptionNode =
-            this.GetNode<TextEdit>(new NodePath("Gui Container/Gui Body/Frame Panel/Hbox/Description/Description Edit"))
+            (RootNodeFs.get this).nodeOf MetadataNode.FrameDescription :?> TextEdit
 
         updateFrame (Frame.setDescription descriptionNode.Text)
 
@@ -238,7 +220,6 @@ type MainPanelFs() =
         updateFrame (frameModifier selectedAttribute)
 
     member this._on_Frame_Attribute_List_nothing_selected() = updateFrame Frame.withoutAttributes
-
 
     member this._on_Frame_Unit_List_item_selected(index: int) =
         let unit = DiscriminatedUnion.fromIndex index

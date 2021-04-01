@@ -1,44 +1,52 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://Gui/MainPanel.cs" type="Script" id=1]
+[ext_resource path="res://Gui/RootNode.cs" type="Script" id=1]
 [ext_resource path="res://Gui/FileMenu.cs" type="Script" id=2]
 [ext_resource path="res://Gui/FileClasses.cs" type="Script" id=3]
 [ext_resource path="res://Gui/FrameClasses.cs" type="Script" id=4]
 [ext_resource path="res://Gui/FrameAttributes.cs" type="Script" id=5]
 [ext_resource path="res://Gui/FrameUnit.cs" type="Script" id=6]
+[ext_resource path="res://Gui/FoldFile.cs" type="Script" id=8]
 
-[node name="PanelContainer" type="PanelContainer"]
+[node name="RootNode" type="Node"]
+script = ExtResource( 1 )
+
+[node name="FoldFile" type="Node" parent="."]
+script = ExtResource( 8 )
+
+[node name="Gui Container" type="VBoxContainer" parent="."]
 margin_right = 1024.0
 margin_bottom = 600.0
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Gui Container" type="VSplitContainer" parent="."]
-margin_left = 7.0
-margin_top = 7.0
-margin_right = 1017.0
-margin_bottom = 593.0
+grow_horizontal = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Header Menu" type="HBoxContainer" parent="Gui Container"]
-margin_right = 1010.0
-margin_bottom = 20.0
+[node name="PanelContainer" type="PanelContainer" parent="Gui Container"]
+margin_right = 1024.0
+margin_bottom = 34.0
 size_flags_horizontal = 3
-size_flags_vertical = 5
 
-[node name="File Button" type="MenuButton" parent="Gui Container/Header Menu"]
+[node name="Header Menu" type="HBoxContainer" parent="Gui Container/PanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 1017.0
+margin_bottom = 27.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="File Button" type="MenuButton" parent="Gui Container/PanelContainer/Header Menu"]
 margin_right = 35.0
 margin_bottom = 20.0
 text = "File"
 script = ExtResource( 2 )
 
-[node name="FileDialog" type="FileDialog" parent="Gui Container/Header Menu/File Button"]
+[node name="FileDialog" type="FileDialog" parent="Gui Container/PanelContainer/Header Menu/File Button"]
 margin_left = 101.836
 margin_top = 44.9194
 margin_right = 947.836
@@ -49,7 +57,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="FileDialogSave" type="FileDialog" parent="Gui Container/Header Menu/File Button"]
+[node name="FileDialogSave" type="FileDialog" parent="Gui Container/PanelContainer/Header Menu/File Button"]
 margin_left = 101.836
 margin_top = 44.9194
 margin_right = 947.836
@@ -58,25 +66,24 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Gui Body" type="HBoxContainer" parent="Gui Container"]
-margin_top = 32.0
-margin_right = 1010.0
-margin_bottom = 586.0
+[node name="Gui Body" type="GridContainer" parent="Gui Container"]
+margin_top = 38.0
+margin_right = 1024.0
+margin_bottom = 600.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-__meta__ = {
-"_edit_use_anchors_": false
-}
+columns = 3
 
 [node name="File Panel" type="PanelContainer" parent="Gui Container/Gui Body"]
 margin_right = 214.0
-margin_bottom = 554.0
+margin_bottom = 562.0
+size_flags_vertical = 3
 
 [node name="HBox" type="VBoxContainer" parent="Gui Container/Gui Body/File Panel"]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 207.0
-margin_bottom = 547.0
+margin_bottom = 555.0
 rect_min_size = Vector2( 200, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -157,7 +164,7 @@ margin_bottom = 24.0
 [node name="Description" type="VSplitContainer" parent="Gui Container/Gui Body/File Panel/HBox"]
 margin_top = 131.0
 margin_right = 200.0
-margin_bottom = 264.0
+margin_bottom = 267.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -169,12 +176,12 @@ text = "Description"
 [node name="Description Edit" type="TextEdit" parent="Gui Container/Gui Body/File Panel/HBox/Description"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 133.0
+margin_bottom = 136.0
 
 [node name="Classes" type="VSplitContainer" parent="Gui Container/Gui Body/File Panel/HBox"]
-margin_top = 268.0
+margin_top = 271.0
 margin_right = 200.0
-margin_bottom = 402.0
+margin_bottom = 407.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -186,7 +193,7 @@ text = "Classes"
 [node name="Classes List" type="ItemList" parent="Gui Container/Gui Body/File Panel/HBox/Classes"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 134.0
+margin_bottom = 136.0
 select_mode = 1
 script = ExtResource( 3 )
 __meta__ = {
@@ -194,9 +201,9 @@ __meta__ = {
 }
 
 [node name="Frames" type="VSplitContainer" parent="Gui Container/Gui Body/File Panel/HBox"]
-margin_top = 406.0
+margin_top = 411.0
 margin_right = 200.0
-margin_bottom = 540.0
+margin_bottom = 548.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -208,50 +215,37 @@ text = "Frames"
 [node name="Frames List" type="ItemList" parent="Gui Container/Gui Body/File Panel/HBox/Frames"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 134.0
+margin_bottom = 137.0
 __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="Crease Pattern Panel" type="PanelContainer" parent="Gui Container/Gui Body"]
+[node name="Hbox" type="VBoxContainer" parent="Gui Container/Gui Body"]
 margin_left = 218.0
-margin_right = 732.0
-margin_bottom = 554.0
-
-[node name="Hbox" type="VBoxContainer" parent="Gui Container/Gui Body/Crease Pattern Panel"]
-margin_left = 7.0
-margin_top = 7.0
-margin_right = 507.0
-margin_bottom = 547.0
+margin_right = 806.0
+margin_bottom = 562.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Crease Pattern Label" type="RichTextLabel" parent="Gui Container/Gui Body/Crease Pattern Panel/Hbox"]
-margin_right = 500.0
-margin_bottom = 15.0
-text = "Crease Pattern"
-fit_content_height = true
-
-[node name="Crease Pattern" type="TextureRect" parent="Gui Container/Gui Body/Crease Pattern Panel/Hbox"]
-margin_top = 19.0
-margin_right = 500.0
-margin_bottom = 540.0
-rect_min_size = Vector2( 500, 500 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-size_flags_stretch_ratio = 5.0
+[node name="Polygon2D" type="Polygon2D" parent="Gui Container/Gui Body/Hbox"]
+position = Vector2( 0, 20.0595 )
+color = Color( 0.890196, 0.878431, 0.823529, 1 )
+polygon = PoolVector2Array( 0, 0, 0, 500, 500, 500, 500, 0 )
 
 [node name="Frame Panel" type="PanelContainer" parent="Gui Container/Gui Body"]
-margin_left = 736.0
-margin_right = 950.0
-margin_bottom = 554.0
+margin_left = 810.0
+margin_right = 1024.0
+margin_bottom = 562.0
+size_flags_vertical = 3
 
 [node name="Hbox" type="VBoxContainer" parent="Gui Container/Gui Body/Frame Panel"]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 207.0
-margin_bottom = 547.0
+margin_bottom = 555.0
 rect_min_size = Vector2( 200, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -300,7 +294,7 @@ margin_bottom = 24.0
 [node name="Description" type="VSplitContainer" parent="Gui Container/Gui Body/Frame Panel/Hbox"]
 margin_top = 75.0
 margin_right = 200.0
-margin_bottom = 188.0
+margin_bottom = 190.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -312,12 +306,12 @@ text = "Description"
 [node name="Description Edit" type="TextEdit" parent="Gui Container/Gui Body/Frame Panel/Hbox/Description"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 113.0
+margin_bottom = 115.0
 
 [node name="Classes" type="VSplitContainer" parent="Gui Container/Gui Body/Frame Panel/Hbox"]
-margin_top = 192.0
+margin_top = 194.0
 margin_right = 200.0
-margin_bottom = 305.0
+margin_bottom = 309.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -329,7 +323,7 @@ text = "Classes"
 [node name="Classes List" type="ItemList" parent="Gui Container/Gui Body/Frame Panel/Hbox/Classes"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 113.0
+margin_bottom = 115.0
 select_mode = 1
 script = ExtResource( 4 )
 __meta__ = {
@@ -337,9 +331,9 @@ __meta__ = {
 }
 
 [node name="Attributes" type="VSplitContainer" parent="Gui Container/Gui Body/Frame Panel/Hbox"]
-margin_top = 309.0
+margin_top = 313.0
 margin_right = 200.0
-margin_bottom = 422.0
+margin_bottom = 428.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -351,7 +345,7 @@ text = "Attributes"
 [node name="Attribute List" type="ItemList" parent="Gui Container/Gui Body/Frame Panel/Hbox/Attributes"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 113.0
+margin_bottom = 115.0
 select_mode = 1
 script = ExtResource( 5 )
 __meta__ = {
@@ -359,9 +353,9 @@ __meta__ = {
 }
 
 [node name="Unit" type="VSplitContainer" parent="Gui Container/Gui Body/Frame Panel/Hbox"]
-margin_top = 426.0
+margin_top = 432.0
 margin_right = 200.0
-margin_bottom = 540.0
+margin_bottom = 548.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -373,7 +367,7 @@ text = "Unit"
 [node name="Unit List" type="ItemList" parent="Gui Container/Gui Body/Frame Panel/Hbox/Unit"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 114.0
+margin_bottom = 116.0
 script = ExtResource( 6 )
 __meta__ = {
 "_editor_description_": ""
@@ -382,25 +376,23 @@ __meta__ = {
 [node name="WindowDialog" type="WindowDialog" parent="."]
 margin_right = 48.0
 margin_bottom = 40.0
-[connection signal="CreateNewFile" from="Gui Container/Header Menu/File Button" to="." method="_on_File_Button_CreateNewFile"]
-[connection signal="file_selected" from="Gui Container/Header Menu/File Button/FileDialog" to="." method="_on_FileDialog_file_selected"]
-[connection signal="file_selected" from="Gui Container/Header Menu/File Button/FileDialogSave" to="." method="_on_FileDialogSave_file_selected"]
-[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Spec/Spec Edit" to="." method="_on_File_Spec_Edit_text_changed"]
-[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Creator/Creator Edit" to="." method="_on_File_Creator_Edit_text_changed"]
-[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Author/Author Edit" to="." method="_on_File_Author_Edit_text_changed"]
-[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Title/Title Edit" to="." method="_on_File_Title_Edit_text_changed"]
-[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Description/Description Edit" to="." method="_on_File_Description_Edit_text_changed"]
-[connection signal="item_selected" from="Gui Container/Gui Body/File Panel/HBox/Classes/Classes List" to="." method="_on_File_Classes_List_item_selected"]
-[connection signal="multi_selected" from="Gui Container/Gui Body/File Panel/HBox/Classes/Classes List" to="." method="_on_File_Classes_List_multi_selected"]
-[connection signal="nothing_selected" from="Gui Container/Gui Body/File Panel/HBox/Classes/Classes List" to="." method="_on_File_Classes_List_nothing_selected"]
-[connection signal="item_selected" from="Gui Container/Gui Body/File Panel/HBox/Frames/Frames List" to="." method="_on_File_Frames_List_item_selected"]
-[connection signal="text_changed" from="Gui Container/Gui Body/Frame Panel/Hbox/Author/Author Edit" to="." method="_on_Frame_Author_Edit_text_changed"]
-[connection signal="text_changed" from="Gui Container/Gui Body/Frame Panel/Hbox/Title/Title Edit" to="." method="_on_Frame_Title_Edit_text_changed"]
-[connection signal="text_changed" from="Gui Container/Gui Body/Frame Panel/Hbox/Description/Description Edit" to="." method="_on_Frame_Description_Edit_text_changed"]
-[connection signal="item_selected" from="Gui Container/Gui Body/Frame Panel/Hbox/Classes/Classes List" to="." method="_on_Frame_Classes_List_item_selected"]
-[connection signal="multi_selected" from="Gui Container/Gui Body/Frame Panel/Hbox/Classes/Classes List" to="." method="_on_Frame_Classes_List_multi_selected"]
+[connection signal="file_selected" from="Gui Container/PanelContainer/Header Menu/File Button/FileDialog" to="FoldFile" method="_on_FileDialog_file_selected"]
+[connection signal="file_selected" from="Gui Container/PanelContainer/Header Menu/File Button/FileDialogSave" to="FoldFile" method="_on_FileDialogSave_file_selected"]
+[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Spec/Spec Edit" to="FoldFile" method="_on_File_Spec_Edit_text_changed"]
+[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Creator/Creator Edit" to="FoldFile" method="_on_File_Creator_Edit_text_changed"]
+[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Author/Author Edit" to="FoldFile" method="_on_File_Author_Edit_text_changed"]
+[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Title/Title Edit" to="FoldFile" method="_on_File_Title_Edit_text_changed"]
+[connection signal="text_changed" from="Gui Container/Gui Body/File Panel/HBox/Description/Description Edit" to="FoldFile" method="_on_File_Description_Edit_text_changed"]
+[connection signal="multi_selected" from="Gui Container/Gui Body/File Panel/HBox/Classes/Classes List" to="FoldFile" method="_on_File_Classes_List_multi_selected"]
+[connection signal="nothing_selected" from="Gui Container/Gui Body/File Panel/HBox/Classes/Classes List" to="FoldFile" method="_on_File_Classes_List_nothing_selected"]
+[connection signal="multi_selected" from="Gui Container/Gui Body/File Panel/HBox/Frames/Frames List" to="FoldFile" method="_on_File_Frames_List_multi_selected"]
+[connection signal="nothing_selected" from="Gui Container/Gui Body/File Panel/HBox/Frames/Frames List" to="FoldFile" method="_on_File_Frames_List_nothing_selected"]
+[connection signal="text_changed" from="Gui Container/Gui Body/Frame Panel/Hbox/Author/Author Edit" to="FoldFile" method="_on_Frame_Author_Edit_text_changed"]
+[connection signal="text_changed" from="Gui Container/Gui Body/Frame Panel/Hbox/Title/Title Edit" to="FoldFile" method="_on_Frame_Title_Edit_text_changed"]
+[connection signal="text_changed" from="Gui Container/Gui Body/Frame Panel/Hbox/Description/Description Edit" to="FoldFile" method="_on_Frame_Description_Edit_text_changed"]
+[connection signal="multi_selected" from="Gui Container/Gui Body/Frame Panel/Hbox/Classes/Classes List" to="FoldFile" method="_on_Frame_Classes_List_multi_selected"]
 [connection signal="nothing_selected" from="Gui Container/Gui Body/Frame Panel/Hbox/Classes/Classes List" to="." method="_on_Frame_Classes_List_nothing_selected"]
-[connection signal="item_selected" from="Gui Container/Gui Body/Frame Panel/Hbox/Attributes/Attribute List" to="." method="_on_Frame_Attribute_List_item_selected"]
 [connection signal="multi_selected" from="Gui Container/Gui Body/Frame Panel/Hbox/Attributes/Attribute List" to="." method="_on_Frame_Attribute_List_multi_selected"]
-[connection signal="nothing_selected" from="Gui Container/Gui Body/Frame Panel/Hbox/Attributes/Attribute List" to="." method="_on_Frame_Attribute_List_nothing_selected"]
-[connection signal="item_selected" from="Gui Container/Gui Body/Frame Panel/Hbox/Unit/Unit List" to="." method="_on_Frame_Unit_List_item_selected"]
+[connection signal="nothing_selected" from="Gui Container/Gui Body/Frame Panel/Hbox/Attributes/Attribute List" to="FoldFile" method="_on_Frame_Attribute_List_nothing_selected"]
+[connection signal="multi_selected" from="Gui Container/Gui Body/Frame Panel/Hbox/Unit/Unit List" to="." method="_on_Fram_Unit_List_multi_selected"]
+[connection signal="nothing_selected" from="Gui Container/Gui Body/Frame Panel/Hbox/Unit/Unit List" to="FoldFile" method="_on_Frame_Unit_List_nothing_selected"]
