@@ -18,7 +18,7 @@ type MetadataNode =
     | FrameUnit
 
 type RootNodeFs() as this =
-    inherit Node()
+    inherit Control()
 
     member this.nodeOf node =
         match node with

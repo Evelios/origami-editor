@@ -1,6 +1,11 @@
 # Normalize files to be checked out based on the system
 * text=auto
 
+
+# Godot binary file types
+*.theme binary
+*.import binary
+
 # Properly detect languages on Github
 *.h linguist-language=cpp
 *.inc linguist-language=cpp
@@ -20,6 +25,7 @@ thirdparty/* linguist-vendored
 *.ico binary
 *.jar binary
 *.png binary
+*.svg binary
 *.ttf binary
 *.tza binary
 *.hdr binary

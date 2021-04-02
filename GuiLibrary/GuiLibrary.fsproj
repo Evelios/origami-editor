@@ -11,6 +11,9 @@
         <Compile Include="RootNode.fs" />
         <Compile Include="FoldFile.fs" />
         <Compile Include="Palette.fs" />
+        <Compile Include="Close.fs" />
+        <Compile Include="Minimize.fs" />
+        <Compile Include="ShrinkExpand.fs" />
     </ItemGroup>
 
     <ItemGroup>
