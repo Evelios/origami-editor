@@ -17,7 +17,11 @@ _global_script_class_icons={
 
 config/name="OrigamiEditor"
 run/main_scene="res://Gui/Gui.tscn"
-config/icon="res://icon.png"
+config/icon="res://Assets/Icons/fold.svg"
+
+[global]
+
+icon=false
 
 [rendering]
 
