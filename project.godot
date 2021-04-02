@@ -19,6 +19,10 @@ config/name="OrigamiEditor"
 run/main_scene="res://Gui/Gui.tscn"
 config/icon="res://Assets/Icons/fold.svg"
 
+[display]
+
+window/size/borderless=true
+
 [global]
 
 icon=false
