@@ -1,7 +1,7 @@
 namespace Fold
 
 
-type StringMap<'a when 'a: comparison>(items: ('a * string) list) as this =
+type StringMap<'a when 'a: comparison>(items: ('a * string) list) =
     let itemIsKey = Map.ofList items
 
     let stringIsKey =

@@ -1,13 +1,13 @@
-using Godot;
 using GuiLibrary;
+using Godot;
 
 public class FileMenu : FileMenuFs
 {
 	[Signal]
 	public delegate void CreateNewFile();
 
-	public override void NewFile()
+	public void NewFile()
 	{
-		EmitSignal(nameof(CreateNewFile));
+		// EmitSignal(nameof(CreateNewFile));
 	}
 }

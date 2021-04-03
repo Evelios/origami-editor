@@ -15,6 +15,7 @@
         <Compile Include="Minimize.fs" />
         <Compile Include="ShrinkExpand.fs" />
         <Compile Include="TitleBar.fs" />
+        <Compile Include="ResizeControl.fs" />
     </ItemGroup>
 
     <ItemGroup>

@@ -17,7 +17,7 @@ type MetadataNode =
     | FrameAttributes
     | FrameUnit
 
-type RootNodeFs() as this =
+type RootNodeFs() =
     inherit Control()
 
     member this.nodeOf node =
