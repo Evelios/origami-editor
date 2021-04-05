@@ -10,6 +10,10 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GuiLibrary", "GuiLibrary\Gu
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Utilities", "Utilities\Utilities.fsproj", "{C2E36D54-47EB-4F04-B2FC-7B58ECBBC379}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CreasePattern", "CreasePattern\CreasePattern.fsproj", "{8A5FD212-A4F0-4CBA-A4BF-631B044AAEB0}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CreasePatternTests", "CreasePatternTests\CreasePatternTests.fsproj", "{DACBD2CE-E14F-44EE-B752-12543919BCE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 	Debug|Any CPU = Debug|Any CPU
@@ -47,5 +51,17 @@ Global
 		{C2E36D54-47EB-4F04-B2FC-7B58ECBBC379}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
 		{C2E36D54-47EB-4F04-B2FC-7B58ECBBC379}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{C2E36D54-47EB-4F04-B2FC-7B58ECBBC379}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+		{8A5FD212-A4F0-4CBA-A4BF-631B044AAEB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A5FD212-A4F0-4CBA-A4BF-631B044AAEB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A5FD212-A4F0-4CBA-A4BF-631B044AAEB0}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A5FD212-A4F0-4CBA-A4BF-631B044AAEB0}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{8A5FD212-A4F0-4CBA-A4BF-631B044AAEB0}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A5FD212-A4F0-4CBA-A4BF-631B044AAEB0}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+		{DACBD2CE-E14F-44EE-B752-12543919BCE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DACBD2CE-E14F-44EE-B752-12543919BCE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DACBD2CE-E14F-44EE-B752-12543919BCE3}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DACBD2CE-E14F-44EE-B752-12543919BCE3}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{DACBD2CE-E14F-44EE-B752-12543919BCE3}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{DACBD2CE-E14F-44EE-B752-12543919BCE3}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal

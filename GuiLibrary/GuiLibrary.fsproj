@@ -16,6 +16,7 @@
         <Compile Include="ShrinkExpand.fs" />
         <Compile Include="TitleBar.fs" />
         <Compile Include="ResizeControl.fs" />
+        <Compile Include="CreasePattern\Container.fs" />
     </ItemGroup>
 
     <ItemGroup>

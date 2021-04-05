@@ -37,7 +37,6 @@ anchor_bottom = 1.0
 margin_left = 3.0
 margin_top = 3.0
 margin_right = -3.0
-margin_bottom = -3.0
 grow_horizontal = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -126,21 +125,21 @@ script = ExtResource( 9 )
 [node name="Gui Body" type="GridContainer" parent="Gui Container"]
 margin_top = 36.0
 margin_right = 1018.0
-margin_bottom = 594.0
+margin_bottom = 597.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 3
 
 [node name="File Panel" type="PanelContainer" parent="Gui Container/Gui Body"]
 margin_right = 212.0
-margin_bottom = 558.0
+margin_bottom = 561.0
 size_flags_vertical = 3
 
 [node name="HBox" type="VBoxContainer" parent="Gui Container/Gui Body/File Panel"]
 margin_left = 6.0
 margin_top = 6.0
 margin_right = 206.0
-margin_bottom = 552.0
+margin_bottom = 555.0
 rect_min_size = Vector2( 200, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -229,7 +228,7 @@ caret_blink_speed = 0.5
 [node name="Description" type="VSplitContainer" parent="Gui Container/Gui Body/File Panel/HBox"]
 margin_top = 111.0
 margin_right = 200.0
-margin_bottom = 256.0
+margin_bottom = 257.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -241,12 +240,12 @@ text = "Description"
 [node name="Description Edit" type="TextEdit" parent="Gui Container/Gui Body/File Panel/HBox/Description"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 145.0
+margin_bottom = 146.0
 
 [node name="Classes" type="VSplitContainer" parent="Gui Container/Gui Body/File Panel/HBox"]
-margin_top = 256.0
+margin_top = 257.0
 margin_right = 200.0
-margin_bottom = 401.0
+margin_bottom = 403.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -258,7 +257,7 @@ text = "Classes"
 [node name="Classes List" type="ItemList" parent="Gui Container/Gui Body/File Panel/HBox/Classes"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 145.0
+margin_bottom = 146.0
 select_mode = 1
 script = ExtResource( 3 )
 __meta__ = {
@@ -266,9 +265,9 @@ __meta__ = {
 }
 
 [node name="Frames" type="VSplitContainer" parent="Gui Container/Gui Body/File Panel/HBox"]
-margin_top = 401.0
+margin_top = 403.0
 margin_right = 200.0
-margin_bottom = 546.0
+margin_bottom = 549.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -280,39 +279,31 @@ text = "Frames"
 [node name="Frames List" type="ItemList" parent="Gui Container/Gui Body/File Panel/HBox/Frames"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 145.0
+margin_bottom = 146.0
 __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="Crease Pattern Editor" type="VBoxContainer" parent="Gui Container/Gui Body"]
-margin_left = 212.0
-margin_right = 806.0
-margin_bottom = 558.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="GraphEdit" parent="Gui Container/Gui Body/Crease Pattern Editor" instance=ExtResource( 18 )]
+[node name="Crease Pattern" parent="Gui Container/Gui Body" instance=ExtResource( 18 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 594.0
-margin_bottom = 558.0
-scroll_offset = Vector2( -4, -2 )
+margin_left = 212.0
+margin_right = 806.0
+margin_bottom = 561.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Frame Panel" type="PanelContainer" parent="Gui Container/Gui Body"]
 margin_left = 806.0
 margin_right = 1018.0
-margin_bottom = 558.0
+margin_bottom = 561.0
 size_flags_vertical = 3
 
 [node name="Hbox" type="VBoxContainer" parent="Gui Container/Gui Body/Frame Panel"]
 margin_left = 6.0
 margin_top = 6.0
 margin_right = 206.0
-margin_bottom = 552.0
+margin_bottom = 555.0
 rect_min_size = Vector2( 200, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -365,7 +356,7 @@ caret_blink_speed = 0.5
 [node name="Description" type="VSplitContainer" parent="Gui Container/Gui Body/Frame Panel/Hbox"]
 margin_top = 63.0
 margin_right = 200.0
-margin_bottom = 183.0
+margin_bottom = 184.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -377,12 +368,12 @@ text = "Description"
 [node name="Description Edit" type="TextEdit" parent="Gui Container/Gui Body/Frame Panel/Hbox/Description"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 120.0
+margin_bottom = 121.0
 
 [node name="Classes" type="VSplitContainer" parent="Gui Container/Gui Body/Frame Panel/Hbox"]
-margin_top = 183.0
+margin_top = 184.0
 margin_right = 200.0
-margin_bottom = 304.0
+margin_bottom = 306.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -394,7 +385,7 @@ text = "Classes"
 [node name="Classes List" type="ItemList" parent="Gui Container/Gui Body/Frame Panel/Hbox/Classes"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 121.0
+margin_bottom = 122.0
 select_mode = 1
 script = ExtResource( 4 )
 __meta__ = {
@@ -402,9 +393,9 @@ __meta__ = {
 }
 
 [node name="Attributes" type="VSplitContainer" parent="Gui Container/Gui Body/Frame Panel/Hbox"]
-margin_top = 304.0
+margin_top = 306.0
 margin_right = 200.0
-margin_bottom = 425.0
+margin_bottom = 427.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -424,9 +415,9 @@ __meta__ = {
 }
 
 [node name="Unit" type="VSplitContainer" parent="Gui Container/Gui Body/Frame Panel/Hbox"]
-margin_top = 425.0
+margin_top = 427.0
 margin_right = 200.0
-margin_bottom = 546.0
+margin_bottom = 549.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -438,7 +429,7 @@ text = "Unit"
 [node name="Unit List" type="ItemList" parent="Gui Container/Gui Body/Frame Panel/Hbox/Unit"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 121.0
+margin_bottom = 122.0
 script = ExtResource( 6 )
 __meta__ = {
 "_editor_description_": ""
