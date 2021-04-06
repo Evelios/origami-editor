@@ -16,7 +16,7 @@ margin_left = 6.0
 margin_top = 6.0
 margin_right = 1018.0
 margin_bottom = 594.0
-color = Color( 0.34902, 0.317647, 0.317647, 1 )
+color = Color( 0.223529, 0.223529, 0.223529, 1 )
 
 [node name="HScrollBar" type="HScrollBar" parent="Background"]
 anchor_top = 1.0
@@ -65,7 +65,7 @@ __meta__ = {
 [node name="Line2D" type="Line2D" parent="Center Container/Crease Pattern"]
 points = PoolVector2Array( 0, 0, 500, 0, 500, 500, 0, 500, 0, 0 )
 width = 4.0
-default_color = Color( 0.454902, 0.580392, 0.627451, 1 )
+default_color = Color( 0.152941, 0.337255, 0.419608, 1 )
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2

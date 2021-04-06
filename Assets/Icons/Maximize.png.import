@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/maximize.svg-f707f509464f78de7842f8b9cc9defb3.stex"
+path="res://.import/Maximize.png-9829a2f56433aa051fdc6deaa7499e77.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Icons/maximize.svg"
-dest_files=[ "res://.import/maximize.svg-f707f509464f78de7842f8b9cc9defb3.stex" ]
+source_file="res://Assets/Icons/Maximize.png"
+dest_files=[ "res://.import/Maximize.png-9829a2f56433aa051fdc6deaa7499e77.stex" ]
 
 [params]
 

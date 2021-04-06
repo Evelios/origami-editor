@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/shrink.svg-92f3b8088ebaba9611697f5bb5be2f88.stex"
+path="res://.import/Minimize.png-2772291a4c065f930c54d6b97bd91128.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Icons/shrink.svg"
-dest_files=[ "res://.import/shrink.svg-92f3b8088ebaba9611697f5bb5be2f88.stex" ]
+source_file="res://Assets/Icons/Minimize.png"
+dest_files=[ "res://.import/Minimize.png-2772291a4c065f930c54d6b97bd91128.stex" ]
 
 [params]
 

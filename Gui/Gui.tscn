@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://Gui/RootNode.cs" type="Script" id=1]
 [ext_resource path="res://Gui/FileMenu.cs" type="Script" id=2]
@@ -9,15 +9,27 @@
 [ext_resource path="res://Assets/theme.theme" type="Theme" id=7]
 [ext_resource path="res://Gui/FoldFile.cs" type="Script" id=8]
 [ext_resource path="res://Gui/Close.cs" type="Script" id=9]
-[ext_resource path="res://Assets/Icons/minimize.svg" type="Texture" id=10]
+[ext_resource path="res://Assets/Icons/Maximize.png" type="Texture" id=10]
 [ext_resource path="res://Gui/Minimize.cs" type="Script" id=11]
-[ext_resource path="res://Assets/Icons/maximize.svg" type="Texture" id=12]
-[ext_resource path="res://Assets/Icons/close.svg" type="Texture" id=13]
+[ext_resource path="res://Assets/Icons/Maximize_hover_x24.png" type="Texture" id=12]
+[ext_resource path="res://Assets/Icons/Maximize_pressed_x24.png" type="Texture" id=13]
 [ext_resource path="res://Gui/ShrinkMaximize.cs" type="Script" id=14]
 [ext_resource path="res://Assets/Icons/fold.svg" type="Texture" id=15]
 [ext_resource path="res://Gui/TitleBar.cs" type="Script" id=16]
 [ext_resource path="res://Gui/ResizeControl.cs" type="Script" id=17]
 [ext_resource path="res://Assets/Scenes/CreasePattern.tscn" type="PackedScene" id=18]
+[ext_resource path="res://Assets/Icons/Shrink.png" type="Texture" id=19]
+[ext_resource path="res://Assets/Icons/Close.png" type="Texture" id=20]
+[ext_resource path="res://Assets/Icons/Close_hover_x24.png" type="Texture" id=21]
+[ext_resource path="res://Assets/Icons/Close_pressed_x24.png" type="Texture" id=22]
+[ext_resource path="res://Assets/Icons/Minimize.png" type="Texture" id=23]
+[ext_resource path="res://Assets/Icons/Shrink_hover_x24.png" type="Texture" id=24]
+[ext_resource path="res://Assets/Icons/Minimize_hover_x24.png" type="Texture" id=25]
+[ext_resource path="res://Assets/Icons/Minimize_pressed_x24.png" type="Texture" id=26]
+[ext_resource path="res://Assets/Icons/Shrink_pressed_x24.png" type="Texture" id=27]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.12549, 0.12549, 0.12549, 1 )
 
 [node name="RootNode" type="Control"]
 anchor_right = 1.0
@@ -46,15 +58,14 @@ __meta__ = {
 
 [node name="Title Bar" type="PanelContainer" parent="Gui Container"]
 margin_right = 1018.0
-margin_bottom = 36.0
+margin_bottom = 24.0
 size_flags_horizontal = 3
+custom_styles/panel = SubResource( 1 )
 script = ExtResource( 16 )
 
 [node name="Menu Options" type="HBoxContainer" parent="Gui Container/Title Bar"]
-margin_left = 6.0
-margin_top = 6.0
-margin_right = 65.0
-margin_bottom = 30.0
+margin_right = 59.0
+margin_bottom = 24.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 __meta__ = {
@@ -94,10 +105,9 @@ __meta__ = {
 }
 
 [node name="Window Buttons" type="HBoxContainer" parent="Gui Container/Title Bar"]
-margin_left = 940.0
-margin_top = 6.0
-margin_right = 1012.0
-margin_bottom = 30.0
+margin_left = 922.0
+margin_right = 1018.0
+margin_bottom = 24.0
 size_flags_horizontal = 8
 size_flags_vertical = 0
 alignment = 2
@@ -105,25 +115,40 @@ alignment = 2
 [node name="Minimize" type="TextureButton" parent="Gui Container/Title Bar/Window Buttons"]
 margin_right = 24.0
 margin_bottom = 24.0
-texture_normal = ExtResource( 10 )
+texture_normal = ExtResource( 23 )
+texture_pressed = ExtResource( 26 )
+texture_hover = ExtResource( 25 )
 script = ExtResource( 11 )
 
-[node name="ShrinkMaximize" type="TextureButton" parent="Gui Container/Title Bar/Window Buttons"]
+[node name="Shrink" type="TextureButton" parent="Gui Container/Title Bar/Window Buttons"]
 margin_left = 24.0
 margin_right = 48.0
 margin_bottom = 24.0
-texture_normal = ExtResource( 12 )
+texture_normal = ExtResource( 19 )
+texture_pressed = ExtResource( 27 )
+texture_hover = ExtResource( 24 )
 script = ExtResource( 14 )
 
-[node name="Close" type="TextureButton" parent="Gui Container/Title Bar/Window Buttons"]
+[node name="Maximize" type="TextureButton" parent="Gui Container/Title Bar/Window Buttons"]
 margin_left = 48.0
 margin_right = 72.0
 margin_bottom = 24.0
-texture_normal = ExtResource( 13 )
+texture_normal = ExtResource( 10 )
+texture_pressed = ExtResource( 13 )
+texture_hover = ExtResource( 12 )
+script = ExtResource( 14 )
+
+[node name="Close" type="TextureButton" parent="Gui Container/Title Bar/Window Buttons"]
+margin_left = 72.0
+margin_right = 96.0
+margin_bottom = 24.0
+texture_normal = ExtResource( 20 )
+texture_pressed = ExtResource( 22 )
+texture_hover = ExtResource( 21 )
 script = ExtResource( 9 )
 
 [node name="Gui Body" type="GridContainer" parent="Gui Container"]
-margin_top = 36.0
+margin_top = 24.0
 margin_right = 1018.0
 margin_bottom = 597.0
 size_flags_horizontal = 3
@@ -132,14 +157,14 @@ columns = 3
 
 [node name="File Panel" type="PanelContainer" parent="Gui Container/Gui Body"]
 margin_right = 212.0
-margin_bottom = 561.0
+margin_bottom = 573.0
 size_flags_vertical = 3
 
 [node name="HBox" type="VBoxContainer" parent="Gui Container/Gui Body/File Panel"]
 margin_left = 6.0
 margin_top = 6.0
 margin_right = 206.0
-margin_bottom = 555.0
+margin_bottom = 567.0
 rect_min_size = Vector2( 200, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -228,7 +253,7 @@ caret_blink_speed = 0.5
 [node name="Description" type="VSplitContainer" parent="Gui Container/Gui Body/File Panel/HBox"]
 margin_top = 111.0
 margin_right = 200.0
-margin_bottom = 257.0
+margin_bottom = 261.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -240,12 +265,12 @@ text = "Description"
 [node name="Description Edit" type="TextEdit" parent="Gui Container/Gui Body/File Panel/HBox/Description"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 146.0
+margin_bottom = 150.0
 
 [node name="Classes" type="VSplitContainer" parent="Gui Container/Gui Body/File Panel/HBox"]
-margin_top = 257.0
+margin_top = 261.0
 margin_right = 200.0
-margin_bottom = 403.0
+margin_bottom = 411.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -257,7 +282,7 @@ text = "Classes"
 [node name="Classes List" type="ItemList" parent="Gui Container/Gui Body/File Panel/HBox/Classes"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 146.0
+margin_bottom = 150.0
 select_mode = 1
 script = ExtResource( 3 )
 __meta__ = {
@@ -265,9 +290,9 @@ __meta__ = {
 }
 
 [node name="Frames" type="VSplitContainer" parent="Gui Container/Gui Body/File Panel/HBox"]
-margin_top = 403.0
+margin_top = 411.0
 margin_right = 200.0
-margin_bottom = 549.0
+margin_bottom = 561.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -279,7 +304,7 @@ text = "Frames"
 [node name="Frames List" type="ItemList" parent="Gui Container/Gui Body/File Panel/HBox/Frames"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 146.0
+margin_bottom = 150.0
 __meta__ = {
 "_editor_description_": ""
 }
@@ -289,21 +314,21 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 212.0
 margin_right = 806.0
-margin_bottom = 561.0
+margin_bottom = 573.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Frame Panel" type="PanelContainer" parent="Gui Container/Gui Body"]
 margin_left = 806.0
 margin_right = 1018.0
-margin_bottom = 561.0
+margin_bottom = 573.0
 size_flags_vertical = 3
 
 [node name="Hbox" type="VBoxContainer" parent="Gui Container/Gui Body/Frame Panel"]
 margin_left = 6.0
 margin_top = 6.0
 margin_right = 206.0
-margin_bottom = 555.0
+margin_bottom = 567.0
 rect_min_size = Vector2( 200, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -356,7 +381,7 @@ caret_blink_speed = 0.5
 [node name="Description" type="VSplitContainer" parent="Gui Container/Gui Body/Frame Panel/Hbox"]
 margin_top = 63.0
 margin_right = 200.0
-margin_bottom = 184.0
+margin_bottom = 187.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -368,12 +393,12 @@ text = "Description"
 [node name="Description Edit" type="TextEdit" parent="Gui Container/Gui Body/Frame Panel/Hbox/Description"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 121.0
+margin_bottom = 124.0
 
 [node name="Classes" type="VSplitContainer" parent="Gui Container/Gui Body/Frame Panel/Hbox"]
-margin_top = 184.0
+margin_top = 187.0
 margin_right = 200.0
-margin_bottom = 306.0
+margin_bottom = 312.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -385,7 +410,7 @@ text = "Classes"
 [node name="Classes List" type="ItemList" parent="Gui Container/Gui Body/Frame Panel/Hbox/Classes"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 122.0
+margin_bottom = 125.0
 select_mode = 1
 script = ExtResource( 4 )
 __meta__ = {
@@ -393,9 +418,9 @@ __meta__ = {
 }
 
 [node name="Attributes" type="VSplitContainer" parent="Gui Container/Gui Body/Frame Panel/Hbox"]
-margin_top = 306.0
+margin_top = 312.0
 margin_right = 200.0
-margin_bottom = 427.0
+margin_bottom = 436.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -407,7 +432,7 @@ text = "Attributes"
 [node name="Attribute List" type="ItemList" parent="Gui Container/Gui Body/Frame Panel/Hbox/Attributes"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 121.0
+margin_bottom = 124.0
 select_mode = 1
 script = ExtResource( 5 )
 __meta__ = {
@@ -415,9 +440,9 @@ __meta__ = {
 }
 
 [node name="Unit" type="VSplitContainer" parent="Gui Container/Gui Body/Frame Panel/Hbox"]
-margin_top = 427.0
+margin_top = 436.0
 margin_right = 200.0
-margin_bottom = 549.0
+margin_bottom = 561.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -429,7 +454,7 @@ text = "Unit"
 [node name="Unit List" type="ItemList" parent="Gui Container/Gui Body/Frame Panel/Hbox/Unit"]
 margin_top = 26.0
 margin_right = 200.0
-margin_bottom = 122.0
+margin_bottom = 125.0
 script = ExtResource( 6 )
 __meta__ = {
 "_editor_description_": ""

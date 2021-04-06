@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/close.svg-c407afd9401fe64d159b8d2860bf6eb3.stex"
+path="res://.import/Close.png-e591da37883b8956c394e7f7ad15d6bb.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Icons/close.svg"
-dest_files=[ "res://.import/close.svg-c407afd9401fe64d159b8d2860bf6eb3.stex" ]
+source_file="res://Assets/Icons/Close.png"
+dest_files=[ "res://.import/Close.png-e591da37883b8956c394e7f7ad15d6bb.stex" ]
 
 [params]
 
