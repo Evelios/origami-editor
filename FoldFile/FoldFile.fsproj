@@ -2,7 +2,8 @@
 
     <PropertyGroup>
         <RootNamespace>Fold</RootNamespace>
-        <TargetFramework>net472</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
