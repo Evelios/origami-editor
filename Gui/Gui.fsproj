@@ -7,6 +7,8 @@
 
     <ItemGroup>
         <Compile Include="CreasePatternCanvas.fs" />
+        <Compile Include="FileSettings.fs" />
+        <Compile Include="FileMenu.fs" />
         <Compile Include="Shell.fs" />
         <Compile Include="Program.fs" />
         <AvaloniaResource Include="**\*.xaml" />

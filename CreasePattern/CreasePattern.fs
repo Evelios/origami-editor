@@ -9,10 +9,14 @@ type Edge =
     | Valley
 
 type Label = None
-type Unit = Unitless
+
+type LengthUnit =
+    | Unitless
+    | Pixels
+    static member all = [ Unitless; Pixels ]
 
 type CreasePattern =
-    { units: Unit
+    { units: LengthUnit
       graph: Graph<Vector, Label, Edge> }
 
 
@@ -22,7 +26,7 @@ module CreasePattern =
      * has a width and height of 1.
      *)
     let create : CreasePattern =
-        { units = Unit.Unitless
+        { units = LengthUnit.Unitless
           graph = Graph.empty }
 
     //              let vertices =

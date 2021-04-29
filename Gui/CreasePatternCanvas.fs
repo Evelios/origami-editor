@@ -3,6 +3,7 @@ namespace Gui
 module CreasePatternCanvas =
 
     open Avalonia.FuncUI.DSL
+    open Avalonia.Controls
     open CreasePattern
 
     type State = { creasePattern: CreasePattern }
@@ -16,4 +17,7 @@ module CreasePatternCanvas =
         match msg with
         | _ -> state
 
-    let view (state: State) dispatch = Canvas.create []
+    let view (state: State) dispatch = Canvas.create [
+        Canvas.background "#ffffff"
+        
+    ]
