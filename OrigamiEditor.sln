@@ -10,6 +10,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CreasePattern", "CreasePatt
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CreasePatternTests", "CreasePatternTests\CreasePatternTests.fsproj", "{DACBD2CE-E14F-44EE-B752-12543919BCE3}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gui", "Gui\Gui.fsproj", "{A754205B-4549-4ACF-81AF-BC9EEFDAC918}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 	Debug|Any CPU = Debug|Any CPU
@@ -47,5 +49,11 @@ Global
 		{DACBD2CE-E14F-44EE-B752-12543919BCE3}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
 		{DACBD2CE-E14F-44EE-B752-12543919BCE3}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{DACBD2CE-E14F-44EE-B752-12543919BCE3}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+		{A754205B-4549-4ACF-81AF-BC9EEFDAC918}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A754205B-4549-4ACF-81AF-BC9EEFDAC918}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A754205B-4549-4ACF-81AF-BC9EEFDAC918}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A754205B-4549-4ACF-81AF-BC9EEFDAC918}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{A754205B-4549-4ACF-81AF-BC9EEFDAC918}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{A754205B-4549-4ACF-81AF-BC9EEFDAC918}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -21,7 +21,7 @@ module CreasePattern =
      * the square sheet of paper using cartesian coordinates. The bottom left corner is the origin (0, 0) and the paper
      * has a width and height of 1.
      *)
-    let empty : CreasePattern =
+    let create : CreasePattern =
         { units = Unit.Unitless
           graph = Graph.empty }
 
