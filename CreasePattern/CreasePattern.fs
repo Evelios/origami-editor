@@ -2,7 +2,6 @@
 
 open FSharp.FGL
 
-
 type Edge =
     | Boundary
     | Mountain
@@ -13,7 +12,6 @@ type Label = None
 type LengthUnit =
     | Unitless
     | Pixels
-    static member all = [ Unitless; Pixels ]
 
 type CreasePattern =
     { units: LengthUnit

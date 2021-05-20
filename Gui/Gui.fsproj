@@ -6,11 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="CreasePatternCanvas.fs" />
-        <Compile Include="FileSettings.fs" />
-        <Compile Include="FileMenu.fs" />
-        <Compile Include="Shell.fs" />
-        <Compile Include="Program.fs" />
         <AvaloniaResource Include="**\*.xaml" />
     </ItemGroup>
     
@@ -27,5 +22,15 @@
 
     <ItemGroup>
       <ProjectReference Include="..\CreasePattern\CreasePattern.fsproj" />
+      <ProjectReference Include="..\Utilities\Utilities.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Include="Widgits\DropdownSelection.fs" />
+      <Compile Include="CreasePatternCanvas.fs" />
+      <Compile Include="FileSettings.fs" />
+      <Compile Include="FileMenu.fs" />
+      <Compile Include="Shell.fs" />
+      <Compile Include="Program.fs" />
     </ItemGroup>
 </Project>
