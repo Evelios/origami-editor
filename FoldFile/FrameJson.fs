@@ -10,18 +10,18 @@ type FrameJson =
       frameAttributes: FrameAttribute list option
       frameUnit: Unit option
       [<JsonField(Transform = typeof<Vertex.ListTransform>)>]
-      verticesCoords: (Vertex list) option
+      verticesCoords: Vertex list option
       verticesVertices: int list option
       verticesFaces: int list list option
-      edgesVertices: ((int * int) list) option
-      edgesFaces: ((int * int option) list) option
+      edgesVertices: (int * int) list option
+      edgesFaces: (int * int option) list option
       edgesAssignment: EdgeAssignment list option
       edgesFoldAngle: float list option
       edgesLength: float list option
-      edgeOrders: ((int (*edge id*)  * int (*edge id*)  * int (*order*) ) list) option
+      edgeOrders: (int (*edge id*)  * int (*edge id*)  * int (*order*) ) list option
       facesVertices: int list list option
       facesEdges: int list list option
-      faceOrders: ((int (*face id*)  * int (*face id*)  * int (*order*) ) list) option }
+      faceOrders: (int (*face id*)  * int (*face id*)  * int (*order*) ) list option }
 
 module FrameJson =
     let nameConversion =
@@ -33,7 +33,7 @@ module FrameJson =
 
 
     /// Convert the frame type to a json serializable type
-    let toJsonType (frame: Frame): FrameJson =
+    let toJsonType (frame: Frame) : FrameJson =
         let stringWithDefault =
             function
             | "" -> None
@@ -71,7 +71,7 @@ module FrameJson =
           faceOrders = frame.faces.orders |> listWithDefault }
 
     /// Convert the json serializable type to the frame type
-    let fromJsonType (frameJson: FrameJson): Frame =
+    let fromJsonType (frameJson: FrameJson) : Frame =
         let orEmptyString = Option.defaultValue ""
 
         let toSet =
@@ -117,12 +117,12 @@ module FrameJson =
     let private jsonConfigUnformatted =
         JsonConfig.create (jsonFieldNaming = nameConversion, serializeNone = SerializeNone.Omit, unformatted = true)
 
-    let ToJson (frame: Frame): string =
+    let ToJson (frame: Frame) : string =
         Json.serializeEx jsonConfig (toJsonType frame)
 
-    let ToJsonUnformatted (frame: Frame): string =
+    let ToJsonUnformatted (frame: Frame) : string =
         Json.serializeEx jsonConfigUnformatted (toJsonType frame)
 
-    let FromJson json: Frame =
+    let FromJson json : Frame =
         Json.deserializeEx<FrameJson> jsonConfig json
         |> fromJsonType

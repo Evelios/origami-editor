@@ -43,9 +43,9 @@ type Frame =
 
 module Frame =
 
-    let Create a: Frame = a
+    let Create a : Frame = a
 
-    let Empty: Frame =
+    let Empty : Frame =
         { author = ""
           title = ""
           description = ""
@@ -58,30 +58,33 @@ module Frame =
 
     (* Accessors *)
 
-    let setAuthor author frame: Frame = { frame with author = author }
+    let setAuthor author frame : Frame = { frame with author = author }
 
-    let setTitle title frame: Frame = { frame with title = title }
-    let setDescription description frame: Frame = { frame with description = description }
-    let setClasses classes frame: Frame = { frame with classes = classes }
+    let setTitle title frame : Frame = { frame with title = title }
 
-    let addClass theClass frame: Frame =
+    let setDescription description frame : Frame =
+        { frame with description = description }
+
+    let setClasses classes frame : Frame = { frame with classes = classes }
+
+    let addClass theClass frame : Frame =
         { frame with
               classes = Set.add theClass frame.classes }
 
-    let removeClass theClass frame: Frame =
+    let removeClass theClass frame : Frame =
         { frame with
               classes = Set.remove theClass frame.classes }
 
-    let withoutClasses frame: Frame = { frame with classes = Set.empty }
-    let setAttributes attributes frame: Frame = { frame with attributes = attributes }
+    let withoutClasses frame : Frame = { frame with classes = Set.empty }
+    let setAttributes attributes frame : Frame = { frame with attributes = attributes }
 
-    let addAttribute attribute frame: Frame =
+    let addAttribute attribute frame : Frame =
         { frame with
               attributes = Set.add attribute frame.attributes }
 
-    let removeAttribute attribute frame: Frame =
+    let removeAttribute attribute frame : Frame =
         { frame with
               attributes = Set.remove attribute frame.attributes }
 
-    let withoutAttributes frame: Frame = { frame with attributes = Set.empty }
-    let setUnit unit frame: Frame = { frame with unit = unit }
+    let withoutAttributes frame : Frame = { frame with attributes = Set.empty }
+    let setUnit unit frame : Frame = { frame with unit = unit }

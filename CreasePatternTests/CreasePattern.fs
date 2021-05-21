@@ -9,5 +9,5 @@ let Setup () =
 
 [<Test>]
 let Compilation () =
-    let creasePattern = CreasePattern.empty
+    let creasePattern = CreasePattern.create
     Assert.Pass()

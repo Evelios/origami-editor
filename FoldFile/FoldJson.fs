@@ -17,18 +17,18 @@ type FoldFileJson =
       frameAttributes: FrameAttribute list option
       frameUnit: Unit option
       [<JsonField(Transform = typeof<Vertex.ListTransform>)>]
-      verticesCoords: (Vertex list) option
+      verticesCoords: Vertex list option
       verticesVertices: int list option
       verticesFaces: int list list option
-      edgesVertices: ((int * int) list) option
-      edgesFaces: ((int * int option) list) option
+      edgesVertices: (int * int) list option
+      edgesFaces: (int * int option) list option
       edgesAssignment: EdgeAssignment list option
       edgesFoldAngle: float list option
       edgesLength: float list option
-      edgeOrders: ((int (*edge id*)  * int (*edge id*)  * int (*order*) ) list) option
+      edgeOrders: (int (*edge id*)  * int (*edge id*)  * int (*order*) ) list option
       facesVertices: int list list option
       facesEdges: int list list option
-      faceOrders: ((int (*face id*)  * int (*face id*)  * int (*order*) ) list) option }
+      faceOrders: (int (*face id*)  * int (*face id*)  * int (*order*) ) list option }
 
 module FoldJson =
     // Convert the fold file to a json serializable type

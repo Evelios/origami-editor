@@ -1,7 +1,6 @@
 ﻿namespace CreasePattern
 
 open System
-open MathNet.Numerics.LinearAlgebra
 open MathNet.Spatial.Euclidean
 
 
@@ -20,14 +19,14 @@ type Vector =
     member this.EPSILON = 1e-6
     member this.withinDelta a b = abs (a - b) < this.EPSILON
 
-    override this.Equals(obj: obj): bool =
+    override this.Equals(obj: obj) : bool =
         match obj with
         | :? Vector as other ->
             match (this, other) with
-            | (Vec2 first, Vec2 second) ->
+            | Vec2 first, Vec2 second ->
                 this.withinDelta first.X second.X
                 && this.withinDelta first.Y second.Y
-            | (Vec3 first, Vec3 second) ->
+            | Vec3 first, Vec3 second ->
                 this.withinDelta first.X second.X
                 && this.withinDelta first.Y second.Y
                 && this.withinDelta first.Z second.Z
@@ -37,5 +36,5 @@ type Vector =
     override this.GetHashCode() = failwith "not implemented"
 
 module Vector =
-    let in2D x y: Vector = Vec2(Vector2D(x, y))
-    let in3D x y z: Vector = Vec3(Vector3D(x, y, z))
+    let in2D x y : Vector = Vec2(Vector2D(x, y))
+    let in3D x y z : Vector = Vec3(Vector3D(x, y, z))
