@@ -1,13 +1,12 @@
 namespace Gui
 
-open Avalonia.FuncUI.Types
-open Avalonia.Layout
 
 module Shell =
     open Elmish
     open Avalonia.Controls
     open Avalonia.FuncUI.DSL
-    open Avalonia.FuncUI
+    open Avalonia.FuncUI.Types
+    open Fold
     open Avalonia.FuncUI.Components.Hosts
     open Avalonia.FuncUI.Elmish
 
@@ -19,25 +18,45 @@ module Shell =
         | FileSettingsMsg of FileSettings.Msg
         | CreasePatternCanvasMsg of CreasePatternCanvas.Msg
         | FileMenuMsg of FileMenu.Msg
+        | SelectedFoldFilePath of string array
 
     let init =
         { fileSettings = FileSettings.init
           creasePatternCanvasState = CreasePatternCanvas.init },
         Cmd.none
 
-    let update (msg: Msg) (state: State) : State * Cmd<_> =
+    let update (msg: Msg) (state: State) (window: HostWindow) : State * Cmd<_> =
         match msg with
+        (* Component Messages *)
         | FileSettingsMsg fileSettingsMsg ->
             { state with
-                  fileSettings = FileSettings.update fileSettingsMsg state.fileSettings }
+                  fileSettings = FileSettings.update fileSettingsMsg state.fileSettings },
+            Cmd.none
+
         | CreasePatternCanvasMsg creasePatternCanvasMsg ->
             { state with
                   creasePatternCanvasState =
-                      CreasePatternCanvas.update creasePatternCanvasMsg state.creasePatternCanvasState }
-        | FileMenuMsg fileMenuMsg -> state
-        ,
+                      CreasePatternCanvas.update creasePatternCanvasMsg state.creasePatternCanvasState },
+            Cmd.none
 
-        Cmd.none
+        | FileMenuMsg fileMenuMsg ->
+            match fileMenuMsg with
+            | FileMenu.Msg.OpenFoldFile ->
+                let dialog =
+                    Dialogs.getFileDialog "Fold File" Fold.extensions
+
+                let showDialog window =
+                    dialog.ShowAsync(window) |> Async.AwaitTask
+
+                state, Cmd.OfAsync.perform showDialog window SelectedFoldFilePath
+            | FileMenu.Msg.OpenFileSettings -> state, Cmd.none
+
+        (* Global Messages*)
+        | SelectedFoldFilePath foldFilePaths ->
+            match FileLoader.loadFoldFile foldFilePaths.[0] with
+            | Ok foldContents -> state, Cmd.none
+            | Error _ -> state, Cmd.none
+
 
     let view (state: State) dispatch =
         let body =
@@ -61,10 +80,13 @@ module Shell =
             base.Height <- 600.0
             base.MinWidth <- 800.0
             base.MinHeight <- 600.0
+            this.HasSystemDecorations <- true
 
-            //            this.VisualRoot.VisualRoot.Renderer.DrawFps <- true
-//            this.VisualRoot.VisualRoot.Renderer.DrawDirtyRects <- true
+            let updateWithServices (msg: Msg) (state: State) = update msg state this
 
-            Elmish.Program.mkProgram (fun () -> init) update view
+            Program.mkProgram (fun () -> init) updateWithServices view
             |> Program.withHost this
+#if DEBUG
+            |> Program.withConsoleTrace
+#endif
             |> Program.run

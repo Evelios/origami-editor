@@ -16,6 +16,7 @@
     <ItemGroup>
         <Compile Include="Util.fs" />
         <Compile Include="StringMapTests.fs" />
+        <Compile Include="VertexTests.fs" />
         <Compile Include="FrameTests.fs" />
         <Compile Include="FileTests.fs" />
         <Content Include="basic-integration.fold" />

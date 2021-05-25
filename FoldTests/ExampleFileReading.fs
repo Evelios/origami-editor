@@ -15,5 +15,5 @@ let exampleFoldFiles =
 let exampleFileParsing path =
     Assert.DoesNotThrow(fun () ->
         File.ReadAllText path
-        |> FoldJson.FromJson
+        |> FoldJson.fromJson
         |> ignore)

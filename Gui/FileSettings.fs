@@ -1,15 +1,11 @@
 namespace Gui
 
-open Gui.Widgits
-open Utilities
-
-
 module FileSettings =
 
     open Avalonia.FuncUI.DSL
     open Avalonia.Controls
-    open Avalonia.Layout
-    open CreasePattern
+    open Gui.Widgits
+    open Fold
 
     type State = { unit: LengthUnit }
 

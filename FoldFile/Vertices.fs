@@ -7,9 +7,9 @@ type Vertices =
 
 module Vertices =
 
-    let Create a: Vertices = a
+    let create a: Vertices = a
 
-    let Empty: Vertices =
+    let empty: Vertices =
         { coords = []
           vertices = []
           faces = [] }

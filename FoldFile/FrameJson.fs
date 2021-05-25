@@ -8,7 +8,7 @@ type FrameJson =
       frameDescription: string option
       frameClasses: FrameClass list option
       frameAttributes: FrameAttribute list option
-      frameUnit: Unit option
+      frameUnit: LengthUnit option
       [<JsonField(Transform = typeof<Vertex.ListTransform>)>]
       verticesCoords: Vertex list option
       verticesVertices: int list option
@@ -86,16 +86,16 @@ module FrameJson =
           attributes = frameJson.frameAttributes |> toSet
           unit =
               frameJson.frameUnit
-              |> Option.defaultValue Unit.Unitless
+              |> Option.defaultValue LengthUnit.Unitless
           vertices =
-              Vertices.Create
+              Vertices.create
                   { coords = frameJson.verticesCoords |> Option.defaultValue []
                     vertices =
                         frameJson.verticesVertices
                         |> Option.defaultValue []
                     faces = frameJson.verticesFaces |> Option.defaultValue [] }
           edges =
-              Edges.Create
+              Edges.create
                   { vertices = frameJson.edgesVertices |> Option.defaultValue []
                     faces = frameJson.edgesFaces |> Option.defaultValue []
                     assignment =
@@ -105,7 +105,7 @@ module FrameJson =
                     length = frameJson.edgesLength |> Option.defaultValue []
                     orders = frameJson.edgeOrders |> Option.defaultValue [] }
           faces =
-              Faces.Create
+              Faces.create
                   { vertices = frameJson.facesVertices |> Option.defaultValue []
                     edges = frameJson.facesEdges |> Option.defaultValue []
                     orders = frameJson.faceOrders |> Option.defaultValue [] } }

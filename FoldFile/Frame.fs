@@ -20,7 +20,7 @@ type FrameAttribute =
     | [<JsonUnionCase("nonSelfTouching")>] NonSelfTouching
     | [<JsonUnionCase("nonSelfIntersecting")>] NonSelfIntersecting
 
-type Unit =
+type LengthUnit =
     | [<JsonUnionCase("unit")>] Unitless
     | [<JsonUnionCase("in")>] Inches
     | [<JsonUnionCase("pt")>] Points
@@ -36,27 +36,27 @@ type Frame =
       description: string
       classes: FrameClass Set
       attributes: FrameAttribute Set
-      unit: Unit
+      unit: LengthUnit
       vertices: Vertices
       edges: Edges
       faces: Faces }
 
 module Frame =
 
-    let Create a : Frame = a
+    let create a : Frame = a
 
-    let Empty : Frame =
+    let empty : Frame =
         { author = ""
           title = ""
           description = ""
           classes = Set.empty
           attributes = Set.empty
-          unit = Unit.Unitless
-          vertices = Vertices.Empty
-          edges = Edges.Empty
-          faces = Faces.Empty }
+          unit = LengthUnit.Unitless
+          vertices = Vertices.empty
+          edges = Edges.empty
+          faces = Faces.empty }
 
-    (* Accessors *)
+    (* Modifiers *)
 
     let setAuthor author frame : Frame = { frame with author = author }
 

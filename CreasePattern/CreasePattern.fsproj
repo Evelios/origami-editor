@@ -6,13 +6,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Vector.fs" />
+        <Compile Include="Edge.fs" />
         <Compile Include="CreasePattern.fs" />
+        <Compile Include="Frame.fs" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="FSharp.FGL" Version="0.0.1" />
       <PackageReference Include="MathNet.Spatial" Version="0.6.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FoldFile\FoldFile.fsproj" />
     </ItemGroup>
 
 </Project>

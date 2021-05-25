@@ -12,7 +12,7 @@ let json =
     |> File.ReadAllText
 
 let foldFile =
-    Fold.Create
+    Fold.create
         { spec = 1
           creator = "Thomas Waters"
           author = "Thomas Waters"
@@ -20,7 +20,7 @@ let foldFile =
           description = "Fold Integration Test"
           classes = Set.ofList [ FileClass.Diagrams ]
           keyFrame =
-              (Frame.Create
+              (Frame.create
                   { author = "Thomas Waters"
                     title = "Key Frame"
                     description = "The Mainframe"
@@ -31,20 +31,20 @@ let foldFile =
                         Set.ofList [ FrameAttribute.Geo2D
                                      FrameAttribute.Manifold
                                      FrameAttribute.NonSelfIntersecting ]
-                    unit = Unit.Unitless
+                    unit = LengthUnit.Unitless
                     vertices =
 
-                        (Vertices.Create
+                        (Vertices.create
                             { vertices = [ 0; 1; 2; 3 ]
                               faces = [ [ 0; 1 ]; [ 1; 2 ]; [ 2; 3 ] ]
                               coords =
-                                  [ Vertex.in2d 0.f 0.f
-                                    Vertex.in2d 0.f 1.f
-                                    Vertex.in2d 1.f 0.f
-                                    Vertex.in2d 1.f 1.f ] })
+                                  [ Vertex.in2d 0. 0.
+                                    Vertex.in2d 0. 1.
+                                    Vertex.in2d 1. 0.
+                                    Vertex.in2d 1. 1. ] })
                     edges =
 
-                        (Edges.Create
+                        (Edges.create
                             { vertices = [ (0, 1); (1, 2); (2, 3) ]
                               faces = [ (1, Some 2); (2, None) ]
                               assignment =
@@ -57,7 +57,7 @@ let foldFile =
                               orders = [ (2, 1, -1) ] })
                     faces =
 
-                        (Faces.Create
+                        (Faces.create
                             { vertices = [ [ 0; 1; 2 ]; [ 1; 2; 3 ] ]
                               edges = [ [ 0; 1; 2 ]; [ 1; 2; 3 ] ]
                               orders = [ (1, 2, 0) ] }) })
@@ -65,10 +65,10 @@ let foldFile =
 
 [<Test>]
 let Deserialization () =
-    let actual = FoldJson.FromJson json
+    let actual = FoldJson.fromJson json
     Assert.AreEqual(foldFile, actual)
 
 [<Test>]
 let Serialization () =
-    let actual = FoldJson.ToJson foldFile
+    let actual = FoldJson.toJson foldFile
     Assert.AreEqual(json, actual)

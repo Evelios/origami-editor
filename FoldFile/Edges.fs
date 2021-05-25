@@ -19,9 +19,9 @@ type Edges =
 
 module Edges =
     
-    let Create a: Edges = a
+    let create a: Edges = a
     
-    let Empty: Edges =
+    let empty: Edges =
         { vertices = []
           faces = []
           assignment = []

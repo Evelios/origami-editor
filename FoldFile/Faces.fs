@@ -7,9 +7,9 @@ type Faces =
 
 module Faces =
 
-    let Create a: Faces = a
+    let create a: Faces = a
 
-    let Empty: Faces =
+    let empty: Faces =
         { vertices = []
           edges = []
           orders = [] }

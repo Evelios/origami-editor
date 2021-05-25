@@ -20,41 +20,49 @@ type Fold =
 
 module Fold =
 
-    let Create a: Fold = a
+    let create a : Fold = a
 
-    let Empty =
-        Create
+    let empty =
+        create
             { spec = 1
               creator = ""
               author = ""
               title = ""
               description = ""
               classes = Set.empty
-              keyFrame = Frame.Empty
+              keyFrame = Frame.empty
               frames = [] }
+
+    (* Constants *)
+
+    let extensions =
+        seq {
+            "fold"
+            "json"
+        }
 
 
     (* Modifiers *)
 
-    let setSpec spec file: Fold = { file with spec = spec }
+    let setSpec spec file : Fold = { file with spec = spec }
 
-    let setCreator creator file: Fold = { file with creator = creator }
-    let setAuthor author file: Fold = { file with author = author }
-    let setTitle title file: Fold = { file with title = title }
-    let setDescription description file: Fold = { file with description = description }
-    let setClasses classes file: Fold = { file with classes = classes }
+    let setCreator creator file : Fold = { file with creator = creator }
+    let setAuthor author file : Fold = { file with author = author }
+    let setTitle title file : Fold = { file with title = title }
+    let setDescription description file : Fold = { file with description = description }
+    let setClasses classes file : Fold = { file with classes = classes }
 
-    let addClass theClass file: Fold =
+    let addClass theClass file : Fold =
         { file with
               classes = Set.add theClass file.classes }
 
-    let removeClass theClass file: Fold =
+    let removeClass theClass file : Fold =
         { file with
               classes = Set.remove theClass file.classes }
 
-    let withoutClasses file: Fold = { file with classes = Set.empty }
-    let setKeyframe keyFrame file: Fold = { file with keyFrame = keyFrame }
-    let setFrames frames file: Fold = { file with frames = frames }
+    let withoutClasses file : Fold = { file with classes = Set.empty }
+    let setKeyframe keyFrame file : Fold = { file with keyFrame = keyFrame }
+    let setFrames frames file : Fold = { file with frames = frames }
 
 
     (**
@@ -62,7 +70,7 @@ module Fold =
     This functions existence probably indicates that a dictionary structure is a better representation
     of the fold fold frames.
     *)
-    let updateFrame (frameIndex: int) (update: Frame -> Frame) (fold: Fold): Fold =
+    let updateFrame (frameIndex: int) (update: Frame -> Frame) (fold: Fold) : Fold =
         if frameIndex = 0 then
             { fold with
                   keyFrame = update fold.keyFrame }
@@ -72,6 +80,12 @@ module Fold =
 
         else
             let frames =
-                (List.mapi (fun i frame -> if i = (frameIndex - 1) then update frame else frame)) fold.frames
+                (List.mapi
+                    (fun i frame ->
+                        if i = (frameIndex - 1) then
+                            update frame
+                        else
+                            frame))
+                    fold.frames
 
             setFrames frames fold

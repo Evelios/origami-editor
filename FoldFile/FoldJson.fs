@@ -15,7 +15,7 @@ type FoldFileJson =
       frameDescription: string option
       frameClasses: FrameClass list option
       frameAttributes: FrameAttribute list option
-      frameUnit: Unit option
+      frameUnit: LengthUnit option
       [<JsonField(Transform = typeof<Vertex.ListTransform>)>]
       verticesCoords: Vertex list option
       verticesVertices: int list option
@@ -123,12 +123,12 @@ module FoldJson =
         JsonConfig.create
             (jsonFieldNaming = FrameJson.nameConversion, serializeNone = SerializeNone.Omit, unformatted = true)
 
-    let ToJson (fold: Fold): string =
+    let toJson (fold: Fold): string =
         Json.serializeEx jsonConfig (toJsonType fold)
 
-    let ToJsonUnformatted (fold: Fold): string =
+    let toJsonUnformatted (fold: Fold): string =
         Json.serializeEx jsonConfigUnformatted (toJsonType fold)
 
-    let FromJson json: Fold =
+    let fromJson json: Fold =
         Json.deserializeEx<FoldFileJson> jsonConfig json
         |> fromJsonType
