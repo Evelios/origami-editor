@@ -1,4 +1,4 @@
-namespace Gui
+namespace Gui.Widgets
 
 module Dialogs =
     open System

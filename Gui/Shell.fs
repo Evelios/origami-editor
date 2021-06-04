@@ -14,10 +14,10 @@ module Shell =
 
     open CreasePattern
     open Fold
+    open Gui.Widgets
 
     type State =
-        { fileSettings: FileSettings.State
-          frame: CreasePattern.Frame }
+        { frame: CreasePattern.Frame }
 
     type Msg =
         (* Component Messages *)
@@ -33,8 +33,7 @@ module Shell =
     let title = "Origami Editor"
 
     let init =
-        { fileSettings = FileSettings.init
-          frame = CreasePattern.Frame.create },
+        { frame = CreasePattern.Frame.create },
         Cmd.none
 
     let update (msg: Msg) (state: State) (window: HostWindow) : State * Cmd<_> =
@@ -45,7 +44,7 @@ module Shell =
         (* Component Messages *)
         | FileSettingsMsg fileSettingsMsg ->
             { state with
-                  fileSettings = FileSettings.update fileSettingsMsg state.fileSettings },
+                  frame = FileSettings.update fileSettingsMsg state.frame },
             Cmd.none
 
         | FileMenuMsg fileMenuMsg ->
@@ -97,7 +96,7 @@ module Shell =
     let view (state: State) dispatch =
         let body =
             let children : IView list =
-                [ FileSettings.view state.fileSettings (FileSettingsMsg >> dispatch)
+                [ FileSettings.view state.frame (FileSettingsMsg >> dispatch)
                   CreasePatternCanvas.view state.frame.creasePattern (CreasePatternCanvasMsg >> dispatch) ]
 
             DockPanel.create [ DockPanel.children children ]

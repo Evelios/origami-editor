@@ -39,3 +39,7 @@ module Theme =
            sixth = "#3C3176"
            seventh = "#9BA638"
            eigth = "#632770" |}
+
+    let spacing = {| small = 4.; medium = 8.; large = 16. |}
+    
+    let size = {| small = 150. |}

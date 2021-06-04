@@ -21,7 +21,7 @@ module FileMenu =
     let view dispatch =
         let exampleFiles : IView list =
             let examplesDirectory =
-                Path.Join(__SOURCE_DIRECTORY__, "..", "Assets", "Examples")
+                Path.Join(__SOURCE_DIRECTORY__, "..", "..", "Assets", "Examples")
 
             Directory.GetFiles(examplesDirectory, "*.fold")
             |> Array.map

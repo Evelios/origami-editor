@@ -27,13 +27,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Include="Widgets\DropdownSelection.fs" />
       <Compile Include="Theme.fs" />
-      <Compile Include="Dialogs.fs" />
-      <Compile Include="CreasePatternCanvas.fs" />
       <Compile Include="FileLoader.fs" />
-      <Compile Include="FileSettings.fs" />
-      <Compile Include="FileMenu.fs" />
+      <Compile Include="Widgets\Form.fs" />
+      <Compile Include="Widgets\Dialogs.fs" />
+      <Compile Include="Components\FileMenu.fs" />
+      <Compile Include="Components\FileSettings.fs" />
+      <Compile Include="Components\CreasePatternCanvas.fs" />
       <Compile Include="Shell.fs" />
       <Compile Include="Program.fs" />
     </ItemGroup>
