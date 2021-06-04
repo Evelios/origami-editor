@@ -1,4 +1,4 @@
-﻿namespace Utilities
+﻿namespace Utilities.Extensions
 
 open Microsoft.FSharp.Reflection
 

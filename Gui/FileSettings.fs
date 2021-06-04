@@ -4,7 +4,7 @@ module FileSettings =
 
     open Avalonia.FuncUI.DSL
     open Avalonia.Controls
-    open Gui.Widgits
+    open Gui.Widgets
     open Fold
 
     type State = { unit: LengthUnit }

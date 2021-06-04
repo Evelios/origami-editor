@@ -1,4 +1,4 @@
-﻿namespace Utilities
+﻿namespace Utilities.Conversions
 
 module TryParser =
     // convenient, functional TryParse wrappers returning option<'a>

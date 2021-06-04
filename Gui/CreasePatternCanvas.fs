@@ -8,38 +8,43 @@ module CreasePatternCanvas =
     open Avalonia.FuncUI.DSL
     open Avalonia.Controls
     open Avalonia.Controls.Shapes
+
     open CreasePattern
     open Fold
+    open Utilities.Collections
 
     type Msg = None
 
-    let width = 500.
-    let height = 500.
-    
+    let maxLength = 500.
+
     let theme =
-          {| lineThickness = 2.
-             boundaryColor = Theme.colors.backgroundLight
-             mountainColor = Theme.colors.tertiary
-             valleyColor = Theme.colors.quaternary
-             unassignedColor = Theme.colors.primary
-             flatColor = Theme.colors.backgroundAccent
-          |}
+        {| lineThickness = 2.
+           boundaryColor = Theme.colors.backgroundLight
+           mountainColor = Theme.colors.tertiary
+           valleyColor = Theme.colors.quaternary
+           unassignedColor = Theme.colors.primary
+           flatColor = Theme.colors.backgroundAccent |}
 
 
     (* Drawing *)
 
-    let scaledEdges (creasePattern: CreasePattern) : Edge list =
-        let xRatio =
-            width / (creasePattern.bounds.maxX - creasePattern.bounds.minX)
-
-        let yRatio =
-            height / (creasePattern.bounds.maxY - creasePattern.bounds.minY)
-
-        CreasePattern.edges creasePattern
-        |> List.map (Edge.scale xRatio yRatio 1.)
 
     let canvas (creasePattern: CreasePattern) =
-        let edgeColor (edgeType: EdgeAssignment): string =
+        let creasePatternSize = CreasePattern.size creasePattern
+
+        let pageSize =
+            Size.withMaxSize maxLength creasePatternSize
+
+        let scaledEdges : Edge list =
+            let xRatio = pageSize.width / creasePatternSize.width
+
+            let yRatio =
+                pageSize.height / creasePatternSize.height
+
+            CreasePattern.edges creasePattern
+            |> List.map (Edge.scale xRatio yRatio 1.)
+
+        let edgeColor (edgeType: EdgeAssignment) : string =
             match edgeType with
             | EdgeAssignment.Boundary -> theme.boundaryColor
             | EdgeAssignment.Mountain -> theme.mountainColor
@@ -54,18 +59,16 @@ module CreasePatternCanvas =
                  Line.stroke (edgeColor edge.assignment)
                  Line.strokeThickness theme.lineThickness
                  Line.strokeLineCap Media.PenLineCap.Round ]
-
             :> IView
 
-        let edgeLines =
-            List.map asLine (scaledEdges creasePattern)
+        let edgeLines = List.map asLine scaledEdges
 
-        Canvas.create [ Canvas.height height
-                        Canvas.width width
+        Canvas.create [ Canvas.height pageSize.height
+                        Canvas.width pageSize.width
                         Canvas.background Theme.colors.foreground
                         Canvas.children edgeLines ]
 
-    
+
     let view (creasePattern: CreasePattern) _ =
         DockPanel.create
         <| [ DockPanel.background Theme.colors.background

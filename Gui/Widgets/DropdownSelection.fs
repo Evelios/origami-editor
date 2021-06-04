@@ -1,4 +1,4 @@
-namespace Gui.Widgits
+namespace Gui.Widgets
 
 open Avalonia.FuncUI.Types
 
@@ -8,7 +8,7 @@ module DropdownSelection =
     open Avalonia.FuncUI.DSL
     open Avalonia.Controls
     open Avalonia.Layout
-    open Utilities
+    open Utilities.Extensions
 
     let create
         (state: {| name: string

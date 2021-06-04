@@ -27,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Include="Widgits\DropdownSelection.fs" />
+      <Compile Include="Widgets\DropdownSelection.fs" />
       <Compile Include="Theme.fs" />
       <Compile Include="Dialogs.fs" />
       <Compile Include="CreasePatternCanvas.fs" />

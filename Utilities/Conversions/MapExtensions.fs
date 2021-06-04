@@ -1,7 +1,6 @@
-﻿namespace Utilities
+﻿namespace Utilities.Conversions
 
 open System.Runtime.CompilerServices
-
 
 [<Extension>]
 type MapExtension() =

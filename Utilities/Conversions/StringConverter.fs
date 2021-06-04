@@ -1,5 +1,4 @@
-namespace Fold
-
+namespace Utilities.Conversions
 
 module StringConverter =
 

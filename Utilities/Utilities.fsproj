@@ -6,13 +6,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="TryParse.fs" />
-        <Compile Include="DiscriminatedUnion.fs" />
-        <Compile Include="NamingConventions.fs" />
-        <Compile Include="MapExtensions.fs" />
-        <Compile Include="Transforms.fs" />
-        <Compile Include="StringMap.fs" />
-        <Compile Include="StringConverter.fs" />
+        <Compile Include="Conversions\TryParse.fs" />
+        <Compile Include="Conversions\MapExtensions.fs" />
+        <Compile Include="Conversions\Transforms.fs" />
+        <Compile Include="Conversions\StringConverter.fs" />
+        <Compile Include="Conversions\NamingConventions.fs" />
+        <Compile Include="Extensions\DiscriminatedUnion.fs" />
+        <Compile Include="Collections\StringMap.fs" />
+        <Compile Include="Collections\Size.fs" />
     </ItemGroup>
 
     <ItemGroup>

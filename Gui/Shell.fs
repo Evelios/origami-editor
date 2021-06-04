@@ -124,6 +124,6 @@ module Shell =
             Program.mkProgram (fun () -> init) updateWithServices view
             |> Program.withHost this
 #if DEBUG
-            |> Program.withConsoleTrace
+//            |> Program.withConsoleTrace
 #endif
             |> Program.run

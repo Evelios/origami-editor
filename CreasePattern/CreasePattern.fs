@@ -1,7 +1,6 @@
 ﻿namespace CreasePattern
 
 open FSharp.FGL
-open FSharp.FGL.Directed
 open Fold
 
 type Label = int
@@ -18,6 +17,9 @@ type CreasePattern =
 
 
 module CreasePattern =
+    open FSharp.FGL.Directed
+    open Utilities.Collections
+
     (* Create a crease pattern using the "Unitless" units and a square sheet of paper. The crease pattern is created in
      * the square sheet of paper using cartesian coordinates. The bottom left corner is the origin (0, 0) and the paper
      * has a width and height of 1.
@@ -30,10 +32,14 @@ module CreasePattern =
                 maxY = -infinity }
           graph = Graph.empty }
 
-
-
-
     (* Accessors *)
+
+    let size creasePattern =
+        Size.create
+            (creasePattern.bounds.maxX
+             - creasePattern.bounds.minX)
+            (creasePattern.bounds.maxY
+             - creasePattern.bounds.minY)
 
     let edges creasePattern : Edge list =
         List.map
@@ -60,8 +66,8 @@ module CreasePattern =
                     { bounds with
                           minX = min bounds.minX (Vertex.x vertex)
                           maxX = max bounds.maxX (Vertex.x vertex)
-                          minY = min bounds.minY (Vertex.x vertex)
-                          maxY = max bounds.maxY (Vertex.x vertex) })
+                          minY = min bounds.minY (Vertex.y vertex)
+                          maxY = max bounds.maxY (Vertex.y vertex) })
                 creasePattern.bounds
                 newVertices
 
@@ -95,6 +101,12 @@ module CreasePattern =
                br = (Vertex.in2d 1. 0.)
                bl = (Vertex.in2d 0. 0.) |}
 
+        let vertices =
+            [ corners.tl
+              corners.tr
+              corners.bl
+              corners.br ]
+
         let boundaries =
             [ Edge.create
                 { start = corners.tl
@@ -114,10 +126,7 @@ module CreasePattern =
                     assignment = EdgeAssignment.Boundary } ]
 
         empty
-        |> addVertices [ corners.tl
-                         corners.tr
-                         corners.bl
-                         corners.br ]
+        |> addVertices vertices
         |> addEdges boundaries
 
     (* Queries *)
