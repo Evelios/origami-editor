@@ -24,6 +24,7 @@ module Shell =
         | FileSettingsMsg of FileSettings.Msg
         | CreasePatternCanvasMsg of CreasePatternCanvas.Msg
         | FileMenuMsg of FileMenu.Msg
+
         (* Global Messages *)
         | SelectedFoldFilePath of string array
         | LoadFoldFile of string
@@ -71,17 +72,16 @@ module Shell =
 
 
         | SelectedFoldFilePath foldFilePaths ->
-            match Array.tryHead foldFilePaths with
-            | Some foldPath -> state, Cmd.ofMsg <| LoadFoldFile foldPath
-            | _ ->
-                printfn "Didn't select any files to open"
+            if foldFilePaths = null then
                 noUpdate
-            
+            else
+                match Array.tryHead foldFilePaths with
+                | Some foldPath -> state, Cmd.ofMsg <| LoadFoldFile foldPath
+                | _ -> noUpdate
+
         | LoadFoldFile foldPath ->
             match FileLoader.loadFoldFile foldPath with
             | Ok foldContents ->
-                printfn $"{foldContents}"
-                printfn $"{Frame.fromFoldFrame foldContents.keyFrame}"
                 { state with
                       frame = Frame.fromFoldFrame foldContents.keyFrame },
                 Cmd.ofMsg

@@ -30,10 +30,10 @@ module CreasePatternCanvas =
 
     let scaledEdges (creasePattern: CreasePattern) : Edge list =
         let xRatio =
-            width / (creasePattern.maxX - creasePattern.minX)
+            width / (creasePattern.bounds.maxX - creasePattern.bounds.minX)
 
         let yRatio =
-            height / (creasePattern.maxY - creasePattern.minY)
+            height / (creasePattern.bounds.maxY - creasePattern.bounds.minY)
 
         CreasePattern.edges creasePattern
         |> List.map (Edge.scale xRatio yRatio 1.)
@@ -66,7 +66,7 @@ module CreasePatternCanvas =
                         Canvas.children edgeLines ]
 
     
-    let view (creasePattern: CreasePattern) dispatch =
+    let view (creasePattern: CreasePattern) _ =
         DockPanel.create
         <| [ DockPanel.background Theme.colors.background
              DockPanel.children [ canvas creasePattern ] ]

@@ -5,9 +5,16 @@ type Frame =
       creasePattern: CreasePattern }
 
 module Frame =
+    
+    (* Builders *)
+    
     let create : Frame =
         { unit = Fold.Unitless
           creasePattern = CreasePattern.create }
+        
+    let empty : Frame =
+        { unit = Fold.Unitless
+          creasePattern = CreasePattern.empty }
 
     (* Modifiers *)
 
