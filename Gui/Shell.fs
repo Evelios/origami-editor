@@ -2,41 +2,49 @@ namespace Gui
 
 
 module Shell =
+    open System
+    open System.IO
+
     open Elmish
     open Avalonia.Controls
     open Avalonia.FuncUI.DSL
     open Avalonia.FuncUI.Types
-    open Fold
     open Avalonia.FuncUI.Components.Hosts
     open Avalonia.FuncUI.Elmish
 
+    open CreasePattern
+    open Fold
+
     type State =
         { fileSettings: FileSettings.State
-          creasePatternCanvasState: CreasePatternCanvas.State }
+          frame: CreasePattern.Frame }
 
     type Msg =
+        (* Component Messages *)
         | FileSettingsMsg of FileSettings.Msg
         | CreasePatternCanvasMsg of CreasePatternCanvas.Msg
         | FileMenuMsg of FileMenu.Msg
+        (* Global Messages *)
         | SelectedFoldFilePath of string array
+        | LoadFoldFile of string
+        | UpdateTitle of string
+
+    let title = "Origami Editor"
 
     let init =
         { fileSettings = FileSettings.init
-          creasePatternCanvasState = CreasePatternCanvas.init },
+          frame = CreasePattern.Frame.create },
         Cmd.none
 
     let update (msg: Msg) (state: State) (window: HostWindow) : State * Cmd<_> =
+        let noUpdate = state, Cmd.none
+
         match msg with
+
         (* Component Messages *)
         | FileSettingsMsg fileSettingsMsg ->
             { state with
                   fileSettings = FileSettings.update fileSettingsMsg state.fileSettings },
-            Cmd.none
-
-        | CreasePatternCanvasMsg creasePatternCanvasMsg ->
-            { state with
-                  creasePatternCanvasState =
-                      CreasePatternCanvas.update creasePatternCanvasMsg state.creasePatternCanvasState },
             Cmd.none
 
         | FileMenuMsg fileMenuMsg ->
@@ -49,25 +57,54 @@ module Shell =
                     dialog.ShowAsync(window) |> Async.AwaitTask
 
                 state, Cmd.OfAsync.perform showDialog window SelectedFoldFilePath
+
+            | FileMenu.Msg.OpenExampleFoldFile path -> state, Cmd.ofMsg <| LoadFoldFile path
             | FileMenu.Msg.OpenFileSettings -> state, Cmd.none
 
+
+        | CreasePatternCanvasMsg _ -> noUpdate
+
         (* Global Messages*)
+        | UpdateTitle newTitle ->
+            window.Title <- $"{title} - {newTitle}"
+            noUpdate
+
+
         | SelectedFoldFilePath foldFilePaths ->
-            match FileLoader.loadFoldFile foldFilePaths.[0] with
-            | Ok foldContents -> state, Cmd.none
-            | Error _ -> state, Cmd.none
+            match Array.tryHead foldFilePaths with
+            | Some foldPath -> state, Cmd.ofMsg <| LoadFoldFile foldPath
+            | _ ->
+                printfn "Didn't select any files to open"
+                noUpdate
+            
+        | LoadFoldFile foldPath ->
+            match FileLoader.loadFoldFile foldPath with
+            | Ok foldContents ->
+                printfn $"{foldContents}"
+                printfn $"{Frame.fromFoldFrame foldContents.keyFrame}"
+                { state with
+                      frame = Frame.fromFoldFrame foldContents.keyFrame },
+                Cmd.ofMsg
+                <| UpdateTitle(Path.GetFileNameWithoutExtension foldPath)
+
+            | Error error ->
+                printfn $"An error occured loading fold file: {foldPath}{Environment.NewLine}{error}"
+                noUpdate
+
+
 
 
     let view (state: State) dispatch =
         let body =
             let children : IView list =
                 [ FileSettings.view state.fileSettings (FileSettingsMsg >> dispatch)
-                  CreasePatternCanvas.view state.creasePatternCanvasState (CreasePatternCanvasMsg >> dispatch) ]
+                  CreasePatternCanvas.view state.frame.creasePattern (CreasePatternCanvasMsg >> dispatch) ]
 
             DockPanel.create [ DockPanel.children children ]
 
         DockPanel.create
-        <| [ DockPanel.children
+        <| [ DockPanel.background Theme.colors.backgroundDark
+             DockPanel.children
              <| [ FileMenu.view (FileMenuMsg >> dispatch)
                   body ] ]
 
@@ -75,7 +112,7 @@ module Shell =
         inherit HostWindow()
 
         do
-            base.Title <- "Origami Editor"
+            base.Title <- title
             base.Width <- 800.0
             base.Height <- 600.0
             base.MinWidth <- 800.0

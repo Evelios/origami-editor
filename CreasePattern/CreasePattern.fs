@@ -1,12 +1,17 @@
 ﻿namespace CreasePattern
 
 open FSharp.FGL
+open FSharp.FGL.Directed
 open Fold
 
 type Label = int
 
 type CreasePattern =
-    { graph: Graph<Vertex, Label, EdgeAssignment> }
+    { minX: float
+      maxX: float
+      maxY: float
+      minY: float
+      graph: Graph<Vertex, Label, EdgeAssignment> }
 
 
 module CreasePattern =
@@ -14,7 +19,24 @@ module CreasePattern =
      * the square sheet of paper using cartesian coordinates. The bottom left corner is the origin (0, 0) and the paper
      * has a width and height of 1.
      *)
-    let create : CreasePattern = { graph = Graph.empty }
+    let create : CreasePattern =
+        { minX = 0.
+          maxX = 1.
+          minY = 0.
+          maxY = 1.
+          graph = Graph.empty }
+
+
+    (* Accessors *)
+
+    let edges creasePattern : Edge list =
+        List.map
+            (fun (start, finish, assignment) ->
+                Edge.create
+                    { start = start
+                      finish = finish
+                      assignment = assignment })
+            (Undirected.Edges.toEdgeList creasePattern.graph)
 
 
     (* Modifiers *)
@@ -44,7 +66,7 @@ module CreasePattern =
                   creasePatternWithVertices.graph
                   |> Undirected.Edges.addMany graphEdges }
 
-
+    
     (* Queries *)
 
     let pointWithin distance creasePattern = ()
@@ -65,5 +87,4 @@ module CreasePattern =
                 edges.vertices
                 edges.assignment
 
-        create
-        |> addEdges graphEdges
+        create |> addEdges graphEdges

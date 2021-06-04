@@ -63,19 +63,43 @@ type Vertex =
     override this.GetHashCode() = failwith "not implemented"
 
 module Vertex =
-
-    [<Literal>]
-    let Epsilon : float = 1e-8
+    (* Builders *)
 
     let in2d x y = Vector2D(x, y) |> Vertex.Vector2
+
     let in3d x y z = Vector3D(x, y, z) |> Vertex.Vector3
 
+
     (* Accessors *)
+
+    let x vector =
+        match vector with
+        | Vector2 vector -> vector.X
+        | Vector3 vector -> vector.X
+
+    let y vector =
+        match vector with
+        | Vector2 vector -> vector.Y
+        | Vector3 vector -> vector.Y
 
     let hashCode vector =
         match vector with
         | Vector2 vector -> HashCode.Combine(vector.X, vector.Y, 0)
         | Vector3 vector -> HashCode.Combine(vector.X, vector.Y, vector.Z)
+
+
+    (* Modifiers *)
+
+    let scale x y z vector =
+        match vector with
+        | Vector2 vector ->
+            Vector2
+            <| Vector2D(vector.X * x, vector.Y * y)
+        | Vector3 vector ->
+            Vector3
+            <| Vector3D(vector.X * x, vector.Y * y, vector.Z * z)
+
+
 
     (* Json *)
     let fromList (list: float list) : Vertex option =
@@ -88,6 +112,8 @@ module Vertex =
         match vertex with
         | Vector2 vec -> [ vec.X; vec.Y ]
         | Vector3 vec -> [ vec.X; vec.Y; vec.Z ]
+
+    (* Json transformations *)
 
     type Transform() =
         interface ITypeTransform with
