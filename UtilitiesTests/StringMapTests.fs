@@ -1,7 +1,7 @@
 module FoldTests.StringMapTests
 
 open NUnit.Framework
-open Fold
+open Utilities.Collections
 
 [<SetUp>]
 let Setup () = ()

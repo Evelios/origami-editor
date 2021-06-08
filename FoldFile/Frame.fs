@@ -88,3 +88,7 @@ module Frame =
 
     let withoutAttributes frame : Frame = { frame with attributes = Set.empty }
     let setUnit unit frame : Frame = { frame with unit = unit }
+
+    let setVertices vertices frame : Frame = { frame with vertices = vertices }
+    let setEdges edges frame : Frame = { frame with edges = edges }
+    let setFaces faces frame : Frame = { frame with faces = faces }

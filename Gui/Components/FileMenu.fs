@@ -7,16 +7,12 @@ module FileMenu =
     open Avalonia.Controls
     open Avalonia.FuncUI.DSL
     open System.IO
-
-
-
-
+    
     type Msg =
+        | NewFile
         | OpenFoldFile
         | OpenExampleFoldFile of string
-        | OpenFileSettings
-
-
+        | SaveAs
 
     let view dispatch =
         let exampleFiles : IView list =
@@ -33,14 +29,17 @@ module FileMenu =
 
         let menuOptions : IView list =
             [ MenuItem.create
+              <| [ MenuItem.header "New File"
+                   MenuItem.onClick (fun _ -> dispatch NewFile) ]
+              MenuItem.create
               <| [ MenuItem.header "Open"
                    MenuItem.onClick (fun _ -> dispatch OpenFoldFile) ]
               MenuItem.create
               <| [ MenuItem.header "Open Example"
                    MenuItem.viewItems exampleFiles ]
               MenuItem.create
-              <| [ MenuItem.header "File Settings"
-                   MenuItem.onClick (fun _ -> dispatch OpenFileSettings) ] ]
+              <| [ MenuItem.header "Save As"
+                   MenuItem.onClick (fun _ -> dispatch SaveAs) ] ]
 
         let fileMenu =
             MenuItem.create

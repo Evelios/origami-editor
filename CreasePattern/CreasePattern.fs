@@ -132,8 +132,9 @@ module CreasePattern =
     (* Queries *)
 
 
-    (* Deserialization *)
+    (* Serialization & Deserialization *)
 
+    /// Convert the frame values in the fold file to a crease pattern
     let fromFoldValues (vertices: Fold.Vertices) (edges: Fold.Edges) (_: Fold.Faces) : CreasePattern =
         let coordinates = Array.ofList vertices.coords
 
@@ -148,3 +149,40 @@ module CreasePattern =
                 edges.assignment
 
         empty |> addEdges graphEdges
+
+    /// Add in the crease pattern values into the fold frame
+    let addToFoldFrame (creasePattern: CreasePattern) (frame: Fold.Frame) : Fold.Frame =
+        let vertexLookup : Map<Vertex, int> =
+            Vertices.toVertexList creasePattern.graph
+            |> List.indexed
+            |> List.fold (fun map (id, (vert, _)) -> Map.add vert id map) Map.empty
+
+        let vertices =
+            Fold.Vertices.create
+                { coords =
+                      Vertices.toVertexList creasePattern.graph
+                      |> List.map fst
+                  vertices = []
+                  faces = [] }
+
+        let edges =
+            Undirected.Edges.toEdgeList creasePattern.graph
+
+        let edgeVertices : (Vertex * Vertex) list =
+            List.map (fun (v1, v2, _) -> (v1, v2)) edges
+
+        let edgeVerticesIndexed =
+            List.map (fun (v1, v2) -> (Map.find v1 vertexLookup, Map.find v2 vertexLookup)) edgeVertices
+
+        let edges =
+            Fold.Edges.create
+                { vertices = edgeVerticesIndexed
+                  faces = []
+                  assignment = List.map (fun (_, _, assignment) -> assignment) edges
+                  foldAngle = []
+                  length = []
+                  orders = [] }
+
+        frame
+        |> Frame.setVertices vertices
+        |> Frame.setEdges edges

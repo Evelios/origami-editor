@@ -16,25 +16,24 @@ module Shell =
     open Fold
     open Gui.Widgets
 
-    type State =
-        { frame: CreasePattern.Frame }
+    type State = { frame: CreasePattern.Frame }
 
     type Msg =
         (* Component Messages *)
+        | FileMenuMsg of FileMenu.Msg
         | FileSettingsMsg of FileSettings.Msg
         | CreasePatternCanvasMsg of CreasePatternCanvas.Msg
-        | FileMenuMsg of FileMenu.Msg
 
         (* Global Messages *)
+        | UpdateTitle of string
         | SelectedFoldFilePath of string array
         | LoadFoldFile of string
-        | UpdateTitle of string
+        | SaveFoldFileToPath of string
 
     let title = "Origami Editor"
 
     let init =
-        { frame = CreasePattern.Frame.create },
-        Cmd.none
+        { frame = CreasePattern.Frame.create }, Cmd.none
 
     let update (msg: Msg) (state: State) (window: HostWindow) : State * Cmd<_> =
         let noUpdate = state, Cmd.none
@@ -49,6 +48,8 @@ module Shell =
 
         | FileMenuMsg fileMenuMsg ->
             match fileMenuMsg with
+            | FileMenu.Msg.NewFile -> init
+
             | FileMenu.Msg.OpenFoldFile ->
                 let dialog =
                     Dialogs.getFileDialog "Fold File" Fold.extensions
@@ -59,8 +60,15 @@ module Shell =
                 state, Cmd.OfAsync.perform showDialog window SelectedFoldFilePath
 
             | FileMenu.Msg.OpenExampleFoldFile path -> state, Cmd.ofMsg <| LoadFoldFile path
-            | FileMenu.Msg.OpenFileSettings -> state, Cmd.none
 
+            | FileMenu.Msg.SaveAs ->
+                let dialog =
+                    Dialogs.saveFileDialog "Fold File" Fold.extensions
+
+                let showDialog window =
+                    dialog.ShowAsync(window) |> Async.AwaitTask
+
+                state, Cmd.OfAsync.perform showDialog window SaveFoldFileToPath
 
         | CreasePatternCanvasMsg _ -> noUpdate
 
@@ -68,7 +76,6 @@ module Shell =
         | UpdateTitle newTitle ->
             window.Title <- $"{title} - {newTitle}"
             noUpdate
-
 
         | SelectedFoldFilePath foldFilePaths ->
             if foldFilePaths = null then
@@ -90,8 +97,15 @@ module Shell =
                 printfn $"An error occured loading fold file: {foldPath}{Environment.NewLine}{error}"
                 noUpdate
 
+        | SaveFoldFileToPath foldPath ->
+            let foldText =
+                Fold.empty
+                |> Fold.setKeyframe (Frame.toFoldFrame state.frame)
+                |> FoldJson.toJson
 
+            File.WriteAllText(foldPath, foldText)
 
+            state, Cmd.none
 
     let view (state: State) dispatch =
         let body =
@@ -123,6 +137,6 @@ module Shell =
             Program.mkProgram (fun () -> init) updateWithServices view
             |> Program.withHost this
 #if DEBUG
-//            |> Program.withConsoleTrace
+            //            |> Program.withConsoleTrace
 #endif
             |> Program.run

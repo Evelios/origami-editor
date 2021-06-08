@@ -1,4 +1,4 @@
-module CreasePatternTests.FoldConversion
+module CreasePatternTests.FoldDeserialization
 
 
 open NUnit.Framework
@@ -6,7 +6,7 @@ open Fold
 open CreasePattern
 
 [<SetUp>]
-let Setup () = ()
+let SetUp () = ()
 
 [<Test>]
 let units () =
@@ -15,7 +15,7 @@ let units () =
         |> Fold.Frame.setUnit LengthUnit.Inches
 
     let expected =
-        Frame.create |> Frame.setUnit LengthUnit.Inches
+        Frame.empty |> Frame.setUnit LengthUnit.Inches
 
     Assert.AreEqual(expected, Frame.fromFoldFrame given)
 
@@ -61,7 +61,7 @@ let creasePattern () =
            tl = Vertex.in2d 1. 0. |}
 
     let expected =
-        CreasePattern.create
+        CreasePattern.empty
         |> CreasePattern.addEdges [ Edge.create
                                         { start = v.bl
                                           finish = v.br

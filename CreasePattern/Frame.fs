@@ -31,8 +31,18 @@ module Frame =
     let setAuthor author frame = { frame with author = author }
     let setTitle title frame = { frame with title = title }
     let setDescription description frame = { frame with description = description }
+    
+    (* Serialization & Deserialization *)
 
     let fromFoldFrame (foldFrame: Fold.Frame) : Frame =
         { create with
               unit = foldFrame.unit
               creasePattern = CreasePattern.fromFoldValues foldFrame.vertices foldFrame.edges foldFrame.faces }
+        
+    let toFoldFrame (frame: Frame): Fold.Frame =
+        Fold.Frame.empty
+        |> Fold.Frame.setUnit frame.unit
+        |> Fold.Frame.setAuthor frame.author
+        |> Fold.Frame.setTitle frame.title
+        |> Fold.Frame.setDescription frame.description
+        |> CreasePattern.addToFoldFrame frame.creasePattern
