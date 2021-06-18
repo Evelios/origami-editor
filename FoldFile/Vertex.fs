@@ -82,6 +82,11 @@ module Vertex =
         | Vector2 vector -> vector.Y
         | Vector3 vector -> vector.Y
 
+    let z vector =
+        match vector with
+        | Vector2 _ -> 0.
+        | Vector3 vector -> vector.Z
+
     let hashCode vector =
         match vector with
         | Vector2 vector -> HashCode.Combine(vector.X, vector.Y, 0)
@@ -92,13 +97,20 @@ module Vertex =
 
     let scale x y z vector =
         match vector with
-        | Vector2 vector ->
-            Vector2
-            <| Vector2D(vector.X * x, vector.Y * y)
+        | Vector2 vector -> Vector2 <| Vector2D(vector.X * x, vector.Y * y)
         | Vector3 vector ->
             Vector3
             <| Vector3D(vector.X * x, vector.Y * y, vector.Z * z)
 
+
+    (* Queries *)
+
+    let distanceSquaredTo v1 v2 : float =
+        (x v1 - x v2) ** 2.
+        + (y v1 - y v2) ** 2.
+        + (z v1 - z v2) ** 2.
+
+    let distanceTo v1 v2 : float = distanceSquaredTo v1 v2 |> sqrt
 
 
     (* Json *)

@@ -29,11 +29,14 @@
     <ItemGroup>
       <Compile Include="Theme.fs" />
       <Compile Include="FileLoader.fs" />
+      <Compile Include="Widgets\Icons.fs" />
       <Compile Include="Widgets\Form.fs" />
       <Compile Include="Widgets\Dialogs.fs" />
       <Compile Include="Components\FileMenu.fs" />
       <Compile Include="Components\FileSettings.fs" />
-      <Compile Include="Components\CreasePatternCanvas.fs" />
+      <Compile Include="Components\CreasePatternCanvas\Translation.fs" />
+      <Compile Include="Components\CreasePatternCanvas\CreasePatternComponents.fs" />
+      <Compile Include="Components\CreasePatternCanvas\CreasePatternCanvas.fs" />
       <Compile Include="Shell.fs" />
       <Compile Include="Program.fs" />
     </ItemGroup>

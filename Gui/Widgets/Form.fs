@@ -1,6 +1,5 @@
 namespace Gui.Widgets
 
-
 module Form =
 
     open Avalonia.FuncUI.DSL
@@ -8,9 +7,11 @@ module Form =
     open Avalonia.Layout
     open Avalonia.FuncUI.Types
     open Avalonia.Media
+    open Avalonia.Interactivity
 
     open Utilities.Extensions
     open Gui
+
 
     let formElement name element : IView<StackPanel> =
         StackPanel.create
@@ -30,7 +31,7 @@ module Form =
         formElement state.name
         <| TextBox.create [ TextBox.text state.value
                             TextBox.onTextChanged state.onSelected ]
-        
+
     let multiline
         (state: {| name: string
                    value: string
@@ -48,8 +49,15 @@ module Form =
                    selected: 'a
                    onSelected: 'a -> unit |})
         : IView<StackPanel> =
-            
+
         formElement state.name
         <| ComboBox.create [ ComboBox.dataItems (Seq.map DiscriminatedUnion.toString DiscriminatedUnion.allCases<'a>)
                              ComboBox.selectedItem (DiscriminatedUnion.toString state.selected)
                              ComboBox.onSelectedItemChanged (tryUnbox >> Option.iter state.onSelected) ]
+
+    let imageButton
+        (state: {| icon: IView<'a>
+                   onClick: RoutedEventArgs -> unit |})
+        : IView<Button> =
+        Button.create [ Button.onClick state.onClick
+                        Button.content state.icon ]

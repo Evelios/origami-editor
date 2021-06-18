@@ -51,6 +51,10 @@ module CreasePattern =
             (Undirected.Edges.toEdgeList creasePattern.graph)
 
 
+    let vertices creasePattern : Vertex list =
+        List.map fst (Vertices.toVertexList creasePattern.graph)
+
+
     (* Modifiers *)
 
     let addVertices (vertices: Vertex list) (creasePattern: CreasePattern) : CreasePattern =
@@ -130,6 +134,31 @@ module CreasePattern =
         |> addEdges boundaries
 
     (* Queries *)
+
+    /// This function is currently linear but can be sped up with quad-trees
+    let pointWithin distance vertex creasePattern : Vertex option =
+        let distanceSquared = distance * distance
+        let distSquaredToVertex = Vertex.distanceSquaredTo vertex
+
+        let vertexDistance, closestVertex =
+            Vertices.toVertexList creasePattern.graph
+            |> List.fold
+                (fun (distanceSquared, closestVertex) (nextVertex, _) ->
+                    let nextDistanceSquared = distSquaredToVertex nextVertex
+
+                    if nextDistanceSquared < distanceSquared then
+                        (nextDistanceSquared, nextVertex)
+
+                    else
+                        (distanceSquared, closestVertex))
+                (infinity, Vertex.in2d infinity infinity)
+
+        if vertexDistance < distanceSquared then
+            Some closestVertex
+        else
+            None
+
+
 
 
     (* Serialization & Deserialization *)

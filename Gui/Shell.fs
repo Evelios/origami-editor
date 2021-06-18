@@ -15,8 +15,12 @@ module Shell =
     open CreasePattern
     open Fold
     open Gui.Widgets
+    open Gui.Components
+    open Gui.Components.CreasePatternCanvas
 
-    type State = { frame: CreasePattern.Frame }
+    type State =
+        { frame: CreasePattern.Frame
+          creasePatternCanvas: CreasePatternCanvas.State }
 
     type Msg =
         (* Component Messages *)
@@ -33,7 +37,11 @@ module Shell =
     let title = "Origami Editor"
 
     let init =
-        { frame = CreasePattern.Frame.create }, Cmd.none
+        let frame = CreasePattern.Frame.create
+
+        { frame = CreasePattern.Frame.create
+          creasePatternCanvas = CreasePatternCanvas.init frame.creasePattern },
+        Cmd.none
 
     let update (msg: Msg) (state: State) (window: HostWindow) : State * Cmd<_> =
         let noUpdate = state, Cmd.none
@@ -70,7 +78,14 @@ module Shell =
 
                 state, Cmd.OfAsync.perform showDialog window SaveFoldFileToPath
 
-        | CreasePatternCanvasMsg _ -> noUpdate
+        | CreasePatternCanvasMsg creasePatternCanvasMsg ->
+            { state with
+                  creasePatternCanvas =
+                      CreasePatternCanvas.update
+                          creasePatternCanvasMsg
+                          state.creasePatternCanvas
+                          state.frame.creasePattern },
+            Cmd.none
 
         (* Global Messages*)
         | UpdateTitle newTitle ->
@@ -111,7 +126,10 @@ module Shell =
         let body =
             let children : IView list =
                 [ FileSettings.view state.frame (FileSettingsMsg >> dispatch)
-                  CreasePatternCanvas.view state.frame.creasePattern (CreasePatternCanvasMsg >> dispatch) ]
+                  CreasePatternCanvas.view
+                      state.creasePatternCanvas
+                      state.frame.creasePattern
+                      (CreasePatternCanvasMsg >> dispatch) ]
 
             DockPanel.create [ DockPanel.children children ]
 

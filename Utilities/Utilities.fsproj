@@ -12,6 +12,7 @@
         <Compile Include="Conversions\StringConverter.fs" />
         <Compile Include="Conversions\NamingConventions.fs" />
         <Compile Include="Extensions\DiscriminatedUnion.fs" />
+        <Compile Include="Extensions\ListExtensions.fs" />
         <Compile Include="Collections\StringMap.fs" />
         <Compile Include="Collections\Size.fs" />
     </ItemGroup>
