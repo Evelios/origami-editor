@@ -63,6 +63,9 @@ type Vertex =
     override this.GetHashCode() = failwith "not implemented"
 
 module Vertex =
+    [<Literal>]
+    let epsilon = 1e-6
+    
     (* Builders *)
 
     let in2d x y = Vector2D(x, y) |> Vertex.Vector2

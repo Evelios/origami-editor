@@ -19,7 +19,7 @@ module Shell =
     open Gui.Components.CreasePatternCanvas
 
     type State =
-        { frame: CreasePattern.Frame
+        { shared: SharedState
           creasePatternCanvas: CreasePatternCanvas.State }
 
     type Msg =
@@ -37,10 +37,10 @@ module Shell =
     let title = "Origami Editor"
 
     let init =
-        let frame = CreasePattern.Frame.create
+        let shared = SharedState.init
 
-        { frame = CreasePattern.Frame.create
-          creasePatternCanvas = CreasePatternCanvas.init frame.creasePattern },
+        { shared = shared
+          creasePatternCanvas = CreasePatternCanvas.init shared.frame.creasePattern },
         Cmd.none
 
     let update (msg: Msg) (state: State) (window: HostWindow) : State * Cmd<_> =
@@ -51,7 +51,7 @@ module Shell =
         (* Component Messages *)
         | FileSettingsMsg fileSettingsMsg ->
             { state with
-                  frame = FileSettings.update fileSettingsMsg state.frame },
+                  shared = FileSettings.update fileSettingsMsg state.shared },
             Cmd.none
 
         | FileMenuMsg fileMenuMsg ->
@@ -79,12 +79,12 @@ module Shell =
                 state, Cmd.OfAsync.perform showDialog window SaveFoldFileToPath
 
         | CreasePatternCanvasMsg creasePatternCanvasMsg ->
+            let updatedStates =
+                CreasePatternCanvas.update creasePatternCanvasMsg state.creasePatternCanvas state.shared window
+
             { state with
-                  creasePatternCanvas =
-                      CreasePatternCanvas.update
-                          creasePatternCanvasMsg
-                          state.creasePatternCanvas
-                          state.frame.creasePattern },
+                  creasePatternCanvas = updatedStates.state
+                  shared = updatedStates.shared },
             Cmd.none
 
         (* Global Messages*)
@@ -104,7 +104,9 @@ module Shell =
             match FileLoader.loadFoldFile foldPath with
             | Ok foldContents ->
                 { state with
-                      frame = Frame.fromFoldFrame foldContents.keyFrame },
+                      shared =
+                          { state.shared with
+                                frame = Frame.fromFoldFrame foldContents.keyFrame } },
                 Cmd.ofMsg
                 <| UpdateTitle(Path.GetFileNameWithoutExtension foldPath)
 
@@ -115,7 +117,7 @@ module Shell =
         | SaveFoldFileToPath foldPath ->
             let foldText =
                 Fold.empty
-                |> Fold.setKeyframe (Frame.toFoldFrame state.frame)
+                |> Fold.setKeyframe (Frame.toFoldFrame state.shared.frame)
                 |> FoldJson.toJson
 
             File.WriteAllText(foldPath, foldText)
@@ -125,10 +127,10 @@ module Shell =
     let view (state: State) dispatch =
         let body =
             let children : IView list =
-                [ FileSettings.view state.frame (FileSettingsMsg >> dispatch)
+                [ FileSettings.view state.shared.frame (FileSettingsMsg >> dispatch)
                   CreasePatternCanvas.view
                       state.creasePatternCanvas
-                      state.frame.creasePattern
+                      state.shared.frame.creasePattern
                       (CreasePatternCanvasMsg >> dispatch) ]
 
             DockPanel.create [ DockPanel.children children ]

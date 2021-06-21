@@ -13,12 +13,14 @@
         <Compile Include="Conversions\NamingConventions.fs" />
         <Compile Include="Extensions\DiscriminatedUnion.fs" />
         <Compile Include="Extensions\ListExtensions.fs" />
+        <Compile Include="Extensions\ViewExtensions.fs" />
         <Compile Include="Collections\StringMap.fs" />
         <Compile Include="Collections\Size.fs" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="FSharp.Json" Version="0.4.0" />
+      <PackageReference Include="JaggerJo.Avalonia.FuncUI.DSL" Version="0.4.0" />
     </ItemGroup>
 
 </Project>

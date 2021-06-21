@@ -95,6 +95,18 @@ module CreasePattern =
                   creasePatternWithVertices.graph
                   |> Undirected.Edges.addMany graphEdges }
 
+    let addEdge (edge: Edge) (creasePattern: CreasePattern) : CreasePattern =
+        let vertices = [ edge.start; edge.finish ]
+        let creasePatternWithVertices = addVertices vertices creasePattern
+
+        let graphEdge =
+            (edge.start, edge.finish, edge.assignment)
+
+        { creasePatternWithVertices with
+              graph =
+                  creasePatternWithVertices.graph
+                  |> Undirected.Edges.add graphEdge }
+
     (* Builder *)
 
     ///  Create a basic crease pattern within a 0 -> 1 grid system with edge boundaries

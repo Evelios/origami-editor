@@ -15,12 +15,17 @@ module FileSettings =
         | ChangeTitle of string
         | ChangeDescription of string
 
-    let update msg : Frame -> Frame =
-        match msg with
-        | SelectUnit unit -> Frame.setUnit unit
-        | ChangeAuthor author -> Frame.setAuthor author
-        | ChangeTitle title -> Frame.setTitle title
-        | ChangeDescription description -> Frame.setDescription description
+    let update msg shared : SharedState =
+        let updateFrame =
+            match msg with
+            | SelectUnit unit -> Frame.setUnit unit
+            | ChangeAuthor author -> Frame.setAuthor author
+            | ChangeTitle title -> Frame.setTitle title
+            | ChangeDescription description -> Frame.setDescription description
+
+        { shared with
+              frame = updateFrame shared.frame }
+
 
     // View
 
