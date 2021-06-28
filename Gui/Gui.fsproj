@@ -32,12 +32,12 @@
       <Compile Include="Widgets\Icons.fs" />
       <Compile Include="Widgets\Form.fs" />
       <Compile Include="Widgets\Dialogs.fs" />
-      <Compile Include="Components\SharedState.fs" />
       <Compile Include="Components\FileMenu.fs" />
       <Compile Include="Components\FileSettings.fs" />
       <Compile Include="Components\CreasePatternCanvas\Translation.fs" />
       <Compile Include="Components\CreasePatternCanvas\CreasePatternComponents.fs" />
       <Compile Include="Components\CreasePatternCanvas\CreasePatternCanvas.fs" />
+      <Compile Include="Components\IconBar.fs" />
       <Compile Include="Shell.fs" />
       <Compile Include="Program.fs" />
     </ItemGroup>

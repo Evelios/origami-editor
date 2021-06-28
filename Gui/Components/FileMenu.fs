@@ -1,18 +1,50 @@
 namespace Gui
 
-open Avalonia.FuncUI.Types
-
 module FileMenu =
 
     open Avalonia.Controls
     open Avalonia.FuncUI.DSL
+    open Avalonia.FuncUI.Types
+    open Elmish
     open System.IO
-    
+
+    open Fold
+    open Gui.Widgets
+
+    type External =
+        | CreateNewFile
+        | SelectedFoldFilePath of string array
+        | LoadFoldFile of string
+        | SaveFoldFileToPath of string
+        | DoNothing
+
     type Msg =
+        | SendExternal of External
         | NewFile
         | OpenFoldFile
         | OpenExampleFoldFile of string
         | SaveAs
+
+    let update msg window : Cmd<Msg> * External =
+
+        match msg with
+        | NewFile -> Cmd.none, External.CreateNewFile
+
+        | OpenFoldFile ->
+            let fileDialogTask =
+                Dialogs.openFileDialogTask "Fold File" Fold.extensions window
+
+            Cmd.OfAsync.perform fileDialogTask () (SelectedFoldFilePath >> SendExternal), DoNothing
+
+        | OpenExampleFoldFile path -> Cmd.ofMsg <| (LoadFoldFile path |> SendExternal), DoNothing
+
+        | SaveAs ->
+            let fileDialogTask =
+                Dialogs.saveFileDialogTask "Fold File" Fold.extensions window
+
+            Cmd.OfAsync.perform fileDialogTask () (SaveFoldFileToPath >> SendExternal), DoNothing
+
+        | SendExternal external -> Cmd.none, external
 
     let view dispatch =
         let exampleFiles : IView list =

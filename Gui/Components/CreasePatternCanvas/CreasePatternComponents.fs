@@ -17,14 +17,14 @@ module CreasePatternComponents =
         {| lineThickness = 2.
            vertexSize = 8.
            vertexHoveredSize = 10.
-           vertexColor = Theme.colors.backgroundDark
-           vertexHoveredColor = Theme.colors.primary
-           vertexSelectedColor = Theme.colors.tertiary
-           boundaryColor = Theme.colors.backgroundLight
-           mountainColor = Theme.colors.tertiary
-           valleyColor = Theme.colors.quaternary
-           unassignedColor = Theme.colors.primary
-           flatColor = Theme.colors.backgroundAccent |}
+           vertexColor = Theme.colors.darkGray
+           vertexHoveredColor = Theme.colors.yellow
+           vertexSelectedColor = Theme.colors.blue
+           boundaryColor = Theme.colors.lighterGray
+           mountainColor = Theme.colors.green
+           valleyColor = Theme.colors.blue
+           unassignedColor = Theme.colors.lighterGray
+           flatColor = Theme.colors.lighterGray |}
 
 
     (* Edges *)

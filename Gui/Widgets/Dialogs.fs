@@ -5,7 +5,7 @@ module Dialogs =
     open Avalonia.Controls
 
     (* Open up a file dialog for selecting files of a particular type. *)
-    let getFileDialog (title: string) (extensions: string seq) =
+    let openFileDialogTask (title: string) (extensions: string seq) (window: Window) : Unit -> Async<string array> =
         let dialog = OpenFileDialog()
 
         let filters =
@@ -18,10 +18,10 @@ module Dialogs =
         dialog.AllowMultiple <- false
         dialog.Title <- $"Open {title}"
 
-        dialog
+        fun () -> dialog.ShowAsync(window) |> Async.AwaitTask
 
     (* Open up a file dialog for saving a file type. *)
-    let saveFileDialog (title: string) (extensions: string seq) =
+    let saveFileDialogTask (title: string) (extensions: string seq) (window: Window) : Unit -> Async<string> =
         let dialog = SaveFileDialog()
 
         let filters =
@@ -34,4 +34,4 @@ module Dialogs =
         dialog.Filters <- filters
         dialog.Title <- $"Save {title}"
 
-        dialog
+        fun () -> dialog.ShowAsync(window) |> Async.AwaitTask

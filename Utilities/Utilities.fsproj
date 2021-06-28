@@ -14,6 +14,7 @@
         <Compile Include="Extensions\DiscriminatedUnion.fs" />
         <Compile Include="Extensions\ListExtensions.fs" />
         <Compile Include="Extensions\ViewExtensions.fs" />
+        <Compile Include="Extensions\EventExtensions.fs" />
         <Compile Include="Collections\StringMap.fs" />
         <Compile Include="Collections\Size.fs" />
     </ItemGroup>

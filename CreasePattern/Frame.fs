@@ -8,16 +8,16 @@ type Frame =
       creasePattern: CreasePattern }
 
 module Frame =
-    
+
     (* Builders *)
-    
+
     let create : Frame =
         { unit = Fold.Unitless
           author = ""
           title = ""
           description = ""
           creasePattern = CreasePattern.create }
-        
+
     let empty : Frame =
         { unit = Fold.Unitless
           author = ""
@@ -28,18 +28,25 @@ module Frame =
     (* Modifiers *)
 
     let setUnit unit frame = { frame with unit = unit }
+
     let setAuthor author frame = { frame with author = author }
     let setTitle title frame = { frame with title = title }
-    let setDescription description frame = { frame with description = description }
-    
+
+    let setDescription description frame =
+        { frame with description = description }
+
+    let mapCreasePattern action frame =
+        { frame with
+              creasePattern = action frame.creasePattern }
+
     (* Serialization & Deserialization *)
 
     let fromFoldFrame (foldFrame: Fold.Frame) : Frame =
         { create with
               unit = foldFrame.unit
               creasePattern = CreasePattern.fromFoldValues foldFrame.vertices foldFrame.edges foldFrame.faces }
-        
-    let toFoldFrame (frame: Frame): Fold.Frame =
+
+    let toFoldFrame (frame: Frame) : Fold.Frame =
         Fold.Frame.empty
         |> Fold.Frame.setUnit frame.unit
         |> Fold.Frame.setAuthor frame.author

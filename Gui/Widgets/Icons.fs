@@ -7,10 +7,10 @@ module Icons =
     open Avalonia.FuncUI.DSL
     open Avalonia.FuncUI.Types
 
-    let iconBase (data: string) : IView<Canvas> =
+    let iconBase (data: string) (color: string) : IView<Canvas> =
         Canvas.create [ Canvas.width 24.0
                         Canvas.height 24.0
-                        Canvas.children [ Path.create [ Path.fill "white"
+                        Canvas.children [ Path.create [ Path.fill color
                                                         Path.data data ] ] ]
 
 

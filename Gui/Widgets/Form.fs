@@ -12,7 +12,6 @@ module Form =
     open Utilities.Extensions
     open Gui
 
-
     let formElement name element : IView<StackPanel> =
         StackPanel.create
         <| [ StackPanel.orientation Orientation.Vertical
@@ -59,5 +58,7 @@ module Form =
         (state: {| icon: IView<'a>
                    onClick: RoutedEventArgs -> unit |})
         : IView<Button> =
-        Button.create [ Button.onClick state.onClick
+        Button.create [ Button.padding Theme.spacing.small
+                        Button.margin Theme.spacing.small
+                        Button.onClick state.onClick
                         Button.content state.icon ]

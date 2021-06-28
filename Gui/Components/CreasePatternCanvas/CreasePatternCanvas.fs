@@ -5,33 +5,30 @@ module CreasePatternCanvas =
     open Avalonia
     open Avalonia.Controls
     open Avalonia.FuncUI.DSL
-    open Avalonia.FuncUI.Types
-    open Avalonia.Interactivity
-    open Avalonia.FuncUI.Components.Hosts
 
     open CreasePattern
     open Fold
+    open Gui
     open Utilities.Collections
     open Utilities.Extensions
-    open Gui.Widgets
-    open Gui
 
     type Selectable =
         | SelectedVertex of Vertex
         | SelectedNone
 
     type State =
-        { showVertices: bool
-          hover: Selectable
+        { hover: Selectable
           selected: Selectable
           translation: Translation
           pageSize: Size }
 
+    type External =
+        | CreateEdge of Edge
+        | DoNothing
+
     type Msg =
         | MouseMove of Point
         | MouseClicked
-        | ToggleShowVertices of RoutedEventArgs
-        | CreateEdge of Vertex * Vertex
 
     let canvasName = "Crease Pattern Canvas"
 
@@ -43,66 +40,56 @@ module CreasePatternCanvas =
         let translation =
             Translation.create creasePattern theme.maxLength
 
-        { showVertices = false
-          hover = SelectedNone
+        { hover = SelectedNone
           selected = SelectedNone
           translation = translation
           pageSize = translation.pageSize }
 
-    let rec update msg state shared (window: HostWindow) : {| state: State; shared: SharedState |} =
-        let updateState newState = {| state = newState; shared = shared |}
-        let updateShared newShared = {| state = state; shared = newShared |}
+    let rec update (msg: Msg) (state: State) (creasePattern: CreasePattern) : State * External =
 
         match msg with
-        (* Crease Pattern Modifications *)
-        | CreateEdge (start, finish) ->
-            let edge =
-                Edge.create
-                    { start = start
-                      finish = finish
-                      assignment = EdgeAssignment.Unassigned }
-
-            updateShared
-                { shared with
-                      frame =
-                          { shared.frame with
-                                creasePattern = CreasePattern.addEdge edge shared.frame.creasePattern } }
-
         (* User Actions *)
         | MouseClicked ->
-            match (state.selected, state.hover) with
-            | SelectedVertex selectedVertex, SelectedVertex hoveredVertex ->
-                update (CreateEdge(selectedVertex, hoveredVertex)) { state with selected = SelectedNone } shared window
+            match (state.hover, state.selected) with
+            | SelectedVertex hoveredVertex, SelectedVertex selectedVertex ->
+                if hoveredVertex = selectedVertex then
+                    { state with selected = SelectedNone }, DoNothing
 
-            | _ -> updateState { state with selected = state.hover }
+                else
+                    let edge =
+                        Edge.create
+                            { start = hoveredVertex
+                              finish = selectedVertex
+                              assignment = EdgeAssignment.Unassigned }
+
+                    { state with selected = SelectedNone }, CreateEdge edge
+
+            | _ -> { state with selected = state.hover }, DoNothing
 
         | MouseMove mousePoint ->
-            printfn $"{mousePoint}"
-
             let vertexWithin =
                 CreasePattern.pointWithin
                     (theme.pointerCloseDistance
                      / (max state.translation.xRatio state.translation.yRatio))
                     (Translation.pointToVertex state.translation mousePoint)
-                    shared.frame.creasePattern
+                    creasePattern
 
             match vertexWithin with
             | Some vertex ->
-                updateState
-                    { state with
-                          hover = SelectedVertex vertex }
-            | None -> updateState { state with hover = SelectedNone }
-
-
-        | ToggleShowVertices _ ->
-            updateState
                 { state with
-                      showVertices = not state.showVertices }
+                      hover = SelectedVertex vertex },
+                DoNothing
+            | None -> { state with hover = SelectedNone }, DoNothing
+
+
 
 
     (* Drawing *)
+    
+    type ViewState = { showVertices: bool }
 
-    let canvas (state: State) (creasePattern: CreasePattern) =
+
+    let canvas (state: State) (viewState: ViewState) (creasePattern: CreasePattern) =
         let edgeLines =
             List.map (CreasePatternComponents.edgeLine state.translation) (CreasePattern.edges creasePattern)
             |> List.rev
@@ -128,35 +115,26 @@ module CreasePatternCanvas =
         // If this gets too slow, cons to the beginning and reverse the list to maintain readability
         let canvasElements =
             edgeLines
-            |> List.concatIf state.showVertices vertexPoints
+            |> List.concatIf viewState.showVertices vertexPoints
             |> List.appendWhenSome hoverElement
             |> List.appendWhenSome selectedElement
 
         Canvas.create [ Canvas.height state.pageSize.height
                         Canvas.width state.pageSize.width
-                        Canvas.background Theme.colors.foreground
+                        Canvas.background Theme.colors.offWhite
                         Canvas.children canvasElements
                         Canvas.name canvasName ]
 
-    let buttons dispatch =
-        let iconButtons : IView list =
-            [ Form.imageButton
-                  {| icon = Icons.adjust
-                     onClick = Msg.ToggleShowVertices >> dispatch |} ]
-
-        StackPanel.create [ StackPanel.children iconButtons ]
-
-    let view (state: State) (creasePattern: CreasePattern) dispatch =
-        let creasePatternCanvas = canvas state creasePattern
+    
+    let view (state: State) (viewState: ViewState) (creasePattern: CreasePattern) dispatch =
+        let creasePatternCanvas = canvas state viewState creasePattern
 
         DockPanel.create
-        <| [ DockPanel.background Theme.colors.background
+        <| [ DockPanel.background Theme.colors.gray
              DockPanel.onPointerMoved (
-                 (View.positionRelativeTo canvasName)
+                 (Event.positionRelativeTo canvasName)
                  >> Msg.MouseMove
                  >> dispatch
              )
-
-             Canvas.onPointerReleased (fun _ -> dispatch Msg.MouseClicked)
-             DockPanel.children [ buttons dispatch
-                                  creasePatternCanvas ] ]
+             DockPanel.onPointerReleased (Event.handleEvent Msg.MouseClicked >> dispatch)
+             DockPanel.children [ creasePatternCanvas ] ]
