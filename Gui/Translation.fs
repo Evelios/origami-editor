@@ -1,4 +1,4 @@
-namespace Gui.Components.CreasePatternCanvas
+namespace Gui
 
 open Avalonia
 open Fold

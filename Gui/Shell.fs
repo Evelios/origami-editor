@@ -1,7 +1,6 @@
 namespace Gui
 
 module Shell =
-    open System
     open System.IO
 
     open Elmish
@@ -16,11 +15,6 @@ module Shell =
     open Gui.Widgets
     open Gui.Components.CreasePatternCanvas
 
-    type State =
-        { frame: Frame
-          showVertices: bool
-          creasePatternCanvas: CreasePatternCanvas.State }
-
     type Msg =
         (* Component Messages *)
         | FileMenuMsg of FileMenu.Msg
@@ -29,118 +23,65 @@ module Shell =
         | CreasePatternCanvasMsg of CreasePatternCanvas.Msg
 
         (* Global Messages *)
-        | UpdateTitle of string
-        | LoadFoldFile of string
-        | SaveFoldFileToPath of string
+        | UpdateTitle
 
     let title = "Origami Editor"
 
     let init =
         let frame = Frame.create
 
-        { frame = frame
+        let translation =
+            Translation.create frame.creasePattern Theme.creasePattern.maxLength
+
+        { filePath = None
+          frame = frame
           showVertices = true
-          creasePatternCanvas = CreasePatternCanvas.init frame.creasePattern },
+          hover = SelectedNone
+          selected = SelectedNone
+          translation = translation
+          pageSize = translation.pageSize },
         Cmd.none
 
-    let update (msg: Msg) (state: State) (window: Window) : State * Cmd<_> =
+    let update (msg: Msg) (state: State) (window: Window) : State * Cmd<Msg> =
         match msg with
 
         (* Component Messages *)
+        | FileMenuMsg fileMenuMsg ->
+            let newState, fileMenuCommand, external =
+                FileMenu.update fileMenuMsg state window
+
+            let cmd = Cmd.map FileMenuMsg fileMenuCommand
+
+            match external with
+            | FileMenu.External.FoldFileLoaded -> newState, Cmd.ofMsg UpdateTitle
+            | FileMenu.External.DoNothing -> newState, (Cmd.batch [ cmd; Cmd.ofMsg UpdateTitle ])
+
         | FileSettingsMsg fileSettingsMsg ->
             { state with
                   frame = FileSettings.update fileSettingsMsg state.frame },
             Cmd.none
 
-        | FileMenuMsg fileMenuMsg ->
-            let fileMenuCommand, external = FileMenu.update fileMenuMsg window
-            let cmd = Cmd.map FileMenuMsg fileMenuCommand
-
-            match external with
-            | FileMenu.CreateNewFile -> { state with frame = Frame.empty }, cmd
-            | FileMenu.SelectedFoldFilePath paths ->
-                match Array.tryHead paths with
-                | Some path -> state, Cmd.ofMsg (LoadFoldFile path)
-                | None -> state, cmd
-            | FileMenu.LoadFoldFile path ->
-                state,
-                Cmd.batch [ Cmd.ofMsg <| LoadFoldFile path
-                            cmd ]
-            | FileMenu.SaveFoldFileToPath path ->
-                state,
-                Cmd.batch [ Cmd.ofMsg <| SaveFoldFileToPath path
-                            cmd ]
-            | FileMenu.DoNothing -> state, cmd
-
-        | IconBarMsg iconBarMsg ->
-            let external = IconBar.update iconBarMsg
-
-            match external with
-            | IconBar.External.ToggleShowVertices ->
-                { state with
-                      showVertices = not state.showVertices },
-                Cmd.none
+        | IconBarMsg iconBarMsg -> IconBar.update iconBarMsg state, Cmd.none
 
         | CreasePatternCanvasMsg creasePatternCanvasMsg ->
-            let creasePatternCanvasState, external =
-                CreasePatternCanvas.update creasePatternCanvasMsg state.creasePatternCanvas state.frame.creasePattern
-
-            let newState =
-                { state with
-                      creasePatternCanvas = creasePatternCanvasState }
-
-            match external with
-            | CreasePatternCanvas.External.CreateEdge edge ->
-                { newState with
-                      frame = Frame.mapCreasePattern (CreasePattern.addEdge edge) state.frame },
-                Cmd.none
-            | CreasePatternCanvas.External.DoNothing -> newState, Cmd.none
-
+            CreasePatternCanvas.update creasePatternCanvasMsg state, Cmd.none
 
         (* Global Messages*)
-        | UpdateTitle newTitle ->
-            window.Title <- $"{title} - {newTitle}"
-            state, Cmd.none
-
-        | LoadFoldFile foldPath ->
-            match FileLoader.loadFoldFile foldPath with
-            | Ok foldContents ->
-                { state with
-                      frame = Frame.fromFoldFrame foldContents.keyFrame },
-                Cmd.ofMsg
-                <| UpdateTitle(Path.GetFileNameWithoutExtension foldPath)
-
-            | Error error ->
-                printfn $"An error occured loading fold file: {foldPath}{Environment.NewLine}{error}"
-                state, Cmd.none
-
-        | SaveFoldFileToPath foldPath ->
-            let foldText =
-                Fold.empty
-                |> Fold.setKeyframe (Frame.toFoldFrame state.frame)
-                |> FoldJson.toJson
-
-            File.WriteAllText(foldPath, foldText)
+        | UpdateTitle ->
+            window.Title <-
+                match state.filePath with
+                | Some path -> $"{title} - {Path.GetFileNameWithoutExtension(path)}"
+                | None -> title
 
             state, Cmd.none
-
 
     let view (state: State) dispatch =
-        let creasePatternCanvas =
-            CreasePatternCanvas.view
-                state.creasePatternCanvas
-                { showVertices = state.showVertices }
-                state.frame.creasePattern
-                (CreasePatternCanvasMsg >> dispatch)
-
         DockPanel.create
         <| [ DockPanel.background Theme.palette.panelBackground
              DockPanel.children [ DockPanel.child Top (FileMenu.view (FileMenuMsg >> dispatch))
-                                  DockPanel.child
-                                      Left
-                                      (IconBar.view { showVertices = state.showVertices } (IconBarMsg >> dispatch))
+                                  DockPanel.child Left (IconBar.view state (IconBarMsg >> dispatch))
                                   DockPanel.child Right (FileSettings.view state.frame (FileSettingsMsg >> dispatch))
-                                  creasePatternCanvas ] ]
+                                  CreasePatternCanvas.view state (CreasePatternCanvasMsg >> dispatch) ] ]
 
     type MainWindow() as this =
         inherit HostWindow()

@@ -10,15 +10,13 @@ module IconBar =
     open Gui.Widgets
     open Utilities.Extensions
 
-    type State = { showVertices: bool }
+    type Msg = | ToggleShowVertices
 
-    type External = | ToggleShowVertices
-
-    type Msg = ExternalMessage of External
-
-    let update msg : External =
+    let update msg state : State =
         match msg with
-        | ExternalMessage external -> external
+        | ToggleShowVertices ->
+            { state with
+                  showVertices = not state.showVertices }
 
     let view (state: State) dispatch =
         let colorToggle isActive =
@@ -29,9 +27,7 @@ module IconBar =
 
         let iconButtons =
             [ {| icon = Icons.adjust <| colorToggle state.showVertices
-                 onClick =
-                     Event.handleEvent (ExternalMessage ToggleShowVertices)
-                     >> dispatch |} ]
+                 onClick = Event.handleEvent ToggleShowVertices >> dispatch |} ]
             |> List.map (fun state -> Form.imageButton state :> IView)
 
         StackPanel.create [ StackPanel.orientation Orientation.Vertical

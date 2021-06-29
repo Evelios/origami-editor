@@ -1,7 +1,5 @@
 namespace Gui.Components.CreasePatternCanvas
 
-open Avalonia.FuncUI.Types
-
 module CreasePatternCanvas =
 
     open Avalonia
@@ -14,40 +12,15 @@ module CreasePatternCanvas =
     open Utilities.Collections
     open Utilities.Extensions
 
-    type Selectable =
-        | SelectedVertex of Vertex
-        | SelectedNone
-
-    type State =
-        { hover: Selectable
-          selected: Selectable
-          translation: Translation
-          pageSize: Size }
-
-    type External =
-        | CreateEdge of Edge
-        | DoNothing
-
     type Msg =
         | MouseMove of Point
         | MouseClicked
 
     let canvasName = "Crease Pattern Canvas"
 
-    let theme =
-        {| maxLength = 500.
-           pointerCloseDistance = 20. |}
+    let theme = {| pointerCloseDistance = 20. |}
 
-    let init (creasePattern: CreasePattern) =
-        let translation =
-            Translation.create creasePattern theme.maxLength
-
-        { hover = SelectedNone
-          selected = SelectedNone
-          translation = translation
-          pageSize = translation.pageSize }
-
-    let rec update (msg: Msg) (state: State) (creasePattern: CreasePattern) : State * External =
+    let rec update (msg: Msg) (state: State) : State =
 
         match msg with
         (* User Actions *)
@@ -55,7 +28,7 @@ module CreasePatternCanvas =
             match (state.hover, state.selected) with
             | SelectedVertex hoveredVertex, SelectedVertex selectedVertex ->
                 if hoveredVertex = selectedVertex then
-                    { state with selected = SelectedNone }, DoNothing
+                    { state with selected = SelectedNone }
 
                 else
                     let edge =
@@ -64,9 +37,11 @@ module CreasePatternCanvas =
                               finish = selectedVertex
                               assignment = EdgeAssignment.Unassigned }
 
-                    { state with selected = SelectedNone }, CreateEdge edge
+                    { state with
+                          selected = SelectedNone
+                          frame = Frame.mapCreasePattern (CreasePattern.addEdge edge) state.frame }
 
-            | _ -> { state with selected = state.hover }, DoNothing
+            | _ -> { state with selected = state.hover }
 
         | MouseMove mousePoint ->
             let vertexWithin =
@@ -74,16 +49,13 @@ module CreasePatternCanvas =
                     (theme.pointerCloseDistance
                      / (max state.translation.xRatio state.translation.yRatio))
                     (Translation.pointToVertex state.translation mousePoint)
-                    creasePattern
+                    state.frame.creasePattern
 
             match vertexWithin with
             | Some vertex ->
                 { state with
-                      hover = SelectedVertex vertex },
-                DoNothing
-            | None -> { state with hover = SelectedNone }, DoNothing
-
-
+                      hover = SelectedVertex vertex }
+            | None -> { state with hover = SelectedNone }
 
 
     (* Drawing *)
@@ -91,13 +63,17 @@ module CreasePatternCanvas =
     type ViewState = { showVertices: bool }
 
 
-    let canvas (state: State) (viewState: ViewState) (creasePattern: CreasePattern) =
+    let canvas (state: State) =
         let edgeLines =
-            List.map (CreasePatternComponents.edgeLine state.translation) (CreasePattern.edges creasePattern)
+            List.map
+                (CreasePatternComponents.edgeLine state.translation)
+                (CreasePattern.edges state.frame.creasePattern)
             |> List.rev
 
         let vertexPoints =
-            List.map (CreasePatternComponents.vertexDefault state.translation) (CreasePattern.vertices creasePattern)
+            List.map
+                (CreasePatternComponents.vertexDefault state.translation)
+                (CreasePattern.vertices state.frame.creasePattern)
 
         let hoverElement =
             match state.hover with
@@ -117,7 +93,7 @@ module CreasePatternCanvas =
         // If this gets too slow, cons to the beginning and reverse the list to maintain readability
         let canvasElements =
             edgeLines
-            |> List.concatIf viewState.showVertices vertexPoints
+            |> List.concatIf state.showVertices vertexPoints
             |> List.appendWhenSome hoverElement
             |> List.appendWhenSome selectedElement
 
@@ -128,10 +104,7 @@ module CreasePatternCanvas =
                         Canvas.name canvasName ]
 
 
-    let view (state: State) (viewState: ViewState) (creasePattern: CreasePattern) dispatch =
-        let creasePatternCanvas = canvas state viewState creasePattern
-
-
+    let view (state: State) dispatch =
         DockPanel.create
         <| [ DockPanel.background Theme.palette.canvasBackdrop
              DockPanel.onPointerMoved (
@@ -140,4 +113,4 @@ module CreasePatternCanvas =
                  >> dispatch
              )
              DockPanel.onPointerReleased (Event.handleEvent Msg.MouseClicked >> dispatch)
-             DockPanel.children [ creasePatternCanvas ] ]
+             DockPanel.children [ canvas state ] ]

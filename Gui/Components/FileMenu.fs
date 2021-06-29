@@ -1,5 +1,7 @@
 namespace Gui
 
+open System
+
 module FileMenu =
 
     open Avalonia.Controls
@@ -9,13 +11,11 @@ module FileMenu =
     open System.IO
 
     open Fold
+    open CreasePattern
     open Gui.Widgets
 
     type External =
-        | CreateNewFile
-        | SelectedFoldFilePath of string array
-        | LoadFoldFile of string
-        | SaveFoldFileToPath of string
+        | FoldFileLoaded
         | DoNothing
 
     type Msg =
@@ -23,28 +23,64 @@ module FileMenu =
         | NewFile
         | OpenFoldFile
         | OpenExampleFoldFile of string
+        | LoadFoldFiles of string array
+        | LoadFoldFile of string
         | SaveAs
+        | SaveFoldFileToPath of string
+        | SavedFile
+        | ErrorSavingFile of exn
 
-    let update msg window : Cmd<Msg> * External =
+    let update msg state window : State * Cmd<Msg> * External =
 
         match msg with
-        | NewFile -> Cmd.none, External.CreateNewFile
-
+        | NewFile -> { state with frame = Frame.create }, Cmd.none, DoNothing
         | OpenFoldFile ->
             let fileDialogTask =
                 Dialogs.openFileDialogTask "Fold File" Fold.extensions window
 
-            Cmd.OfAsync.perform fileDialogTask () (SelectedFoldFilePath >> SendExternal), DoNothing
+            state, Cmd.OfAsync.perform fileDialogTask () LoadFoldFiles, DoNothing
 
-        | OpenExampleFoldFile path -> Cmd.ofMsg <| (LoadFoldFile path |> SendExternal), DoNothing
+        | LoadFoldFiles paths ->
+            match Array.tryHead paths with
+            | Some path -> state, Cmd.ofMsg (LoadFoldFile path), DoNothing
+            | None -> state, Cmd.none, DoNothing
+            
+        | OpenExampleFoldFile path -> state, Cmd.ofMsg (LoadFoldFile path), DoNothing
+        
+        | LoadFoldFile path ->
+            match FileLoader.loadFoldFile path with
+            | Ok foldContents ->
+                { state with
+                      frame = Frame.fromFoldFrame foldContents.keyFrame },
+                Cmd.none
+                , FoldFileLoaded
+
+            | Error error ->
+                printfn $"An error occured loading fold file: {path}{Environment.NewLine}{error}"
+                state, Cmd.none,DoNothing
 
         | SaveAs ->
             let fileDialogTask =
                 Dialogs.saveFileDialogTask "Fold File" Fold.extensions window
 
-            Cmd.OfAsync.perform fileDialogTask () (SaveFoldFileToPath >> SendExternal), DoNothing
+            state, Cmd.OfAsync.perform fileDialogTask () SaveFoldFileToPath,DoNothing
+            
+        | SaveFoldFileToPath path ->
+            let foldText =
+                Fold.empty
+                |> Fold.setKeyframe (Frame.toFoldFrame state.frame)
+                |> FoldJson.toJson
+                
+            let writeToFile () =
+                async { File.WriteAllText(path, foldText) }
 
-        | SendExternal external -> Cmd.none, external
+            state, Cmd.OfAsync.either writeToFile () (fun () -> SavedFile) ErrorSavingFile,DoNothing
+            
+        | SavedFile -> state, Cmd.none, DoNothing
+        | ErrorSavingFile exn -> state, Cmd.none, DoNothing
+            
+
+
 
     let view dispatch =
         let exampleFiles : IView list =

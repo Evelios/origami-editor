@@ -27,6 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Compile Include="Translation.fs" />
       <Compile Include="Types.fs" />
       <Compile Include="Theme.fs" />
       <Compile Include="FileLoader.fs" />
@@ -36,10 +37,10 @@
       <Compile Include="Widgets\DockPanel.fs" />
       <Compile Include="Components\FileMenu.fs" />
       <Compile Include="Components\FileSettings.fs" />
-      <Compile Include="Components\CreasePatternCanvas\Translation.fs" />
       <Compile Include="Components\CreasePatternCanvas\CreasePatternComponents.fs" />
       <Compile Include="Components\CreasePatternCanvas\CreasePatternCanvas.fs" />
       <Compile Include="Components\IconBar.fs" />
+      <Compile Include="Components\InfoPane.fs" />
       <Compile Include="Shell.fs" />
       <Compile Include="Program.fs" />
     </ItemGroup>

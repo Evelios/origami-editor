@@ -21,11 +21,12 @@ module Theme =
     let window =
         {| height = 600.
            width = 800.
-             
         |}
 
     let border = {| thickness = 1. |}
 
+    let creasePattern = {| maxLength = 500. |}
+    
     let spacing =
         {| small = 4.
            medium = 8.
