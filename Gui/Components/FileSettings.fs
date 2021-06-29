@@ -50,7 +50,12 @@ module FileSettings =
                      value = frame.description
                      onSelected = Msg.ChangeDescription >> dispatch |} ]
 
-        StackPanel.create
-        <| [ StackPanel.width Theme.size.small
-             StackPanel.margin Theme.spacing.large
-             StackPanel.children settingsOptions ]
+        let panel =
+            StackPanel.create
+            <| [ StackPanel.width Theme.size.small
+                 StackPanel.margin Theme.spacing.large
+                 StackPanel.children settingsOptions ]
+
+        Border.create [ Border.borderBrush Theme.palette.panelAccent
+                        Border.borderThickness (0., 0., Theme.border.thickness, 0.)
+                        Border.child panel ]

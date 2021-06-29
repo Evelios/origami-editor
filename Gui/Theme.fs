@@ -12,6 +12,20 @@ module Theme =
            blue = "#4F2DBE"
            green = "#26D81D" |}
 
+    let palette =
+        {| panelBackground = colors.darkGray
+           panelAccent = colors.lightGray
+           canvasBackdrop = colors.gray
+           canvasBackground = colors.offWhite |}
+           
+    let window =
+        {| height = 600.
+           width = 800.
+             
+        |}
+
+    let border = {| thickness = 1. |}
+
     let spacing =
         {| small = 4.
            medium = 8.

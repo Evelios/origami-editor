@@ -7,13 +7,13 @@ module Shell =
     open Elmish
     open Avalonia.Controls
     open Avalonia.FuncUI.DSL
-    open Avalonia.FuncUI.Types
     open Avalonia.FuncUI.Components.Hosts
     open Avalonia.FuncUI.Elmish
 
     open Fold
     open CreasePattern
     open Gui.Components
+    open Gui.Widgets
     open Gui.Components.CreasePatternCanvas
 
     type State =
@@ -124,34 +124,33 @@ module Shell =
 
             state, Cmd.none
 
-    let view (state: State) dispatch =
-        let body =
-            let children : IView list =
-                [ FileSettings.view state.frame (FileSettingsMsg >> dispatch)
-                  CreasePatternCanvas.view
-                      state.creasePatternCanvas
-                      { showVertices = state.showVertices }
-                      state.frame.creasePattern
-                      (CreasePatternCanvasMsg >> dispatch) ]
 
-            DockPanel.create [ DockPanel.children children ]
+    let view (state: State) dispatch =
+        let creasePatternCanvas =
+            CreasePatternCanvas.view
+                state.creasePatternCanvas
+                { showVertices = state.showVertices }
+                state.frame.creasePattern
+                (CreasePatternCanvasMsg >> dispatch)
 
         DockPanel.create
-        <| [ DockPanel.background Theme.colors.darkGray
-             DockPanel.children
-             <| [ FileMenu.view (FileMenuMsg >> dispatch)
-                  IconBar.view { showVertices = state.showVertices } (IconBarMsg >> dispatch)
-                  body ] ]
+        <| [ DockPanel.background Theme.palette.panelBackground
+             DockPanel.children [ DockPanel.child Top (FileMenu.view (FileMenuMsg >> dispatch))
+                                  DockPanel.child
+                                      Left
+                                      (IconBar.view { showVertices = state.showVertices } (IconBarMsg >> dispatch))
+                                  DockPanel.child Right (FileSettings.view state.frame (FileSettingsMsg >> dispatch))
+                                  creasePatternCanvas ] ]
 
     type MainWindow() as this =
         inherit HostWindow()
 
         do
             base.Title <- title
-            base.Width <- 800.0
-            base.Height <- 600.0
-            base.MinWidth <- 800.0
-            base.MinHeight <- 600.0
+            base.Height <- Theme.window.height
+            base.Width <- Theme.window.width
+            base.MinHeight <- Theme.window.height
+            base.MinWidth <- Theme.window.width
             this.HasSystemDecorations <- true
 
             let updateWithServices (msg: Msg) (state: State) = update msg state this

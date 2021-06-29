@@ -27,11 +27,13 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Compile Include="Types.fs" />
       <Compile Include="Theme.fs" />
       <Compile Include="FileLoader.fs" />
       <Compile Include="Widgets\Icons.fs" />
       <Compile Include="Widgets\Form.fs" />
       <Compile Include="Widgets\Dialogs.fs" />
+      <Compile Include="Widgets\DockPanel.fs" />
       <Compile Include="Components\FileMenu.fs" />
       <Compile Include="Components\FileSettings.fs" />
       <Compile Include="Components\CreasePatternCanvas\Translation.fs" />

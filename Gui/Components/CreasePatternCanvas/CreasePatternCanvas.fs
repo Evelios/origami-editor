@@ -1,5 +1,7 @@
 namespace Gui.Components.CreasePatternCanvas
 
+open Avalonia.FuncUI.Types
+
 module CreasePatternCanvas =
 
     open Avalonia
@@ -85,7 +87,7 @@ module CreasePatternCanvas =
 
 
     (* Drawing *)
-    
+
     type ViewState = { showVertices: bool }
 
 
@@ -121,16 +123,17 @@ module CreasePatternCanvas =
 
         Canvas.create [ Canvas.height state.pageSize.height
                         Canvas.width state.pageSize.width
-                        Canvas.background Theme.colors.offWhite
+                        Canvas.background Theme.palette.canvasBackground
                         Canvas.children canvasElements
                         Canvas.name canvasName ]
 
-    
+
     let view (state: State) (viewState: ViewState) (creasePattern: CreasePattern) dispatch =
         let creasePatternCanvas = canvas state viewState creasePattern
 
+
         DockPanel.create
-        <| [ DockPanel.background Theme.colors.gray
+        <| [ DockPanel.background Theme.palette.canvasBackdrop
              DockPanel.onPointerMoved (
                  (Event.positionRelativeTo canvasName)
                  >> Msg.MouseMove

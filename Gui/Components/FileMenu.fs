@@ -76,7 +76,13 @@ module FileMenu =
         let fileMenu =
             MenuItem.create
             <| [ MenuItem.header "File"
+                 Menu.padding Theme.spacing.small
                  MenuItem.viewItems menuOptions ]
 
-        Menu.create [ Menu.dock Dock.Top
-                      Menu.viewItems [ fileMenu ] ]
+        let menu =
+            Menu.create [ Menu.viewItems [ fileMenu ] ]
+
+
+        Border.create [ Border.borderBrush Theme.palette.panelAccent
+                        Border.borderThickness (0., 0., 0., Theme.border.thickness)
+                        Border.child menu ]

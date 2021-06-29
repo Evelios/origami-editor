@@ -34,6 +34,5 @@ module IconBar =
                      >> dispatch |} ]
             |> List.map (fun state -> Form.imageButton state :> IView)
 
-        StackPanel.create [ StackPanel.dock Dock.Top
-                            StackPanel.orientation Orientation.Horizontal
+        StackPanel.create [ StackPanel.orientation Orientation.Vertical
                             StackPanel.children iconButtons ]
