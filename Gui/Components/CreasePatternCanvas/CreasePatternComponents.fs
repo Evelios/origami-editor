@@ -12,14 +12,15 @@ module CreasePatternComponents =
     open Fold
     open Gui
     open CreasePattern
+    open Geometry
 
     let theme =
         {| lineThickness = 2.
            vertexSize = 8.
            vertexHoveredSize = 10.
            vertexColor = Theme.colors.darkGray
-           vertexHoveredColor = Theme.colors.yellow
-           vertexSelectedColor = Theme.colors.blue
+           hoveredColor = Theme.colors.yellow
+           selectedColor = Theme.colors.blue
            boundaryColor = Theme.colors.lighterGray
            mountainColor = Theme.colors.green
            valleyColor = Theme.colors.blue
@@ -29,7 +30,7 @@ module CreasePatternComponents =
 
     (* Edges *)
 
-    let edgeColor (edgeType: EdgeAssignment) : string =
+    let private edgeColor (edgeType: EdgeAssignment) : string =
         match edgeType with
         | EdgeAssignment.Boundary -> theme.boundaryColor
         | EdgeAssignment.Mountain -> theme.mountainColor
@@ -37,17 +38,39 @@ module CreasePatternComponents =
         | EdgeAssignment.Unassigned -> theme.unassignedColor
         | EdgeAssignment.Flat -> theme.flatColor
 
-    let edgeLine (translation: Translation) (edge: Edge) : IView =
+    let edgeLine
+        (options: {| translation: Translation
+                     edge: Edge
+                     color: string |})
+        : IView =
         let scaledEdge =
-            Edge.scale translation.xRatio translation.yRatio 1. edge
+            Edge.scale options.translation.xRatio options.translation.yRatio 1. options.edge
 
         Line.create
         <| [ Line.startPoint (Point(Vertex.x scaledEdge.start, Vertex.y scaledEdge.start))
              Line.endPoint (Point(Vertex.x scaledEdge.finish, Vertex.y scaledEdge.finish))
-             Line.stroke (edgeColor edge.assignment)
+             Line.stroke options.color
              Line.strokeThickness theme.lineThickness
              Line.strokeLineCap PenLineCap.Round ]
         :> IView
+
+    let edgeLineDefault translation edge =
+        edgeLine
+            {| translation = translation
+               edge = edge
+               color = edgeColor edge.assignment |}
+
+    let edgeLineHovered translation edge =
+        edgeLine
+            {| translation = translation
+               edge = edge
+               color = theme.hoveredColor |}
+
+    let edgeLineSelected translation edge =
+        edgeLine
+            {| translation = translation
+               edge = edge
+               color = theme.selectedColor |}
 
 
     (* Vertices *)
@@ -81,12 +104,12 @@ module CreasePatternComponents =
         vertexPoint
             {| translation = translation
                vertex = vertex
-               color = theme.vertexHoveredColor
+               color = theme.hoveredColor
                size = theme.vertexHoveredSize |}
-               
+
     let vertexSelected (translation: Translation) (vertex: Vertex) : IView =
         vertexPoint
             {| translation = translation
                vertex = vertex
-               color = theme.vertexSelectedColor
+               color = theme.selectedColor
                size = theme.vertexSize |}

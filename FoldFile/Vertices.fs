@@ -1,5 +1,7 @@
 namespace Fold
 
+open Geometry
+
 type Vertices =
     { coords: Vertex list
       vertices: int list

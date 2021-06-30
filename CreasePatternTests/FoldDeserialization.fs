@@ -4,6 +4,7 @@ module CreasePatternTests.FoldDeserialization
 open NUnit.Framework
 open Fold
 open CreasePattern
+open Geometry
 
 [<SetUp>]
 let SetUp () = ()

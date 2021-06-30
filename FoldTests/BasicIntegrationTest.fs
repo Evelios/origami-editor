@@ -3,6 +3,7 @@ module FoldTests.BasicIntegrationTest
 open System.IO
 open NUnit.Framework
 open Fold
+open Geometry
 
 [<SetUp>]
 let Setup () = ()

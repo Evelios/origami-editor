@@ -14,6 +14,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gui", "Gui\Gui.fsproj", "{A
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "UtilitiesTests", "UtilitiesTests\UtilitiesTests.fsproj", "{4B7600AC-C1A0-4F48-962E-49037078F192}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Geometry", "Geometry\Geometry.fsproj", "{8853ACF8-BB2F-4CCF-84A1-7A62400B2BF8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 	Debug|Any CPU = Debug|Any CPU
@@ -63,5 +65,11 @@ Global
 		{4B7600AC-C1A0-4F48-962E-49037078F192}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
 		{4B7600AC-C1A0-4F48-962E-49037078F192}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{4B7600AC-C1A0-4F48-962E-49037078F192}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+		{8853ACF8-BB2F-4CCF-84A1-7A62400B2BF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8853ACF8-BB2F-4CCF-84A1-7A62400B2BF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8853ACF8-BB2F-4CCF-84A1-7A62400B2BF8}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8853ACF8-BB2F-4CCF-84A1-7A62400B2BF8}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{8853ACF8-BB2F-4CCF-84A1-7A62400B2BF8}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{8853ACF8-BB2F-4CCF-84A1-7A62400B2BF8}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal

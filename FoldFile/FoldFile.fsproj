@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Vertex.fs" />
         <Compile Include="Vertices.fs" />
         <Compile Include="Edges.fs" />
         <Compile Include="Faces.fs" />
@@ -24,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Geometry\Geometry.fsproj" />
       <ProjectReference Include="..\Utilities\Utilities.fsproj" />
     </ItemGroup>
 

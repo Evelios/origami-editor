@@ -25,7 +25,7 @@ module CreasePatternCanvas =
 
     let theme = {| pointerCloseDistance = 20. |}
 
-    let rec update (msg: Msg) (state: State) : State * External =
+    let update (msg: Msg) (state: State) : State * External =
 
         match msg with
         (* User Actions *)
@@ -61,19 +61,20 @@ module CreasePatternCanvas =
             let vertexWithin =
                 CreasePattern.pointWithin convertedCloseDistance convertedVertex state.frame.creasePattern
 
-            let stateWithMousePosition =
-                { state with
-                      mousePosition = Some mousePoint
-                      vertexPosition = Some convertedVertex }
+            let edgeWithin =
+                CreasePattern.edgeWithin convertedCloseDistance convertedVertex state.frame.creasePattern
 
-            match vertexWithin with
-            | Some vertex ->
-                { stateWithMousePosition with
-                      hover = SelectedVertex vertex }
-            | None ->
-                { stateWithMousePosition with
-                      hover = SelectedNone }
-            , External.MouseMoved
+            let hover =
+                match vertexWithin, edgeWithin with
+                | Some vertex, _ -> SelectedVertex vertex
+                | None, Some edge -> SelectedEdge edge
+                | None, None -> SelectedNone
+
+            { state with
+                  mousePosition = Some mousePoint
+                  vertexPosition = Some convertedVertex
+                  hover = hover },
+            External.MouseMoved
 
 
     (* Drawing *)
@@ -84,7 +85,7 @@ module CreasePatternCanvas =
     let canvas (state: State) =
         let edgeLines =
             List.map
-                (CreasePatternComponents.edgeLine state.translation)
+                (CreasePatternComponents.edgeLineDefault state.translation)
                 (CreasePattern.edges state.frame.creasePattern)
             |> List.rev
 
@@ -96,15 +97,21 @@ module CreasePatternCanvas =
         let hoverElement =
             match state.hover with
             | SelectedVertex vertex ->
-                Some
-                <| CreasePatternComponents.vertexHovered state.translation vertex
+                CreasePatternComponents.vertexHovered state.translation vertex
+                |> Some
+            | SelectedEdge edge ->
+                CreasePatternComponents.edgeLineHovered state.translation edge
+                |> Some
             | SelectedNone -> None
 
         let selectedElement =
             match state.selected with
             | SelectedVertex vertex ->
-                Some
-                <| CreasePatternComponents.vertexSelected state.translation vertex
+                CreasePatternComponents.vertexSelected state.translation vertex
+                |> Some
+            | SelectedEdge edge ->
+                CreasePatternComponents.edgeLineSelected state.translation edge
+                |> Some
             | SelectedNone -> None
 
         // This could be a slow point because of appending to the end of the list

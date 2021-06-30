@@ -19,7 +19,6 @@ module FileMenu =
         | DoNothing
 
     type Msg =
-        | SendExternal of External
         | NewFile
         | OpenFoldFile
         | OpenExampleFoldFile of string
@@ -44,43 +43,40 @@ module FileMenu =
             match Array.tryHead paths with
             | Some path -> state, Cmd.ofMsg (LoadFoldFile path), DoNothing
             | None -> state, Cmd.none, DoNothing
-            
+
         | OpenExampleFoldFile path -> state, Cmd.ofMsg (LoadFoldFile path), DoNothing
-        
+
         | LoadFoldFile path ->
             match FileLoader.loadFoldFile path with
             | Ok foldContents ->
                 { state with
                       frame = Frame.fromFoldFrame foldContents.keyFrame },
-                Cmd.none
-                , FoldFileLoaded
+                Cmd.none,
+                FoldFileLoaded
 
             | Error error ->
                 printfn $"An error occured loading fold file: {path}{Environment.NewLine}{error}"
-                state, Cmd.none,DoNothing
+                state, Cmd.none, DoNothing
 
         | SaveAs ->
             let fileDialogTask =
                 Dialogs.saveFileDialogTask "Fold File" Fold.extensions window
 
-            state, Cmd.OfAsync.perform fileDialogTask () SaveFoldFileToPath,DoNothing
-            
+            state, Cmd.OfAsync.perform fileDialogTask () SaveFoldFileToPath, DoNothing
+
         | SaveFoldFileToPath path ->
             let foldText =
                 Fold.empty
                 |> Fold.setKeyframe (Frame.toFoldFrame state.frame)
                 |> FoldJson.toJson
-                
+
             let writeToFile () =
                 async { File.WriteAllText(path, foldText) }
 
-            state, Cmd.OfAsync.either writeToFile () (fun () -> SavedFile) ErrorSavingFile,DoNothing
-            
+            state, Cmd.OfAsync.either writeToFile () (fun () -> SavedFile) ErrorSavingFile, DoNothing
+
         | SavedFile -> state, Cmd.none, DoNothing
         | ErrorSavingFile exn -> state, Cmd.none, DoNothing
-            
-
-
 
     let view dispatch =
         let exampleFiles : IView list =

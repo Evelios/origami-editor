@@ -1,7 +1,7 @@
 module FoldTests.VertexTests
 
 open NUnit.Framework
-open Fold
+open Geometry
 
 [<SetUp>]
 let Setup () = ()

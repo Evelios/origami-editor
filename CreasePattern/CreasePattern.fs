@@ -2,6 +2,7 @@
 
 open FSharp.FGL
 open Fold
+open Geometry
 
 type Label = int
 
@@ -34,6 +35,12 @@ module CreasePattern =
 
     (* Accessors *)
 
+    let private asEdge (start, finish, assignment) =
+        Edge.create
+            { start = start
+              finish = finish
+              assignment = assignment }
+
     let size creasePattern =
         Size.create
             (creasePattern.bounds.maxX
@@ -42,14 +49,7 @@ module CreasePattern =
              - creasePattern.bounds.minY)
 
     let edges creasePattern : Edge list =
-        List.map
-            (fun (start, finish, assignment) ->
-                Edge.create
-                    { start = start
-                      finish = finish
-                      assignment = assignment })
-            (Undirected.Edges.toEdgeList creasePattern.graph)
-
+        List.map asEdge (Undirected.Edges.toEdgeList creasePattern.graph)
 
     let vertices creasePattern : Vertex list =
         List.map fst (Vertices.toVertexList creasePattern.graph)
@@ -95,6 +95,7 @@ module CreasePattern =
                   creasePatternWithVertices.graph
                   |> Undirected.Edges.addMany graphEdges }
 
+    /// Try adding an edge to the crease pattern. If the edge already exists, the same edge will be returned
     let addEdge (edge: Edge) (creasePattern: CreasePattern) : CreasePattern =
         let vertices = [ edge.start; edge.finish ]
         let creasePatternWithVertices = addVertices vertices creasePattern
@@ -102,10 +103,14 @@ module CreasePattern =
         let graphEdge =
             (edge.start, edge.finish, edge.assignment)
 
+        let graph =
+            try
+                creasePatternWithVertices.graph
+                |> Undirected.Edges.add graphEdge
+            with _ -> creasePattern.graph
+
         { creasePatternWithVertices with
-              graph =
-                  creasePatternWithVertices.graph
-                  |> Undirected.Edges.add graphEdge }
+              graph = graph }
 
     (* Builder *)
 
@@ -170,7 +175,30 @@ module CreasePattern =
         else
             None
 
+    let edgeWithin distance vertex creasePattern =
+        let defaultCase =
+            (infinity, ((Vertex.in2d infinity infinity), (Vertex.in2d -infinity -infinity), EdgeAssignment.Unassigned))
 
+        let closestDistance, closestEdge =
+            Edges.toEdgeList creasePattern.graph
+            |> List.fold
+                (fun (closestDistance, closestEdge) nextEdge ->
+                    match nextEdge with
+                    | start, finish, _ as nextEdge ->
+                        let nextDistance =
+                            Line.distanceToVertex vertex (Line.in2d start finish)
+
+                        if nextDistance < closestDistance then
+                            (nextDistance, nextEdge)
+
+                        else
+                            (closestDistance, closestEdge))
+                defaultCase
+
+        if closestDistance < distance then
+            Some(asEdge closestEdge)
+        else
+            None
 
 
     (* Serialization & Deserialization *)

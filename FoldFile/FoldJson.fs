@@ -1,6 +1,7 @@
 ﻿namespace Fold
 
 open FSharp.Json
+open Geometry
 
 type FoldFileJson =
     { fileSpec: int option

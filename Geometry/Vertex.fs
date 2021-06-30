@@ -1,4 +1,4 @@
-﻿namespace Fold
+﻿namespace Geometry
 
 open System
 open FSharp.Json
@@ -7,8 +7,8 @@ open MathNet.Spatial.Euclidean
 [<CustomEquality>]
 [<CustomComparison>]
 type Vertex =
-    | Vector2 of Vector2D
-    | Vector3 of Vector3D
+    | Point2 of Point2D
+    | Point3 of Point3D
 
     member this.Epsilon = 1e-8
 
@@ -28,12 +28,12 @@ type Vertex =
 
     member this.LessThan(other) =
         match (this, other) with
-        | Vector2 first, Vector2 second ->
+        | Point2 first, Point2 second ->
             if this.withinDelta first.X second.X then
                 first.Y < second.Y
             else
                 first.X < second.X
-        | Vector3 first, Vector3 second ->
+        | Point3 first, Point3 second ->
             if this.withinDelta first.X second.X then
                 if this.withinDelta first.Y second.Y then
                     first.Z < second.Z
@@ -50,10 +50,10 @@ type Vertex =
         match obj with
         | :? Vertex as other ->
             match (this, other) with
-            | Vector2 first, Vector2 second ->
+            | Point2 first, Point2 second ->
                 this.withinDelta first.X second.X
                 && this.withinDelta first.Y second.Y
-            | Vector3 first, Vector3 second ->
+            | Point3 first, Point3 second ->
                 this.withinDelta first.X second.X
                 && this.withinDelta first.Y second.Y
                 && this.withinDelta first.Z second.Z
@@ -65,45 +65,48 @@ type Vertex =
 module Vertex =
     [<Literal>]
     let epsilon = 1e-6
-    
+
     (* Builders *)
 
-    let in2d x y = Vector2D(x, y) |> Vertex.Vector2
+    let in2d x y = Point2D(x, y) |> Vertex.Point2
 
-    let in3d x y z = Vector3D(x, y, z) |> Vertex.Vector3
+    let in3d x y z = Point3D(x, y, z) |> Vertex.Point3
+    
+    let internal fromPoint2d = Vertex.Point2
+    let internal fromPoint3d = Vertex.Point2
 
 
     (* Accessors *)
 
-    let x vector =
-        match vector with
-        | Vector2 vector -> vector.X
-        | Vector3 vector -> vector.X
+    let x point =
+        match point with
+        | Point2 point -> point.X
+        | Point3 point -> point.X
 
-    let y vector =
-        match vector with
-        | Vector2 vector -> vector.Y
-        | Vector3 vector -> vector.Y
+    let y point =
+        match point with
+        | Point2 point -> point.Y
+        | Point3 point -> point.Y
 
-    let z vector =
-        match vector with
-        | Vector2 _ -> 0.
-        | Vector3 vector -> vector.Z
+    let z point =
+        match point with
+        | Point2 _ -> 0.
+        | Point3 point -> point.Z
 
-    let hashCode vector =
-        match vector with
-        | Vector2 vector -> HashCode.Combine(vector.X, vector.Y, 0)
-        | Vector3 vector -> HashCode.Combine(vector.X, vector.Y, vector.Z)
+    let hashCode point =
+        match point with
+        | Point2 point -> HashCode.Combine(point.X, point.Y, 0)
+        | Point3 point -> HashCode.Combine(point.X, point.Y, point.Z)
 
 
     (* Modifiers *)
 
-    let scale x y z vector =
-        match vector with
-        | Vector2 vector -> Vector2 <| Vector2D(vector.X * x, vector.Y * y)
-        | Vector3 vector ->
-            Vector3
-            <| Vector3D(vector.X * x, vector.Y * y, vector.Z * z)
+    let scale x y z point =
+        match point with
+        | Point2 point -> Point2 <| Point2D(point.X * x, point.Y * y)
+        | Point3 point ->
+            Point3
+            <| Point3D(point.X * x, point.Y * y, point.Z * z)
 
 
     (* Queries *)
@@ -125,8 +128,8 @@ module Vertex =
 
     let toList vertex =
         match vertex with
-        | Vector2 vec -> [ vec.X; vec.Y ]
-        | Vector3 vec -> [ vec.X; vec.Y; vec.Z ]
+        | Point2 point -> [ point.X; point.Y ]
+        | Point3 point -> [ point.X; point.Y; point.Z ]
 
     (* Json transformations *)
 

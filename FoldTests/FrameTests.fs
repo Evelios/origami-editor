@@ -2,6 +2,7 @@ module FoldTests.FrameTests
 
 open NUnit.Framework
 open Fold
+open Geometry
 
 [<SetUp>]
 let Setup () = ()

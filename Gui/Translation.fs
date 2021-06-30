@@ -1,8 +1,8 @@
 namespace Gui
 
 open Avalonia
-open Fold
 open Utilities.Collections
+open Geometry
 
 type Translation =
     { creasePatternSize: Size

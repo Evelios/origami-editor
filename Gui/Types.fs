@@ -1,9 +1,9 @@
 namespace Gui
 
 open Avalonia
-open Fold
 open CreasePattern
 open Utilities.Collections
+open Geometry
 
 type Direction =
     | Left
@@ -12,6 +12,7 @@ type Direction =
     | Bottom
 
 type Selectable =
+    | SelectedEdge of Edge
     | SelectedVertex of Vertex
     | SelectedNone
 
