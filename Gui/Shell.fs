@@ -20,6 +20,7 @@ module Shell =
         | FileMenuMsg of FileMenu.Msg
         | FileSettingsMsg of FileSettings.Msg
         | IconBarMsg of IconBar.Msg
+        | InfoBarMsg of InfoBar.Msg
         | CreasePatternCanvasMsg of CreasePatternCanvas.Msg
 
         (* Global Messages *)
@@ -38,9 +39,17 @@ module Shell =
           showVertices = true
           hover = SelectedNone
           selected = SelectedNone
+          mousePosition = None
+          vertexPosition = None
           translation = translation
           pageSize = translation.pageSize },
         Cmd.none
+
+    let private handlePlayerExternal (msg: CreasePatternCanvas.External) =
+        match msg with
+        | CreasePatternCanvas.External.MouseMoved -> Cmd.none
+        | CreasePatternCanvas.External.DoNothing -> Cmd.none
+
 
     let update (msg: Msg) (state: State) (window: Window) : State * Cmd<Msg> =
         match msg with
@@ -56,6 +65,8 @@ module Shell =
             | FileMenu.External.FoldFileLoaded -> newState, Cmd.ofMsg UpdateTitle
             | FileMenu.External.DoNothing -> newState, (Cmd.batch [ cmd; Cmd.ofMsg UpdateTitle ])
 
+        | InfoBarMsg infoBarMsg -> InfoBar.update infoBarMsg state, Cmd.none
+
         | FileSettingsMsg fileSettingsMsg ->
             { state with
                   frame = FileSettings.update fileSettingsMsg state.frame },
@@ -64,7 +75,11 @@ module Shell =
         | IconBarMsg iconBarMsg -> IconBar.update iconBarMsg state, Cmd.none
 
         | CreasePatternCanvasMsg creasePatternCanvasMsg ->
-            CreasePatternCanvas.update creasePatternCanvasMsg state, Cmd.none
+            let newState, external =
+                CreasePatternCanvas.update creasePatternCanvasMsg state
+
+            let handled = handlePlayerExternal external
+            newState, handled
 
         (* Global Messages*)
         | UpdateTitle ->
@@ -79,6 +94,7 @@ module Shell =
         DockPanel.create
         <| [ DockPanel.background Theme.palette.panelBackground
              DockPanel.children [ DockPanel.child Top (FileMenu.view (FileMenuMsg >> dispatch))
+                                  DockPanel.child Bottom (InfoBar.view state (InfoBarMsg >> dispatch))
                                   DockPanel.child Left (IconBar.view state (IconBarMsg >> dispatch))
                                   DockPanel.child Right (FileSettings.view state.frame (FileSettingsMsg >> dispatch))
                                   CreasePatternCanvas.view state (CreasePatternCanvasMsg >> dispatch) ] ]

@@ -40,7 +40,7 @@
       <Compile Include="Components\CreasePatternCanvas\CreasePatternComponents.fs" />
       <Compile Include="Components\CreasePatternCanvas\CreasePatternCanvas.fs" />
       <Compile Include="Components\IconBar.fs" />
-      <Compile Include="Components\InfoPane.fs" />
+      <Compile Include="Components\InfoBar.fs" />
       <Compile Include="Shell.fs" />
       <Compile Include="Program.fs" />
     </ItemGroup>

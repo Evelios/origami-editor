@@ -18,8 +18,8 @@ module DockPanel =
         match dir with
         | Left ->
             Border.create [ direction Left
-                            Border.borderThickness (0., 0., Theme.border.thickness, 0.)
                             Border.borderBrush Theme.palette.panelAccent
+                            Border.borderThickness (0., 0., Theme.border.thickness, 0.)
                             Border.child child ]
         | Top ->
             Border.create [ direction Top
