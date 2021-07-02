@@ -39,10 +39,10 @@ let foldFile =
                             { vertices = [ 0; 1; 2; 3 ]
                               faces = [ [ 0; 1 ]; [ 1; 2 ]; [ 2; 3 ] ]
                               coords =
-                                  [ Vertex.in2d 0. 0.
-                                    Vertex.in2d 0. 1.
-                                    Vertex.in2d 1. 0.
-                                    Vertex.in2d 1. 1. ] })
+                                  [ Point2D.xy 0. 0.
+                                    Point2D.xy 0. 1.
+                                    Point2D.xy 1. 0.
+                                    Point2D.xy 1. 1. ] })
                     edges =
 
                         (Edges.create

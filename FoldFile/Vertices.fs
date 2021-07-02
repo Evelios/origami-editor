@@ -3,7 +3,7 @@ namespace Fold
 open Geometry
 
 type Vertices =
-    { coords: Vertex list
+    { coords: Point2D list
       vertices: int list
       faces: int list list }
 

@@ -29,8 +29,8 @@ module Translation =
 
     (* Conversions *)
 
-    let vertexToPoint (translation: Translation) (vertex: Vertex) : Point =
-        Point(Vertex.y vertex * translation.xRatio, Vertex.x vertex * translation.yRatio)
+    let vertexToPoint (translation: Translation) (vertex: Point2D) : Point =
+        Point(vertex.x * translation.xRatio, vertex.y * translation.yRatio)
 
-    let pointToVertex (translation: Translation) (point: Point) : Vertex =
-        Vertex.in2d (point.X / translation.xRatio) (point.Y / translation.yRatio)
+    let pointToVertex (translation: Translation) (point: Point) : Point2D =
+        Point2D.xy (point.X / translation.xRatio) (point.Y / translation.yRatio)

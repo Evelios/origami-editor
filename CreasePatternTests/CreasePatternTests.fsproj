@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="FsCheck.NUnit" Version="2.15.3" />
         <PackageReference Include="MathNet.Spatial" Version="0.6.0" />
         <PackageReference Include="NUnit" Version="3.12.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
@@ -15,6 +16,7 @@
 
     <ItemGroup>
         <Compile Include="CreasePattern.fs" />
+        <Compile Include="Axioms.fs" />
         <Compile Include="FoldDeserialization.fs" />
         <Compile Include="FoldSerialization.fs" />
         <Compile Include="Program.fs" />

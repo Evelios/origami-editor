@@ -27,10 +27,10 @@ let creasePattern () =
     let vertices =
         Vertices.create
             { coords =
-                  [ Vertex.in2d 0. 0.
-                    Vertex.in2d 0. 1.
-                    Vertex.in2d 1. 1.
-                    Vertex.in2d 1. 0. ]
+                  [ Point2D.xy 0. 0.
+                    Point2D.xy 0. 1.
+                    Point2D.xy 1. 1.
+                    Point2D.xy 1. 0. ]
               vertices = []
               faces = [] }
 
@@ -56,10 +56,10 @@ let creasePattern () =
     /// Expect
 
     let v =
-        {| bl = Vertex.in2d 0. 0.
-           br = Vertex.in2d 0. 1.
-           tr = Vertex.in2d 1. 1.
-           tl = Vertex.in2d 1. 0. |}
+        {| bl = Point2D.xy 0. 0.
+           br = Point2D.xy 0. 1.
+           tr = Point2D.xy 1. 1.
+           tl = Point2D.xy 1. 0. |}
 
     let expected =
         CreasePattern.empty

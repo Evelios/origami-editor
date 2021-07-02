@@ -7,8 +7,8 @@ open Geometry
 [<CustomEquality>]
 [<CustomComparison>]
 type Edge =
-    { start: Vertex
-      finish: Vertex
+    { start: Point2D
+      finish: Point2D
       assignment: EdgeAssignment }
 
     interface IComparable<Edge> with
@@ -26,12 +26,12 @@ type Edge =
         else 1
 
     member this.LessThan(other) =
-        Line.in2d this.start this.finish < Line.in2d other.start other.finish
+        LineSegment2D.fromTo this.start this.finish < LineSegment2D.fromTo other.start other.finish
 
     override this.Equals(obj: obj) : bool =
         match obj with
         | :? Edge as other ->
-            Line.in2d this.start this.finish = Line.in2d other.start other.finish
+            LineSegment2D.fromTo this.start this.finish = LineSegment2D.fromTo other.start other.finish
             && this.assignment = other.assignment
         | _ -> false
 
@@ -42,12 +42,14 @@ module Edge =
     let create a : Edge = a
 
 
-    let private toLine edge = Line.in2d edge.start edge.finish
+    let private toLine edge =
+        LineSegment2D.fromTo edge.start edge.finish
 
-    let scale x y z edge =
-        { start = Vertex.scale x y z edge.start
-          finish = Vertex.scale y y z edge.finish
+    let scale x y edge =
+        { start = Point2D.scale x y edge.start
+          finish = Point2D.scale y y edge.finish
           assignment = edge.assignment }
 
     let distanceToVertex vertex edge =
-        toLine edge |> Line.distanceToVertex vertex
+        toLine edge
+        |> LineSegment2D.distanceToVertex vertex

@@ -13,7 +13,7 @@ type Direction =
 
 type Selectable =
     | SelectedEdge of Edge
-    | SelectedVertex of Vertex
+    | SelectedVertex of Point2D
     | SelectedNone
 
 type State =
@@ -23,6 +23,6 @@ type State =
       selected: Selectable
       translation: Translation
       mousePosition: Point option
-      vertexPosition: Vertex option
+      vertexPosition: Point2D option
       pageSize: Size
       filePath: string option }

@@ -10,8 +10,8 @@ type FrameJson =
       frameClasses: FrameClass list option
       frameAttributes: FrameAttribute list option
       frameUnit: LengthUnit option
-      [<JsonField(Transform = typeof<Vertex.ListTransform>)>]
-      verticesCoords: Vertex list option
+      [<JsonField(Transform = typeof<Point2D.ListTransform>)>]
+      verticesCoords: Point2D list option
       verticesVertices: int list option
       verticesFaces: int list list option
       edgesVertices: (int * int) list option

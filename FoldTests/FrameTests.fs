@@ -37,15 +37,15 @@ let testCases =
             vertices =
                 { Vertices.empty with
                       coords =
-                          [ Vertex.in2d -1. -1.
-                            Vertex.in2d 1. 1. ] } }
+                          [ Point2D.xy -1. -1.
+                            Point2D.xy 1. 1. ] } }
       """{"frame_unit":"unit","vertices_coords":[[0.5,1],[2.5,2.5]]}""",
       { Frame.empty with
             vertices =
                 { Vertices.empty with
                       coords =
-                          [ Vertex.in2d 0.5 1.
-                            Vertex.in2d 2.5 2.5 ] } }
+                          [ Point2D.xy 0.5 1.
+                            Point2D.xy 2.5 2.5 ] } }
       """{"frame_unit":"unit","vertices_vertices":[0,1,2]}""",
       { Frame.empty with
             vertices =

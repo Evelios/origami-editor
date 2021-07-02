@@ -44,11 +44,11 @@ module CreasePatternComponents =
                      color: string |})
         : IView =
         let scaledEdge =
-            Edge.scale options.translation.xRatio options.translation.yRatio 1. options.edge
+            Edge.scale options.translation.xRatio options.translation.yRatio options.edge
 
         Line.create
-        <| [ Line.startPoint (Point(Vertex.x scaledEdge.start, Vertex.y scaledEdge.start))
-             Line.endPoint (Point(Vertex.x scaledEdge.finish, Vertex.y scaledEdge.finish))
+        <| [ Line.startPoint (Point(scaledEdge.start.x, scaledEdge.start.y))
+             Line.endPoint (Point(scaledEdge.finish.x, scaledEdge.finish.y))
              Line.stroke options.color
              Line.strokeThickness theme.lineThickness
              Line.strokeLineCap PenLineCap.Round ]
@@ -79,20 +79,20 @@ module CreasePatternComponents =
         (options: {| translation: Translation
                      color: string
                      size: float
-                     vertex: Vertex |})
+                     vertex: Point2D |})
         : IView =
         let scaledVertex =
-            Vertex.scale options.translation.xRatio options.translation.yRatio 1. options.vertex
+            Point2D.scale options.translation.xRatio options.translation.yRatio options.vertex
 
         Ellipse.create
         <| [ Ellipse.width options.size
              Ellipse.height options.size
-             Ellipse.left ((Vertex.x scaledVertex) - options.size / 2.)
-             Ellipse.top ((Vertex.y scaledVertex) - options.size / 2.)
+             Ellipse.left (scaledVertex.x - options.size / 2.)
+             Ellipse.top (scaledVertex.y - options.size / 2.)
              Ellipse.fill options.color ]
         :> IView
 
-    let vertexDefault (translation: Translation) (vertex: Vertex) : IView =
+    let vertexDefault (translation: Translation) (vertex: Point2D) : IView =
         vertexPoint
             {| translation = translation
                vertex = vertex
@@ -100,14 +100,14 @@ module CreasePatternComponents =
                size = theme.vertexSize |}
 
 
-    let vertexHovered (translation: Translation) (vertex: Vertex) : IView =
+    let vertexHovered (translation: Translation) (vertex: Point2D) : IView =
         vertexPoint
             {| translation = translation
                vertex = vertex
                color = theme.hoveredColor
                size = theme.vertexHoveredSize |}
 
-    let vertexSelected (translation: Translation) (vertex: Vertex) : IView =
+    let vertexSelected (translation: Translation) (vertex: Point2D) : IView =
         vertexPoint
             {| translation = translation
                vertex = vertex

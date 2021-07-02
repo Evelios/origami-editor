@@ -10,8 +10,8 @@ let Setup () = ()
 
 
 let redundantElementsTestCases =
-    let v1 = Vertex.in2d 0. 0.
-    let v2 = Vertex.in2d 1. 1.
+    let v1 = Point2D.xy 0. 0.
+    let v2 = Point2D.xy 1. 1.
 
     let edge =
         Edge.create
@@ -42,11 +42,11 @@ let ``Adding Redundant Elements`` given actual = Assert.AreEqual(given, actual)
 let closeDistance = 0.1
 
 let pointCloseTestCases =
-    let pointAdd = Vertex.in2d 0.5 0.5
+    let pointAdd = Point2D.xy 0.5 0.5
 
-    [ ("Point Not Close", pointAdd, Vertex.in2d 0.1 0.1, None)
-      ("Point Close", pointAdd, Vertex.in2d 0.5 0.45, Some pointAdd)
-      ("Point On Boundary", pointAdd, Vertex.in2d 0.5 0.4, Some pointAdd) ]
+    [ ("Point Not Close", pointAdd, Point2D.xy 0.1 0.1, None)
+      ("Point Close", pointAdd, Point2D.xy 0.5 0.45, Some pointAdd)
+      ("Point On Boundary", pointAdd, Point2D.xy 0.5 0.4, Some pointAdd) ]
 
     |> List.map
         (fun (name, add, test, result) ->
@@ -64,14 +64,14 @@ let ``Point Close To Vertex`` add test =
 let edgeCloseTestCases =
     let edgeAdd =
         Edge.create
-            { start = Vertex.in2d 0.5 0.5
-              finish = Vertex.in2d 0.5 0.
+            { start = Point2D.xy 0.5 0.5
+              finish = Point2D.xy 0.5 0.
               assignment = EdgeAssignment.Unassigned }
 
-    [ ("Point Not Close", edgeAdd, Vertex.in2d 0.1 0.1, None)
-      ("Point Close", edgeAdd, Vertex.in2d 0.6 0.45, Some edgeAdd)
-      ("Point On Boundary Perpendicular", edgeAdd, Vertex.in2d 0.6 0.4, Some edgeAdd)
-      ("Point On Boundary Endpoint", edgeAdd, Vertex.in2d 0.6 0.4, Some edgeAdd) ]
+    [ ("Point Not Close", edgeAdd, Point2D.xy 0.1 0.1, None)
+      ("Point Close", edgeAdd, Point2D.xy 0.6 0.45, Some edgeAdd)
+      ("Point On Boundary Perpendicular", edgeAdd, Point2D.xy 0.6 0.4, Some edgeAdd)
+      ("Point On Boundary Endpoint", edgeAdd, Point2D.xy 0.6 0.4, Some edgeAdd) ]
 
     |> List.map
         (fun (name, add, test, result) ->

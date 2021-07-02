@@ -14,7 +14,7 @@ type Bounds =
 
 type CreasePattern =
     { bounds: Bounds
-      graph: Graph<Vertex, Label, EdgeAssignment> }
+      graph: Graph<Point2D, Label, EdgeAssignment> }
 
 
 module CreasePattern =
@@ -51,27 +51,27 @@ module CreasePattern =
     let edges creasePattern : Edge list =
         List.map asEdge (Undirected.Edges.toEdgeList creasePattern.graph)
 
-    let vertices creasePattern : Vertex list =
+    let vertices creasePattern : Point2D list =
         List.map fst (Vertices.toVertexList creasePattern.graph)
 
 
     (* Modifiers *)
 
-    let addVertices (vertices: Vertex list) (creasePattern: CreasePattern) : CreasePattern =
+    let addVertices (vertices: Point2D list) (creasePattern: CreasePattern) : CreasePattern =
         let newVertices =
             List.filter (fun v -> not <| Vertices.contains v creasePattern.graph) vertices
 
         let graphVertices =
-            List.map (fun vertex -> (vertex, Vertex.hashCode vertex)) newVertices
+            List.map (fun vertex -> (vertex, vertex.GetHashCode())) newVertices
 
         let newBounds =
             List.fold
-                (fun bounds vertex ->
+                (fun bounds (vertex: Point2D ) ->
                     { bounds with
-                          minX = min bounds.minX (Vertex.x vertex)
-                          maxX = max bounds.maxX (Vertex.x vertex)
-                          minY = min bounds.minY (Vertex.y vertex)
-                          maxY = max bounds.maxY (Vertex.y vertex) })
+                          minX = min bounds.minX vertex.x
+                          maxX = max bounds.maxX vertex.x
+                          minY = min bounds.minY vertex.y
+                          maxY = max bounds.maxY vertex.y })
                 creasePattern.bounds
                 newVertices
 
@@ -117,10 +117,10 @@ module CreasePattern =
     ///  Create a basic crease pattern within a 0 -> 1 grid system with edge boundaries
     let create : CreasePattern =
         let corners =
-            {| tl = (Vertex.in2d 0. 1.)
-               tr = (Vertex.in2d 1. 1.)
-               br = (Vertex.in2d 1. 0.)
-               bl = (Vertex.in2d 0. 0.) |}
+            {| tl = (Point2D.xy 0. 1.)
+               tr = (Point2D.xy 1. 1.)
+               br = (Point2D.xy 1. 0.)
+               bl = (Point2D.xy 0. 0.) |}
 
         let vertices =
             [ corners.tl
@@ -153,9 +153,9 @@ module CreasePattern =
     (* Queries *)
 
     /// This function is currently linear but can be sped up with quad-trees
-    let pointWithin distance vertex creasePattern : Vertex option =
+    let pointWithin distance vertex creasePattern : Point2D option =
         let distanceSquared = distance * distance
-        let distSquaredToVertex = Vertex.distanceSquaredTo vertex
+        let distSquaredToVertex = Point2D.distanceSquaredTo vertex
 
         let vertexDistance, closestVertex =
             Vertices.toVertexList creasePattern.graph
@@ -168,7 +168,7 @@ module CreasePattern =
 
                     else
                         (distanceSquared, closestVertex))
-                (infinity, Vertex.in2d infinity infinity)
+                (infinity, Point2D.xy infinity infinity)
 
         if vertexDistance < distanceSquared then
             Some closestVertex
@@ -177,7 +177,7 @@ module CreasePattern =
 
     let edgeWithin distance vertex creasePattern =
         let defaultCase =
-            (infinity, ((Vertex.in2d infinity infinity), (Vertex.in2d -infinity -infinity), EdgeAssignment.Unassigned))
+            (infinity, ((Point2D.xy infinity infinity), (Point2D.xy -infinity -infinity), EdgeAssignment.Unassigned))
 
         let closestDistance, closestEdge =
             Edges.toEdgeList creasePattern.graph
@@ -186,7 +186,7 @@ module CreasePattern =
                     match nextEdge with
                     | start, finish, _ as nextEdge ->
                         let nextDistance =
-                            Line.distanceToVertex vertex (Line.in2d start finish)
+                            LineSegment2D.distanceToVertex vertex (LineSegment2D.fromTo start finish)
 
                         if nextDistance < closestDistance then
                             (nextDistance, nextEdge)
@@ -221,7 +221,7 @@ module CreasePattern =
 
     /// Add in the crease pattern values into the fold frame
     let addToFoldFrame (creasePattern: CreasePattern) (frame: Fold.Frame) : Fold.Frame =
-        let vertexLookup : Map<Vertex, int> =
+        let vertexLookup : Map<Point2D, int> =
             Vertices.toVertexList creasePattern.graph
             |> List.indexed
             |> List.fold (fun map (id, (vert, _)) -> Map.add vert id map) Map.empty
@@ -237,7 +237,7 @@ module CreasePattern =
         let edges =
             Undirected.Edges.toEdgeList creasePattern.graph
 
-        let edgeVertices : (Vertex * Vertex) list =
+        let edgeVertices : (Point2D * Point2D) list =
             List.map (fun (v1, v2, _) -> (v1, v2)) edges
 
         let edgeVerticesIndexed =

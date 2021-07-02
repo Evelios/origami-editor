@@ -1,20 +1,20 @@
 namespace Geometry
 
 open System
-open MathNet.Spatial.Euclidean
+open MathNet.Spatial
 
 [<CustomEquality>]
 [<CustomComparison>]
-type Line =
-    | Line2 of LineSegment2D
+type LineSegment2D =
+    | LineSegment2D of Euclidean.LineSegment2D
 
-    interface IComparable<Line> with
+    interface IComparable<LineSegment2D> with
         member this.CompareTo(line) = this.Comparison(line)
 
     interface IComparable with
         member this.CompareTo(obj) =
             match obj with
-            | :? Line as vertex -> this.Comparison(vertex)
+            | :? LineSegment2D as vertex -> this.Comparison(vertex)
             | _ -> failwith "incompatible comparison"
 
     member this.Comparison(other) =
@@ -24,18 +24,18 @@ type Line =
 
     member this.LessThan(other) =
         match (this, other) with
-        | Line2 first, Line2 second ->
+        | LineSegment2D first, LineSegment2D second ->
             let firstLower =
-                min (Vertex.fromPoint2d first.StartPoint) (Vertex.fromPoint2d first.EndPoint)
+                min (Point2D.fromPoint2d first.StartPoint) (Point2D.fromPoint2d first.EndPoint)
 
             let firstGreater =
-                min (Vertex.fromPoint2d first.StartPoint) (Vertex.fromPoint2d first.EndPoint)
+                min (Point2D.fromPoint2d first.StartPoint) (Point2D.fromPoint2d first.EndPoint)
 
             let secondLower =
-                min (Vertex.fromPoint2d second.StartPoint) (Vertex.fromPoint2d second.EndPoint)
+                min (Point2D.fromPoint2d second.StartPoint) (Point2D.fromPoint2d second.EndPoint)
 
             let secondGreater =
-                min (Vertex.fromPoint2d second.StartPoint) (Vertex.fromPoint2d second.EndPoint)
+                min (Point2D.fromPoint2d second.StartPoint) (Point2D.fromPoint2d second.EndPoint)
 
             if firstLower = secondLower then
                 firstGreater < secondGreater
@@ -44,9 +44,9 @@ type Line =
 
     override this.Equals(obj: obj) : bool =
         match obj with
-        | :? Line as other ->
+        | :? LineSegment2D as other ->
             match (this, other) with
-            | Line2 first, Line2 second ->
+            | LineSegment2D first, LineSegment2D second ->
                 (first.StartPoint = second.StartPoint
                  && first.EndPoint = second.EndPoint)
                 || (first.StartPoint = second.EndPoint
@@ -55,14 +55,8 @@ type Line =
 
     override this.GetHashCode() : int = failwith "not implemented"
 
-module Line =
-    let in2d start finish =
-        match start, finish with
-        | Point2 start2d, Point2 finish2d -> Line2 <| LineSegment2D(start2d, finish2d)
-        | _ -> failwith "Can only be used on 2D vertexes"
+module LineSegment2D =
+    let fromTo (Point2D start) (Point2D finish) =
+        Euclidean.LineSegment2D(start, finish) |> LineSegment2D
 
-    let distanceToVertex (vertex: Vertex) (Line2 line) =
-        match vertex with
-        | Point2 point -> (line.LineTo point).Length
-
-        | Point3 _ -> failwith "Can't get the distance to a 3D vertex"
+    let distanceToVertex (Point2D point) (LineSegment2D line) = (line.LineTo point).Length
