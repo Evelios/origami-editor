@@ -62,11 +62,11 @@ module Point2D =
 
     let internal fromPoint2d = Point2D
 
-
     (* Modifiers *)
 
     let scale x y (Point2D point) =
-        Euclidean.Point2D(point.X * x, point.Y * y) |> Point2D
+        Euclidean.Point2D(point.X * x, point.Y * y)
+        |> Point2D
 
     (* Queries *)
 
@@ -74,6 +74,10 @@ module Point2D =
         (p1.x - p2.x) ** 2. + (p1.y - p2.y) ** 2.
 
     let distanceTo p1 p2 : float = distanceSquaredTo p1 p2 |> sqrt
+
+    let midpoint (p1: Point2D) (p2: Point2D) : Point2D =
+        xy ((p1.x + p2.x) / 2.) ((p1.y + p2.y) / 2.)
+
 
     (* Json *)
     let fromList (list: float list) : Point2D option =

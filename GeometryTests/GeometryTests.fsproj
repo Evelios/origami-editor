@@ -8,12 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Vertex.fs" />
-        <Compile Include="Line.fs" />
+        <Compile Include="Point2D.fs" />
+        <Compile Include="Line2D.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="FsCheck.NUnit" Version="2.15.3" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
         <PackageReference Include="NUnit" Version="3.13.1" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />

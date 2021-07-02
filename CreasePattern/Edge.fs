@@ -38,6 +38,11 @@ type Edge =
     override this.GetHashCode() : int = failwith "not implemented"
 
 
+    (* Accessors *)
+
+    member this.line =
+        Line2D.unsafeFromTo this.start this.finish
+
 module Edge =
     let create a : Edge = a
 

@@ -1,4 +1,4 @@
-module GeometryTests.Vertex
+module GeometryTests.Point2D
 
 open NUnit.Framework
 open Geometry
