@@ -185,14 +185,17 @@ module CreasePattern =
                 (fun (closestDistance, closestEdge) nextEdge ->
                     match nextEdge with
                     | start, finish, _ as nextEdge ->
-                        let nextDistance =
-                            LineSegment2D.distanceToVertex vertex (LineSegment2D.fromTo start finish)
-
-                        if nextDistance < closestDistance then
-                            (nextDistance, nextEdge)
-
+                        if start = finish then
+                            (0., nextEdge)
                         else
-                            (closestDistance, closestEdge))
+                            let nextDistance =
+                                LineSegment2D.distanceToVertex vertex (LineSegment2D.fromTo start finish)
+
+                            if nextDistance < closestDistance then
+                                (nextDistance, nextEdge)
+
+                            else
+                                (closestDistance, closestEdge))
                 defaultCase
 
         if closestDistance < distance then

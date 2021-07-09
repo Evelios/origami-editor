@@ -1,7 +1,5 @@
 namespace Gui.Components.CreasePatternCanvas
 
-open Elmish
-
 module CreasePatternCanvas =
 
     open Avalonia
@@ -14,11 +12,6 @@ module CreasePatternCanvas =
     open Utilities.Collections
     open Utilities.Extensions
 
-    [<RequireQualifiedAccess>]
-    type External =
-        | MouseMoved
-        | DoNothing
-
     type Msg =
         | MouseClicked
         | MouseMove of Point
@@ -28,7 +21,7 @@ module CreasePatternCanvas =
 
     let theme = {| pointerCloseDistance = 20. |}
 
-    let update (msg: Msg) (state: State) : State * Cmd<Msg> * External =
+    let update (msg: Msg) (state: State) : State =
         match msg with
 
         (* User Actions *)
@@ -38,19 +31,15 @@ module CreasePatternCanvas =
                 match state.selected with
                 | SelectedNone ->
                     { state with
-                          selected = SelectedOne hover },
-                    Cmd.none,
-                    External.DoNothing
+                          selected = SelectedOne hover }
                 | SelectedOne selected ->
                     { state with
-                          selected = SelectedTwo(selected, hover) },
-                    Cmd.none,
-                    External.DoNothing
+                          selected = SelectedTwo(selected, hover) }
                     
                 // Todo: select the stuff
-                | SelectedTwo _ -> { state with selected = SelectedNone }, Cmd.none, External.DoNothing
+                | SelectedTwo _ -> { state with selected = SelectedNone }
 
-            | None -> { state with selected = SelectedNone }, Cmd.none, External.DoNothing
+            | None -> { state with selected = SelectedNone }
 
 
         | MouseMove mousePoint ->
@@ -77,17 +66,13 @@ module CreasePatternCanvas =
             { state with
                   mousePosition = Some mousePoint
                   vertexPosition = Some convertedVertex
-                  hover = hover },
-            Cmd.none,
-            External.MouseMoved
+                  hover = hover }
 
 
         | CreaseEdge edge ->
             { state with
                   selected = SelectedNone
-                  frame = Frame.mapCreasePattern (CreasePattern.addEdge edge) state.frame },
-            Cmd.none,
-            External.DoNothing
+                  frame = Frame.mapCreasePattern (CreasePattern.addEdge edge) state.frame }
 
 
     (* Drawing *)

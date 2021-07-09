@@ -57,6 +57,11 @@ type LineSegment2D =
 
 module LineSegment2D =
     let fromTo (Point2D start) (Point2D finish) =
-        Euclidean.LineSegment2D(start, finish) |> LineSegment2D
+        Euclidean.LineSegment2D(start, finish)
+        |> LineSegment2D
 
-    let distanceToVertex (Point2D point) (LineSegment2D line) = (line.LineTo point).Length
+    let distanceToVertex (Point2D point) (LineSegment2D line) =
+        if line.StartPoint = point || line.EndPoint = point then
+            0.
+        else
+            (line.LineTo point).Length

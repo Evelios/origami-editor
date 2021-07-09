@@ -42,14 +42,7 @@ module Shell =
           mousePosition = None
           vertexPosition = None
           translation = translation
-          pageSize = translation.pageSize },
-        Cmd.none
-
-    let private handlePlayerExternal (msg: CreasePatternCanvas.External) =
-        match msg with
-        | CreasePatternCanvas.External.MouseMoved -> Cmd.none
-        | CreasePatternCanvas.External.DoNothing -> Cmd.none
-
+          pageSize = translation.pageSize }
 
     let update (msg: Msg) (state: State) (window: Window) : State * Cmd<Msg> =
         match msg with
@@ -75,12 +68,8 @@ module Shell =
         | IconBarMsg iconBarMsg -> IconBar.update iconBarMsg state, Cmd.none
 
         | CreasePatternCanvasMsg creasePatternCanvasMsg ->
-            let newState, cmd, external =
-                CreasePatternCanvas.update creasePatternCanvasMsg state
+            CreasePatternCanvas.update creasePatternCanvasMsg state, Cmd.none
 
-            let mapped = Cmd.map CreasePatternCanvasMsg cmd
-            let handled = handlePlayerExternal external
-            newState, Cmd.batch [ mapped; handled ]
 
         (* Global Messages*)
         | UpdateTitle ->
@@ -113,6 +102,6 @@ module Shell =
 
             let updateWithServices (msg: Msg) (state: State) = update msg state this
 
-            Program.mkProgram (fun () -> init) updateWithServices view
+            Program.mkProgram (fun () -> init, Cmd.none) updateWithServices view
             |> Program.withHost this
             |> Program.run
