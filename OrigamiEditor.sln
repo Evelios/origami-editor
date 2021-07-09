@@ -18,6 +18,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Geometry", "Geometry\Geomet
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GeometryTests", "GeometryTests\GeometryTests.fsproj", "{117D44F5-ECFF-43D1-84EB-3738CC8E8C3C}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GuiTests", "GuiTests\GuiTests.fsproj", "{12D94806-3EB2-4A0E-81C3-3E0D9C70C23A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 	Debug|Any CPU = Debug|Any CPU
@@ -79,5 +81,11 @@ Global
 		{117D44F5-ECFF-43D1-84EB-3738CC8E8C3C}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
 		{117D44F5-ECFF-43D1-84EB-3738CC8E8C3C}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{117D44F5-ECFF-43D1-84EB-3738CC8E8C3C}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+		{12D94806-3EB2-4A0E-81C3-3E0D9C70C23A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12D94806-3EB2-4A0E-81C3-3E0D9C70C23A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12D94806-3EB2-4A0E-81C3-3E0D9C70C23A}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12D94806-3EB2-4A0E-81C3-3E0D9C70C23A}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{12D94806-3EB2-4A0E-81C3-3E0D9C70C23A}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{12D94806-3EB2-4A0E-81C3-3E0D9C70C23A}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal
