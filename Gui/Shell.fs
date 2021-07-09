@@ -37,7 +37,7 @@ module Shell =
         { filePath = None
           frame = frame
           showVertices = true
-          hover = SelectedNone
+          hover = None
           selected = SelectedNone
           mousePosition = None
           vertexPosition = None
@@ -75,11 +75,12 @@ module Shell =
         | IconBarMsg iconBarMsg -> IconBar.update iconBarMsg state, Cmd.none
 
         | CreasePatternCanvasMsg creasePatternCanvasMsg ->
-            let newState, external =
+            let newState, cmd, external =
                 CreasePatternCanvas.update creasePatternCanvasMsg state
 
+            let mapped = Cmd.map CreasePatternCanvasMsg cmd
             let handled = handlePlayerExternal external
-            newState, handled
+            newState, Cmd.batch [ mapped; handled ]
 
         (* Global Messages*)
         | UpdateTitle ->

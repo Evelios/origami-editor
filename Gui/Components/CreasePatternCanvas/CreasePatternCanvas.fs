@@ -1,5 +1,7 @@
 namespace Gui.Components.CreasePatternCanvas
 
+open Elmish
+
 module CreasePatternCanvas =
 
     open Avalonia
@@ -18,36 +20,38 @@ module CreasePatternCanvas =
         | DoNothing
 
     type Msg =
-        | MouseMove of Point
         | MouseClicked
+        | MouseMove of Point
+        | CreaseEdge of Edge
 
     let canvasName = "Crease Pattern Canvas"
 
     let theme = {| pointerCloseDistance = 20. |}
 
-    let update (msg: Msg) (state: State) : State * External =
-
+    let update (msg: Msg) (state: State) : State * Cmd<Msg> * External =
         match msg with
+
         (* User Actions *)
         | MouseClicked ->
-            match (state.hover, state.selected) with
-            | SelectedVertex hoveredVertex, SelectedVertex selectedVertex ->
-                if hoveredVertex = selectedVertex then
-                    { state with selected = SelectedNone }, External.DoNothing
-
-                else
-                    let edge =
-                        Edge.create
-                            { start = hoveredVertex
-                              finish = selectedVertex
-                              assignment = EdgeAssignment.Unassigned }
-
+            match state.hover with
+            | Some hover ->
+                match state.selected with
+                | SelectedNone ->
                     { state with
-                          selected = SelectedNone
-                          frame = Frame.mapCreasePattern (CreasePattern.addEdge edge) state.frame },
+                          selected = SelectedOne hover },
+                    Cmd.none,
                     External.DoNothing
+                | SelectedOne selected ->
+                    { state with
+                          selected = SelectedTwo(selected, hover) },
+                    Cmd.none,
+                    External.DoNothing
+                    
+                // Todo: select the stuff
+                | SelectedTwo _ -> { state with selected = SelectedNone }, Cmd.none, External.DoNothing
 
-            | _ -> { state with selected = state.hover }, External.DoNothing
+            | None -> { state with selected = SelectedNone }, Cmd.none, External.DoNothing
+
 
         | MouseMove mousePoint ->
             // The mouse position converted into crease pattern coordinates
@@ -66,15 +70,24 @@ module CreasePatternCanvas =
 
             let hover =
                 match vertexWithin, edgeWithin with
-                | Some vertex, _ -> SelectedVertex vertex
-                | None, Some edge -> SelectedEdge edge
-                | None, None -> SelectedNone
+                | Some vertex, _ -> Some(VertexComponent vertex)
+                | None, Some edge -> Some(EdgeComponent edge)
+                | None, None -> None
 
             { state with
                   mousePosition = Some mousePoint
                   vertexPosition = Some convertedVertex
                   hover = hover },
+            Cmd.none,
             External.MouseMoved
+
+
+        | CreaseEdge edge ->
+            { state with
+                  selected = SelectedNone
+                  frame = Frame.mapCreasePattern (CreasePattern.addEdge edge) state.frame },
+            Cmd.none,
+            External.DoNothing
 
 
     (* Drawing *)
@@ -94,33 +107,35 @@ module CreasePatternCanvas =
                 (CreasePatternComponents.vertexDefault state.translation)
                 (CreasePattern.vertices state.frame.creasePattern)
 
-        let hoverElement =
-            match state.hover with
-            | SelectedVertex vertex ->
-                CreasePatternComponents.vertexHovered state.translation vertex
-                |> Some
-            | SelectedEdge edge ->
-                CreasePatternComponents.edgeLineHovered state.translation edge
-                |> Some
-            | SelectedNone -> None
+        let creasePatternComponent vertexView edgeView ``component`` =
+            match ``component`` with
+            | VertexComponent vertex -> vertexView state.translation vertex
+            | EdgeComponent edge -> edgeView state.translation edge
 
-        let selectedElement =
+        let hoverElement =
+            Option.map
+                (creasePatternComponent CreasePatternComponents.vertexHovered CreasePatternComponents.edgeLineHovered)
+                state.hover
+
+        let selectedElements =
             match state.selected with
-            | SelectedVertex vertex ->
-                CreasePatternComponents.vertexSelected state.translation vertex
-                |> Some
-            | SelectedEdge edge ->
-                CreasePatternComponents.edgeLineSelected state.translation edge
-                |> Some
-            | SelectedNone -> None
+            | SelectedNone -> []
+            | SelectedOne sel -> [ sel ]
+            | SelectedTwo (selOne, selTwo) -> [ selOne; selTwo ]
+
+            |> List.map (
+                creasePatternComponent CreasePatternComponents.vertexSelected CreasePatternComponents.edgeLineSelected
+            )
 
         // This could be a slow point because of appending to the end of the list
         // If this gets too slow, cons to the beginning and reverse the list to maintain readability
         let canvasElements =
-            edgeLines
-            |> List.concatIf state.showVertices vertexPoints
-            |> List.appendWhenSome hoverElement
-            |> List.appendWhenSome selectedElement
+            []
+            |> List.append edgeLines
+            |> List.appendIf state.showVertices vertexPoints
+            |> List.consWhenSome hoverElement
+            |> List.append selectedElements
+            |> List.rev
 
         Canvas.create [ Canvas.height state.pageSize.height
                         Canvas.width state.pageSize.width

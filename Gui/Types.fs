@@ -11,16 +11,16 @@ type Direction =
     | Right
     | Bottom
 
-type Selectable =
-    | SelectedEdge of Edge
-    | SelectedVertex of Point2D
+type Selected =
     | SelectedNone
+    | SelectedOne of Component
+    | SelectedTwo of Component * Component
 
 type State =
     { frame: Frame
       showVertices: bool
-      hover: Selectable
-      selected: Selectable
+      hover: Component option
+      selected: Selected
       translation: Translation
       mousePosition: Point option
       vertexPosition: Point2D option
