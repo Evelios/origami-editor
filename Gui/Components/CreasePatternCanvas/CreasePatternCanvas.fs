@@ -13,7 +13,8 @@ module CreasePatternCanvas =
     open Utilities.Extensions
 
     type Msg =
-        | MouseClicked
+        | MousePressed of Point
+        | MouseReleased of Point
         | MouseMove of Point
         | CreaseEdge of Edge
 
@@ -23,24 +24,16 @@ module CreasePatternCanvas =
 
     let update (msg: Msg) (state: State) : State =
         match msg with
-
         (* User Actions *)
-        | MouseClicked ->
-            match state.hover with
-            | Some hover ->
-                match state.selected with
-                | SelectedNone ->
-                    { state with
-                          selected = SelectedOne hover }
-                | SelectedOne selected ->
-                    { state with
-                          selected = SelectedTwo(selected, hover) }
-                    
-                // Todo: select the stuff
-                | SelectedTwo _ -> { state with selected = SelectedNone }
+        | MouseReleased position ->
+            match (state.hover, state.selected) with
+            | Some hover, Some selected -> state
+            // Todo: select component
+//                { state with selected = None }
+//                |> update (CreaseEdge (Edge.betweenWithAssignment hover selected EdgeAssignment.Unassigned ))
+            | _ -> { state with selected = state.hover }
 
-            | None -> { state with selected = SelectedNone }
-
+        | MousePressed _ -> state
 
         | MouseMove mousePoint ->
             // The mouse position converted into crease pattern coordinates
@@ -71,7 +64,6 @@ module CreasePatternCanvas =
 
         | CreaseEdge edge ->
             { state with
-                  selected = SelectedNone
                   frame = Frame.mapCreasePattern (CreasePattern.addEdge edge) state.frame }
 
 
@@ -104,9 +96,8 @@ module CreasePatternCanvas =
 
         let selectedElements =
             match state.selected with
-            | SelectedNone -> []
-            | SelectedOne sel -> [ sel ]
-            | SelectedTwo (selOne, selTwo) -> [ selOne; selTwo ]
+            | Some sel -> [ sel ]
+            | None -> []
 
             |> List.map (
                 creasePatternComponent CreasePatternComponents.vertexSelected CreasePatternComponents.edgeLineSelected
@@ -137,5 +128,14 @@ module CreasePatternCanvas =
                  >> Msg.MouseMove
                  >> dispatch
              )
-             DockPanel.onPointerReleased (Event.handleEvent Msg.MouseClicked >> dispatch)
+             DockPanel.onPointerPressed (
+                 (Event.positionRelativeTo canvasName)
+                 >> Msg.MouseMove
+                 >> dispatch
+             )
+             DockPanel.onPointerPressed (
+                 (Event.positionRelativeTo canvasName)
+                 >> Msg.MouseMove
+                 >> dispatch
+             )
              DockPanel.children [ canvas state ] ]

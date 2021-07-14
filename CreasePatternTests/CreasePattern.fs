@@ -14,10 +14,7 @@ let redundantElementsTestCases =
     let v2 = Point2D.xy 1. 1.
 
     let edge =
-        Edge.create
-            { start = v1
-              finish = v2
-              assignment = EdgeAssignment.Unassigned }
+        Edge.betweenWithAssignment v1 v2 EdgeAssignment.Unassigned
 
     [ ("Adding Redundant Vertices",
        CreasePattern.create
@@ -39,6 +36,7 @@ let ``Adding Redundant Elements`` given actual = Assert.AreEqual(given, actual)
 
 
 
+[<Literal>]
 let closeDistance = 0.1
 
 let pointCloseTestCases =
@@ -63,16 +61,12 @@ let ``Point Close To Vertex`` add test =
 
 let edgeCloseTestCases =
     let edgeAdd =
-        Edge.create
-            { start = Point2D.xy 0.5 0.5
-              finish = Point2D.xy 0.5 0.
-              assignment = EdgeAssignment.Unassigned }
+        Edge.betweenWithAssignment (Point2D.xy 0. 0.5) (Point2D.xy 0.5 0.5) EdgeAssignment.Unassigned
 
     [ ("Point Not Close", edgeAdd, Point2D.xy 0.1 0.1, None)
-      ("Point Close", edgeAdd, Point2D.xy 0.6 0.45, Some edgeAdd)
-      ("Point On Boundary Perpendicular", edgeAdd, Point2D.xy 0.6 0.4, Some edgeAdd)
-      ("Point On Boundary Endpoint", edgeAdd, Point2D.xy 0.6 0.4, Some edgeAdd) ]
-
+      ("Point on line", edgeAdd, Point2D.xy 0.3 0.5, Some edgeAdd)
+      ("Point near perpendicular", edgeAdd, Point2D.xy 0.3 0.5, Some edgeAdd)
+      ("Point near endpoint", edgeAdd, Point2D.xy 0.55 0.5, Some edgeAdd) ]
     |> List.map
         (fun (name, add, test, result) ->
             TestCaseData(add, test)

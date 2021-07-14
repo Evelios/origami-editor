@@ -38,7 +38,8 @@ module Shell =
           frame = frame
           showVertices = true
           hover = None
-          selected = SelectedNone
+          selected = None
+          selectedReferences = []
           mousePosition = None
           vertexPosition = None
           translation = translation
@@ -69,7 +70,6 @@ module Shell =
 
         | CreasePatternCanvasMsg creasePatternCanvasMsg ->
             CreasePatternCanvas.update creasePatternCanvasMsg state, Cmd.none
-
 
         (* Global Messages*)
         | UpdateTitle ->

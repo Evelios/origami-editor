@@ -33,7 +33,7 @@ type FoldFileJson =
 
 module FoldJson =
     // Convert the fold file to a json serializable type
-    let toJsonType (fold: Fold): FoldFileJson =
+    let toJsonType (fold: Fold) : FoldFileJson =
         let orNone =
             function
             | "" -> None
@@ -78,7 +78,7 @@ module FoldJson =
           faceOrders = fold.keyFrame.faces.orders |> listWithDefault }
 
     /// Convert the json serializable type to the foldFile type
-    let fromJsonType (foldJson: FoldFileJson): Fold =
+    let fromJsonType (foldJson: FoldFileJson) : Fold =
         let orEmptyString = Option.defaultValue ""
 
         let toSet =
@@ -121,15 +121,18 @@ module FoldJson =
         JsonConfig.create (jsonFieldNaming = FrameJson.nameConversion, serializeNone = SerializeNone.Omit)
 
     let private jsonConfigUnformatted =
-        JsonConfig.create
-            (jsonFieldNaming = FrameJson.nameConversion, serializeNone = SerializeNone.Omit, unformatted = true)
+        JsonConfig.create (
+            jsonFieldNaming = FrameJson.nameConversion,
+            serializeNone = SerializeNone.Omit,
+            unformatted = true
+        )
 
-    let toJson (fold: Fold): string =
+    let toJson (fold: Fold) : string =
         Json.serializeEx jsonConfig (toJsonType fold)
 
-    let toJsonUnformatted (fold: Fold): string =
+    let toJsonUnformatted (fold: Fold) : string =
         Json.serializeEx jsonConfigUnformatted (toJsonType fold)
 
-    let fromJson json: Fold =
+    let fromJson json : Fold =
         Json.deserializeEx<FoldFileJson> jsonConfig json
         |> fromJsonType

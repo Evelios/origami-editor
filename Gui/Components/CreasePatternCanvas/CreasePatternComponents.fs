@@ -44,11 +44,11 @@ module CreasePatternComponents =
                      color: string |})
         : IView =
         let scaledEdge =
-            Edge.scale options.translation.xRatio options.translation.yRatio options.edge
+            Edge.scale options.translation.yRatio options.edge
 
         Line.create
-        <| [ Line.startPoint (Point(scaledEdge.start.x, scaledEdge.start.y))
-             Line.endPoint (Point(scaledEdge.finish.x, scaledEdge.finish.y))
+        <| [ Line.startPoint (Point(scaledEdge.crease.start.x, scaledEdge.crease.start.y))
+             Line.endPoint (Point(scaledEdge.crease.finish.x, scaledEdge.crease.finish.y))
              Line.stroke options.color
              Line.strokeThickness theme.lineThickness
              Line.strokeLineCap PenLineCap.Round ]

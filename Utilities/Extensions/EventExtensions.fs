@@ -16,6 +16,8 @@ module Event =
     /// Given a pointer event, get the position relative to a particular control name
     /// Useful for triggering off of mouse movement events
     let positionRelativeTo (name: String) (event: PointerEventArgs) =
+        event.Handled <- true
+
         let maybeVisual =
             View.findControl name (event.Source :?> IControl)
 

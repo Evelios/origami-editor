@@ -1,105 +1,128 @@
 namespace Geometry
 
 open System
-open MathNet.Spatial
+open Geometry
 
 [<CustomEquality>]
 [<CustomComparison>]
 type Line2D =
-    | Line2D of Euclidean.Line2D
-
-    (* Comparable interfaces *)
+    { start: Point2D
+      finish: Point2D }
 
     interface IComparable<Line2D> with
-        member this.CompareTo(point) = this.Comparison(point)
+        member this.CompareTo(line) = this.Comparison(line)
 
     interface IComparable with
         member this.CompareTo(obj) =
             match obj with
-            | :? Line2D as point -> this.Comparison(point)
+            | :? Line2D as vertex -> this.Comparison(vertex)
             | _ -> failwith "incompatible comparison"
-
-    member this.withinDelta a b = abs (a - b) < Generics.Epsilon
 
     member this.Comparison(other) =
         if this.Equals(other) then 0
         elif this.LessThan(other) then -1
         else 1
 
+    member this.LessThan(other: Line2D) =
+        let firstLower = min this.start this.finish
+
+        let firstGreater = max this.start this.finish
+
+        let secondLower = min other.start other.finish
+
+        let secondGreater = max other.start other.finish
+
+        if firstLower = secondLower then
+            firstGreater < secondGreater
+        else
+            firstLower < secondLower
+
     override this.Equals(obj: obj) : bool =
         match obj with
         | :? Line2D as other ->
-            match (this, other) with
-            | Line2D first, Line2D second -> first.Equals(second)
+            (this.start = other.start
+             && this.finish = other.finish)
+            || (this.start = other.finish
+                && this.finish = other.start)
         | _ -> false
 
-
-    member this.LessThan(Line2D second) =
-        match this with
-        | Line2D first ->
-            if this.withinDelta first.Direction.X second.Direction.X then
-                first.Direction.Y < second.Direction.Y
-            else
-                first.Direction.X < second.Direction.X
-
-    override this.GetHashCode() =
-        match this with
-        | Line2D _ -> HashCode.Combine(this.startPoint, this.endPoint)
-
-    (* Accessors *)
-
-    member this.startPoint =
-        match this with
-        | Line2D line -> Point2D.fromPoint2d line.StartPoint
-
-    member this.endPoint =
-        match this with
-        | Line2D line -> Point2D.fromPoint2d line.EndPoint
-
+    override this.GetHashCode() : int =
+        HashCode.Combine(this.start, this.finish)
 
 module Line2D =
-
     (* Builders *)
+    let fromTo (start: Point2D) (finish: Point2D) = { start = start; finish = finish }
 
-    /// Does not perform the check that the start point and endpoint are the same point
-    let unsafeFromTo (Point2D start) (Point2D finish) =
-        Euclidean.Line2D(start, finish) |> Line2D
+    let private toLineSegment (line: Line2D) : LineSegment2D =
+        LineSegment2D.from line.start line.finish
 
-    /// Checks that the start and endpoint are not the same point
-    let fromTo (start: Point2D) (finish: Point2D) =
-        if start = finish then
-            None
-        else
-            Some(unsafeFromTo start finish)
+    (* Attributes *)
+
+    let direction (line: Line2D) : Vector2D =
+        Vector2D.normalize (line.start - line.finish)
+
+    let length (line: Line2D) : float =
+        Point2D.distanceTo line.start line.finish
 
     (* Queries *)
 
-    let pointOnLine (Point2D point) (Line2D line) =
-        line.ClosestPointTo(point, false)
-        |> Point2D.fromPoint2d
+    let pointClosestTo (point: Point2D) (line: Line2D) : Point2D =
+        let v : Vector2D = line.start |> Point2D.vectorTo point
+        let lineDirection = direction line
 
-    let perpThroughPoint (Point2D euclidPoint: Point2D as point) (Line2D line: Line2D) =
-        let perpPoint =
-            euclidPoint
-            + line.Direction.Rotate(Units.Angle.FromDegrees(90.))
-            |> Point2D.fromPoint2d
+        let alongVector =
+            Vector2D.dotProduct v (direction line)
+            * lineDirection
 
-        unsafeFromTo point perpPoint
-
-    let intersection (Line2D l1) (Line2D l2) : Point2D option =
-        Option.ofNullable (l1.IntersectWith(l2))
-        |> Option.map Point2D.fromPoint2d
+        line.start + alongVector
 
 
-    (* Questions *)
+    let distanceToPoint (point: Point2D) (line: Line2D) : float =
+        if line.start = point || line.finish = point then
+            0.
+        else
+            Point2D.distanceTo point (pointClosestTo point line)
 
-    let isPointOnLine (Point2D point) (Line2D line) =
-        point = line.StartPoint
-        || point = line.EndPoint
-        || line
-            .ClosestPointTo(point, false)
-            .Equals(point, Generics.Epsilon)
+    let atPointInDirection (point: Point2D) (direction: Vector2D) : Line2D = fromTo point (point + direction)
 
+    let perpThroughPoint (point: Point2D) (line: Line2D) : Line2D =
+        atPointInDirection point (Vector2D.rotate (Angle.inDegrees 90.<deg>) (direction line))
 
-    let isPerpendicularTo (Line2D l1) (Line2D l2) =
-        l1.Direction.IsPerpendicularTo(l2.Direction)
+    let isPointOnLine (point: Point2D) (line: Line2D) =
+        point = line.start
+        || point = line.finish
+        || point = pointClosestTo point line
+
+    let areParallel (first: Line2D) (second: Line2D) : bool =
+        let d1 = direction first
+        let d2 = direction second
+
+        d1 = d2 || Vector2D.neg d1 = d2
+
+    let arePerpendicular (first: Line2D) (second: Line2D) =
+        let d1 = (direction first)
+
+        let d2 =
+            Vector2D.rotate (Angle.pi / 2.) (direction second)
+
+        d1 = d2 || Vector2D.neg d1 = d2
+
+    let intersection (first: Line2D) (second: Line2D) : Point2D option =
+        if areParallel first second then
+            None
+        else
+            // http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+            let p = first.start
+            let q = second.start
+
+            let r =
+                first.start |> Point2D.vectorTo first.finish
+
+            let s =
+                second.start |> Point2D.vectorTo second.finish
+
+            let t =
+                Vector2D.crossProduct (q - p) s
+                / Vector2D.crossProduct r s
+
+            p + (t * r) |> Some

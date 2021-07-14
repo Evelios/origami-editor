@@ -7,15 +7,26 @@ open Geometry
 [<SetUp>]
 let Setup () = ()
 
+let pointClosestToTestCases =
+    let line =
+        Line2D.fromTo (Point2D.xy 0. 5.) (Point2D.xy 5. 5.)
+
+    [ (Point2D.xy 0. 5.), line, (Point2D.xy 0. 5.)
+      (Point2D.xy 5. 5.), line, (Point2D.xy 5. 5.)
+      (Point2D.xy 2. 2.), line, (Point2D.xy 2. 5.) ]
+    |> List.map (fun (point, line, expected) -> TestCaseData(point, line).Returns(expected))
+
+[<TestCaseSource(nameof pointClosestToTestCases)>]
+let ``Point closest to line`` vertex line = Line2D.pointClosestTo vertex line
 
 let pointOnLineTestCases =
     let line =
-        Line2D.unsafeFromTo (Point2D.xy 0. 5.) (Point2D.xy 5. 5.)
+        Line2D.fromTo (Point2D.xy 0. 5.) (Point2D.xy 5. 5.)
 
     [ (Point2D.xy 0. 5.), line
       (Point2D.xy 5. 5.), line
       (Point2D.xy 2.5 5.), line
-      (Point2D.xy 2.5 (5. + Generics.Epsilon / 2.), line) ]
+      (Point2D.xy 2.5 (5. + Internal.Epsilon / 2.), line) ]
     |> List.map TestCaseData
 
 [<TestCaseSource(nameof pointOnLineTestCases)>]

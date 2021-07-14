@@ -11,21 +11,31 @@ open Gui
 let Setup () = ()
 
 type TestCase =
-    { messages: CreasePatternCanvas.Msg list
+    { name: string
+      messages: CreasePatternCanvas.Msg list
       expected: State }
 
 let testCases =
-    [ { messages = []; expected = Shell.init }
-      { messages = [ CreasePatternCanvas.Msg.MouseMove(Point(500., 500.)) ]
+    [ { name = "Do nothing"
+        messages = []
+        expected = Shell.init }
+      { name = "Move mouse"
+        messages = [ CreasePatternCanvas.Msg.MouseMove(Point(500., 500.)) ]
         expected =
             { Shell.init with
                   mousePosition = Some(Point(500., 500.))
                   vertexPosition = Some(Point2D.xy 1. 1.)
-                  hover = Point2D.xy 1. 1. |> VertexComponent |> Some } } ]
+                  hover = Point2D.xy 1. 1. |> VertexComponent |> Some } }
+      { name = "Press near point & release off point"
+        messages =
+            [ CreasePatternCanvas.Msg.MousePressed(Point(500., 500.))
+              CreasePatternCanvas.Msg.MouseReleased(Point(0., 0.)) ]
+        expected = { Shell.init with hover = None } } ]
     |> List.map
         (fun testCase ->
             TestCaseData(testCase.messages)
-                .Returns(testCase.expected))
+                .Returns(testCase.expected)
+                .SetName(testCase.name))
 
 [<TestCaseSource(nameof testCases)>]
 let ``Update Tests`` messages =

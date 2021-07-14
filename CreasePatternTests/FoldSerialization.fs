@@ -20,22 +20,10 @@ let basic () =
 
     let creasePattern =
         CreasePattern.empty
-        |> CreasePattern.addEdges [ Edge.create
-                                        { start = v.bl
-                                          finish = v.br
-                                          assignment = Boundary }
-                                    Edge.create
-                                        { start = v.br
-                                          finish = v.tr
-                                          assignment = Boundary }
-                                    Edge.create
-                                        { start = v.tr
-                                          finish = v.tl
-                                          assignment = Boundary }
-                                    Edge.create
-                                        { start = v.tl
-                                          finish = v.bl
-                                          assignment = Boundary } ]
+        |> CreasePattern.addEdges [ Edge.betweenWithAssignment v.bl v.br Boundary
+                                    Edge.betweenWithAssignment v.br v.tr Boundary
+                                    Edge.betweenWithAssignment v.tr v.tl Boundary
+                                    Edge.betweenWithAssignment v.tl v.bl Boundary ]
 
     /// Expect
     let vertices =

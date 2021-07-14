@@ -6,15 +6,10 @@ open Geometry
 
 type Label = int
 
-type Bounds =
-    { minX: float
-      maxX: float
-      maxY: float
-      minY: float }
-
 type CreasePattern =
-    { bounds: Bounds
-      graph: Graph<Point2D, Label, EdgeAssignment> }
+    CreasePattern of
+        {| bounds: BoundingBox2D
+           graph: Graph<Point2D, Label, EdgeAssignment> |}
 
 
 module CreasePattern =
@@ -26,38 +21,32 @@ module CreasePattern =
      * has a width and height of 1.
      *)
     let empty : CreasePattern =
-        { bounds =
-              { minX = infinity
-                maxX = -infinity
-                minY = infinity
-                maxY = -infinity }
-          graph = Graph.empty }
+        CreasePattern
+            {| bounds = BoundingBox2D.empty
+               graph = Graph.empty |}
 
     (* Accessors *)
 
     let private asEdge (start, finish, assignment) =
-        Edge.create
-            { start = start
-              finish = finish
-              assignment = assignment }
+        Edge.betweenWithAssignment start finish assignment
 
-    let size creasePattern =
+    let size (CreasePattern creasePattern) =
         Size.create
             (creasePattern.bounds.maxX
              - creasePattern.bounds.minX)
             (creasePattern.bounds.maxY
              - creasePattern.bounds.minY)
 
-    let edges creasePattern : Edge list =
+    let edges (CreasePattern creasePattern) =
         List.map asEdge (Undirected.Edges.toEdgeList creasePattern.graph)
 
-    let vertices creasePattern : Point2D list =
+    let vertices (CreasePattern creasePattern) : Point2D list =
         List.map fst (Vertices.toVertexList creasePattern.graph)
 
 
     (* Modifiers *)
 
-    let addVertices (vertices: Point2D list) (creasePattern: CreasePattern) : CreasePattern =
+    let addVertices (vertices: Point2D list) (CreasePattern creasePattern: CreasePattern) : CreasePattern =
         let newVertices =
             List.filter (fun v -> not <| Vertices.contains v creasePattern.graph) vertices
 
@@ -65,52 +54,43 @@ module CreasePattern =
             List.map (fun vertex -> (vertex, vertex.GetHashCode())) newVertices
 
         let newBounds =
+            List.fold (fun b v -> BoundingBox2D.containingPoint v b) creasePattern.bounds newVertices
+
+        CreasePattern
+            {| creasePattern with
+                   bounds = newBounds
+                   graph =
+                       creasePattern.graph
+                       |> Vertices.addMany graphVertices |}
+
+    let addEdges (edges: Edge list) (CreasePattern cpData as creasePattern) : CreasePattern =
+        let vertices : Point2D list =
             List.fold
-                (fun bounds (vertex: Point2D ) ->
-                    { bounds with
-                          minX = min bounds.minX vertex.x
-                          maxX = max bounds.maxX vertex.x
-                          minY = min bounds.minY vertex.y
-                          maxY = max bounds.maxY vertex.y })
-                creasePattern.bounds
-                newVertices
-
-        { creasePattern with
-              bounds = newBounds
-              graph =
-                  creasePattern.graph
-                  |> Vertices.addMany graphVertices }
-
-    let addEdges (edges: Edge list) (creasePattern: CreasePattern) : CreasePattern =
-        let vertices =
-            List.fold (fun acc edge -> acc @ [ edge.finish; edge.start ]) [] edges
+                (fun (acc: Point2D list) (edge: Edge) ->
+                    acc
+                    @ [ edge.crease.start
+                        edge.crease.finish ])
+                []
+                edges
 
         let creasePatternWithVertices = addVertices vertices creasePattern
 
         let graphEdges =
-            List.map (fun edge -> (edge.start, edge.finish, edge.assignment)) edges
+            List.map (fun (Edge edge) -> (edge.line.start, edge.line.finish, edge.assignment)) edges
 
-        { creasePatternWithVertices with
-              graph =
-                  creasePatternWithVertices.graph
-                  |> Undirected.Edges.addMany graphEdges }
-
-    /// Try adding an edge to the crease pattern. If the edge already exists, the same edge will be returned
-    let addEdge (edge: Edge) (creasePattern: CreasePattern) : CreasePattern =
-        let vertices = [ edge.start; edge.finish ]
-        let creasePatternWithVertices = addVertices vertices creasePattern
-
-        let graphEdge =
-            (edge.start, edge.finish, edge.assignment)
-
-        let graph =
+        match creasePatternWithVertices with
+        | CreasePattern cpVertData ->
             try
-                creasePatternWithVertices.graph
-                |> Undirected.Edges.add graphEdge
-            with _ -> creasePattern.graph
+                CreasePattern
+                    {| cpVertData with
+                           graph =
+                               cpVertData.graph
+                               |> Undirected.Edges.addMany graphEdges |}
+            with _ -> creasePattern
 
-        { creasePatternWithVertices with
-              graph = graph }
+
+    /// Try adding an edge to the crease pattern. If the edge already exists, the same crease pattern will be returned
+    let addEdge (edge: Edge) (creasePattern: CreasePattern) : CreasePattern = addEdges [ edge ] creasePattern
 
     (* Builder *)
 
@@ -129,22 +109,10 @@ module CreasePattern =
               corners.br ]
 
         let boundaries =
-            [ Edge.create
-                { start = corners.tl
-                  finish = corners.tr
-                  assignment = EdgeAssignment.Boundary }
-              Edge.create
-                  { start = corners.tr
-                    finish = corners.br
-                    assignment = EdgeAssignment.Boundary }
-              Edge.create
-                  { start = corners.br
-                    finish = corners.bl
-                    assignment = EdgeAssignment.Boundary }
-              Edge.create
-                  { start = corners.bl
-                    finish = corners.tl
-                    assignment = EdgeAssignment.Boundary } ]
+            [ Edge.betweenWithAssignment corners.tl corners.tr EdgeAssignment.Boundary
+              Edge.betweenWithAssignment corners.tr corners.br EdgeAssignment.Boundary
+              Edge.betweenWithAssignment corners.br corners.bl EdgeAssignment.Boundary
+              Edge.betweenWithAssignment corners.bl corners.tl EdgeAssignment.Boundary ]
 
         empty
         |> addVertices vertices
@@ -152,8 +120,9 @@ module CreasePattern =
 
     (* Queries *)
 
-    /// This function is currently linear but can be sped up with quad-trees
-    let pointWithin distance vertex creasePattern : Point2D option =
+    // This function is currently linear but can be sped up with quad-trees
+    // Get the closest vertex that is withing a particular distance
+    let pointWithin distance vertex (CreasePattern creasePattern) : Point2D option =
         let distanceSquared = distance * distance
         let distSquaredToVertex = Point2D.distanceSquaredTo vertex
 
@@ -175,28 +144,33 @@ module CreasePattern =
         else
             None
 
-    let edgeWithin distance vertex creasePattern =
+    // Get the closest edge that is withing a particular distance
+    let edgeWithin (distance: float) (vertex: Point2D) (CreasePattern creasePattern) : Edge option =
         let defaultCase =
             (infinity, ((Point2D.xy infinity infinity), (Point2D.xy -infinity -infinity), EdgeAssignment.Unassigned))
 
         let closestDistance, closestEdge =
             Edges.toEdgeList creasePattern.graph
             |> List.fold
-                (fun (closestDistance, closestEdge) nextEdge ->
-                    match nextEdge with
-                    | start, finish, _ as nextEdge ->
-                        if start = finish then
-                            (0., nextEdge)
-                        else
+                (fun closestEdge nextEdge ->
+                    match closestEdge with
+                    | closestDistance, _ as closestEdge ->
+                        match nextEdge with
+                        | start, finish, _ as nextEdge ->
                             let nextDistance =
-                                LineSegment2D.distanceToVertex vertex (LineSegment2D.fromTo start finish)
+                                (LineSegment2D.from start finish)
+                                |> LineSegment2D.distanceToPoint vertex
+
+                            printfn $"{nextEdge}"
+                            printfn $"{nextDistance}"
 
                             if nextDistance < closestDistance then
                                 (nextDistance, nextEdge)
-
                             else
-                                (closestDistance, closestEdge))
+                                closestEdge)
                 defaultCase
+
+        printfn $"{closestDistance}"
 
         if closestDistance < distance then
             Some(asEdge closestEdge)
@@ -212,18 +186,14 @@ module CreasePattern =
 
         let graphEdges =
             List.map2
-                (fun (first, second) assignment ->
-                    Edge.create
-                        { start = coordinates.[first]
-                          finish = coordinates.[second]
-                          assignment = assignment })
+                (fun (first, second) -> Edge.betweenWithAssignment coordinates.[first] coordinates.[second])
                 edges.vertices
                 edges.assignment
 
         empty |> addEdges graphEdges
 
     /// Add in the crease pattern values into the fold frame
-    let addToFoldFrame (creasePattern: CreasePattern) (frame: Fold.Frame) : Fold.Frame =
+    let addToFoldFrame (CreasePattern creasePattern: CreasePattern) (frame: Fold.Frame) : Fold.Frame =
         let vertexLookup : Map<Point2D, int> =
             Vertices.toVertexList creasePattern.graph
             |> List.indexed

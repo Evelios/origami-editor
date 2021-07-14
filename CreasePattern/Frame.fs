@@ -1,5 +1,7 @@
 namespace CreasePattern
 
+open Geometry
+
 type Frame =
     { unit: Fold.LengthUnit
       author: string

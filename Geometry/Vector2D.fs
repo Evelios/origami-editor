@@ -5,20 +5,19 @@ open FSharp.Json
 
 [<CustomEquality>]
 [<CustomComparison>]
-[<RequireQualifiedAccess>]
-type Point2D =
+type Vector2D =
     { x: float
       y: float }
 
     (* Comparable interfaces *)
 
-    interface IComparable<Point2D> with
-        member this.CompareTo(point) = this.Comparison(point)
+    interface IComparable<Vector2D> with
+        member this.CompareTo(vector) = this.Comparison(vector)
 
     interface IComparable with
         member this.CompareTo(obj) =
             match obj with
-            | :? Point2D as point -> this.Comparison(point)
+            | :? Vector2D as vector -> this.Comparison(vector)
             | _ -> failwith "incompatible comparison"
 
     member this.Comparison(other) =
@@ -26,7 +25,7 @@ type Point2D =
         elif this.LessThan(other) then -1
         else 1
 
-    member this.LessThan(other: Point2D) =
+    member this.LessThan(other: Vector2D) =
         if almostEqual (float this.x) (float other.x) then
             float this.y < float other.y
         else
@@ -34,70 +33,84 @@ type Point2D =
 
     override this.Equals(obj: obj) : bool =
         match obj with
-        | :? Point2D as other -> this.Equals(other)
+        | :? Vector2D as other -> this.Equals(other)
         | _ -> false
 
-    member this.Equals(other: Point2D) : bool =
+    member this.Equals(other: Vector2D) : bool =
         almostEqual this.x other.x
         && almostEqual this.y other.y
 
     override this.GetHashCode() = HashCode.Combine(this.x, this.x)
 
-    static member (-)(lhs: Point2D, rhs: Point2D) : Vector2D =
-        Vector2D.xy (lhs.x - rhs.x) (lhs.y - rhs.y)
+    static member (*)(vector: Vector2D, scale: float) : Vector2D =
+        { x = vector.x * scale
+          y = vector.y * scale }
 
-    static member (+)(lhs: Point2D, rhs: Vector2D) : Point2D =
-        { x = lhs.x + rhs.x; y = lhs.y + rhs.y }
+    static member (*)(scale: float, vector: Vector2D) : Vector2D = vector * scale
 
-    static member (*)(lhs: Point2D, rhs: float) : Point2D = { x = lhs.x * rhs; y = lhs.y * rhs }
+    static member (/)(vector: Vector2D, scale: float) : Vector2D =
+        { x = vector.x / scale
+          y = vector.y / scale }
 
-    static member (*)(lhs: float, rhs: Point2D) : Point2D = rhs * lhs
+    static member (/)(scale: float, vector: Vector2D) : Vector2D = vector / scale
 
-    static member (/)(lhs: Point2D, rhs: float) : Point2D = { x = lhs.x / rhs; y = lhs.y / rhs }
-
-    static member (/)(lhs: float, rhs: Point2D) : Point2D = rhs / lhs
-    
-
-module Point2D =
+module Vector2D =
     (* Builders *)
 
-    let xy (x: float) (y: float) : Point2D = { x = x; y = y }
+    let xy (x: float) (y: float) : Vector2D = { x = x; y = y }
 
+    let scale x y (vector: Vector2D) = { x = vector.x * x; y = vector.y * y }
 
-    let scale x y (point: Point2D) = { x = point.x * x; y = point.y * y }
+    
+    (* Accessors *)
+
+    let magnitude v = sqrt (v.x ** 2. + v.y ** 2.)
+
+    
+    (* Modifiers *)
+
+    let neg v = { x = -v.x; y = -v.y }
+
+    let rotate a v =
+        { x = Angle.cos a * v.x - Angle.sin a * v.y
+          y = Angle.sin a * v.x + Angle.cos a * v.y }
+
+    let normalize v = v / (magnitude v)
+
 
     (* Queries *)
 
-    let distanceSquaredTo (p1: Point2D) (p2: Point2D) : float =
+    let distanceSquaredTo (p1: Vector2D) (p2: Vector2D) : float =
         let dx = (p1.x - p2.x)
         let dy = (p1.y - p2.y)
         dx * dx + dy * dy
 
     let distanceTo p1 p2 : float = distanceSquaredTo p1 p2 |> sqrt
 
-    let midpoint (p1: Point2D) (p2: Point2D) : Point2D =
+    let midVector (p1: Vector2D) (p2: Vector2D) : Vector2D =
         xy ((p1.x + p2.x) / 2.) ((p1.y + p2.y) / 2.)
 
+    let dotProduct (lhs: Vector2D) (rhs: Vector2D) : float = (lhs.x * rhs.x) + (lhs.y * rhs.y)
 
-    /// Be careful with the vector arguments. This function is written with piping in mind. The first point is the
-    /// target location. The second point is the starting location
-    let vectorTo (target: Point2D) (from: Point2D) : Vector2D = target - from
+    let crossProduct (lhs: Vector2D) (rhs: Vector2D) : float = (lhs.x * rhs.y) - (lhs.y * rhs.x)
 
 
     (* Json *)
-    let fromList (list: float list) : Point2D option =
+
+    let fromList (list: float list) : Vector2D option =
         match list with
         | [ x; y ] -> Some <| xy x y
         | _ -> None
 
-    let toList (point: Point2D) : float list = [ point.x; point.y ]
+    let toList (vector: Vector2D) : float list = [ vector.x; vector.y ]
+
 
     (* Json transformations *)
 
     type Transform() =
         interface ITypeTransform with
             member this.targetType() = (fun _ -> typeof<float32 list>) ()
-            member this.toTargetType value = toList (value :?> Point2D) :> obj
+            member this.toTargetType value = toList (value :?> Vector2D) :> obj
 
             member this.fromTargetType value =
                 value :?> float list
@@ -110,7 +123,7 @@ module Point2D =
             member this.targetType() = (fun _ -> typeof<float list list>) ()
 
             member this.toTargetType value =
-                value :?> Point2D list |> List.map toList :> obj
+                value :?> Vector2D list |> List.map toList :> obj
 
             member this.fromTargetType value =
                 value :?> float list list
