@@ -10,19 +10,25 @@ open Geometry
 let SetUp () = ()
 
 [<Test>]
-let units () =
+let ``Convert metadata`` () =
     let given =
-        Fold.Frame.empty
-        |> Fold.Frame.setUnit LengthUnit.Inches
+        Frame.empty
+        |> Frame.setUnit Fold.LengthUnit.Meters
+        |> Frame.setAuthor "The Author"
+        |> Frame.setTitle "The Title"
+        |> Frame.setDescription "The description"
 
     let expected =
-        Frame.empty |> Frame.setUnit LengthUnit.Inches
+        CreasePattern.empty
+        |> CreasePattern.setUnit LengthUnit.Meters
+        |> CreasePattern.setAuthor "The Author"
+        |> CreasePattern.setTitle "The Title"
+        |> CreasePattern.setDescription "The description"
 
-    Assert.AreEqual(expected, Frame.fromFoldFrame given)
-
+    Assert.AreEqual(expected, CreasePattern.fromFoldFrame given)
 
 [<Test>]
-let creasePattern () =
+let ``Set graph`` () =
     /// Given
     let vertices =
         Vertices.create
@@ -39,10 +45,10 @@ let creasePattern () =
             { vertices = [ (0, 1); (1, 2); (2, 3); (3, 0) ]
               faces = []
               assignment =
-                  [ Boundary
-                    Boundary
-                    Boundary
-                    Boundary ]
+                  [ Fold.Boundary
+                    Fold.Boundary
+                    Fold.Boundary
+                    Fold.Boundary ]
               foldAngle = []
               length = []
               orders = [] }
@@ -52,6 +58,13 @@ let creasePattern () =
             { vertices = [ [ 0; 1; 2; 3 ] ]
               edges = [ [ 0; 1; 2; 3 ] ]
               orders = [] }
+
+    let frame =
+        Frame.empty
+        |> Frame.setVertices vertices
+        |> Frame.setEdges edges
+        |> Frame.setFaces faces
+        
 
     /// Expect
 
@@ -68,4 +81,4 @@ let creasePattern () =
                                     Edge.betweenWithAssignment v.tr v.tl Boundary
                                     Edge.betweenWithAssignment v.tl v.bl Boundary ]
 
-    Assert.AreEqual(expected, CreasePattern.fromFoldValues vertices edges faces)
+    Assert.AreEqual(expected, CreasePattern.fromFoldFrame frame)

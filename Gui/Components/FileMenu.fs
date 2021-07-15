@@ -32,7 +32,7 @@ module FileMenu =
     let update msg state window : State * Cmd<Msg> * External =
 
         match msg with
-        | NewFile -> { state with frame = Frame.create }, Cmd.none, DoNothing
+        | NewFile -> { state with creasePattern = CreasePattern.create }, Cmd.none, DoNothing
         | OpenFoldFile ->
             let fileDialogTask =
                 Dialogs.openFileDialogTask "Fold File" Fold.extensions window
@@ -50,7 +50,7 @@ module FileMenu =
             match FileLoader.loadFoldFile path with
             | Ok foldContents ->
                 { state with
-                      frame = Frame.fromFoldFrame foldContents.keyFrame },
+                      creasePattern = CreasePattern.fromFoldFrame foldContents.keyFrame },
                 Cmd.none,
                 FoldFileLoaded
 
@@ -67,7 +67,7 @@ module FileMenu =
         | SaveFoldFileToPath path ->
             let foldText =
                 Fold.empty
-                |> Fold.setKeyframe (Frame.toFoldFrame state.frame)
+                |> Fold.setKeyframe (CreasePattern.toFoldFrame state.creasePattern)
                 |> FoldJson.toJson
 
             let writeToFile () =

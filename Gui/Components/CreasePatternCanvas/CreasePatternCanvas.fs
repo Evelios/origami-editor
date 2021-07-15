@@ -7,7 +7,6 @@ module CreasePatternCanvas =
     open Avalonia.FuncUI.DSL
 
     open CreasePattern
-    open Fold
     open Gui
     open Utilities.Collections
     open Utilities.Extensions
@@ -45,10 +44,10 @@ module CreasePatternCanvas =
                  / (max state.translation.xRatio state.translation.yRatio))
 
             let vertexWithin =
-                CreasePattern.pointWithin convertedCloseDistance convertedVertex state.frame.creasePattern
+                CreasePattern.pointWithin convertedCloseDistance convertedVertex state.creasePattern
 
             let edgeWithin =
-                CreasePattern.edgeWithin convertedCloseDistance convertedVertex state.frame.creasePattern
+                CreasePattern.edgeWithin convertedCloseDistance convertedVertex state.creasePattern
 
             let hover =
                 match vertexWithin, edgeWithin with
@@ -61,10 +60,9 @@ module CreasePatternCanvas =
                   vertexPosition = Some convertedVertex
                   hover = hover }
 
-
         | CreaseEdge edge ->
             { state with
-                  frame = Frame.mapCreasePattern (CreasePattern.addEdge edge) state.frame }
+                  creasePattern = CreasePattern.addEdge edge state.creasePattern }
 
 
     (* Drawing *)
@@ -76,13 +74,13 @@ module CreasePatternCanvas =
         let edgeLines =
             List.map
                 (CreasePatternComponents.edgeLineDefault state.translation)
-                (CreasePattern.edges state.frame.creasePattern)
+                (CreasePattern.edges state.creasePattern)
             |> List.rev
 
         let vertexPoints =
             List.map
                 (CreasePatternComponents.vertexDefault state.translation)
-                (CreasePattern.vertices state.frame.creasePattern)
+                (CreasePattern.vertices state.creasePattern)
 
         let creasePatternComponent vertexView edgeView ``component`` =
             match ``component`` with

@@ -1,7 +1,6 @@
 namespace CreasePattern
 
 open System
-open Fold
 open Geometry
 
 [<CustomEquality>]

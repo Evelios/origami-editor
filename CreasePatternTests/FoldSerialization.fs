@@ -41,23 +41,21 @@ let basic () =
             { vertices = [ (2, 3); (1, 3); (0, 2); (0, 1) ]
               faces = []
               assignment =
-                  [ Boundary
-                    Boundary
-                    Boundary
-                    Boundary ]
+                  [ Fold.Boundary
+                    Fold.Boundary
+                    Fold.Boundary
+                    Fold.Boundary ]
               foldAngle = []
               length = []
               orders = [] }
 
     let expected =
-        Fold.Frame.empty
-        |> Fold.Frame.setVertices vertices
-        |> Fold.Frame.setEdges edges
+        Frame.empty
+        |> Frame.setVertices vertices
+        |> Frame.setEdges edges
 
 
     /// When
-    let actual =
-        Fold.Frame.empty
-        |> CreasePattern.addToFoldFrame creasePattern
+    let actual = CreasePattern.toFoldFrame creasePattern
 
     Assert.AreEqual(expected, actual)

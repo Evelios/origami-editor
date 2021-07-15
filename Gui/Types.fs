@@ -12,7 +12,7 @@ type Direction =
     | Bottom
 
 type State =
-    { frame: Frame
+    { creasePattern: CreasePattern
       showVertices: bool
       hover: Component option
       selected: Component option

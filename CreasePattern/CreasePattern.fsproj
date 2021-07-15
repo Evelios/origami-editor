@@ -6,9 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="Types.fs" />
         <Compile Include="Edge.fs" />
         <Compile Include="CreasePattern.fs" />
-        <Compile Include="Frame.fs" />
         <Compile Include="Axioms.fs" />
     </ItemGroup>
 

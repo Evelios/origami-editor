@@ -10,44 +10,44 @@ module FileSettings =
     open Gui.Widgets
 
     type Msg =
-        | SelectUnit of Fold.LengthUnit
+        | SelectUnit of LengthUnit
         | ChangeAuthor of string
         | ChangeTitle of string
         | ChangeDescription of string
 
-    let update msg (frame: Frame) : Frame =
-        frame
+    let update msg (creasePattern: CreasePattern) : CreasePattern =
+        creasePattern
         |> match msg with
-           | SelectUnit unit -> Frame.setUnit unit
-           | ChangeAuthor author -> Frame.setAuthor author
-           | ChangeTitle title -> Frame.setTitle title
-           | ChangeDescription description -> Frame.setDescription description
-
+           | SelectUnit unit -> CreasePattern.setUnit unit
+           | ChangeAuthor author -> CreasePattern.setAuthor author
+           | ChangeTitle title -> CreasePattern.setTitle title
+           | ChangeDescription description -> CreasePattern.setDescription description
+           
 
     // View
 
-    let view (frame: Frame) dispatch =
+    let view (creasePattern: CreasePattern) dispatch =
         let settingsOptions : IView list =
             [ TextBlock.create [ TextBlock.text "File Settings" ]
 
               Form.dropdownSelection
                   {| name = "Units"
-                     selected = frame.unit
+                     selected = creasePattern.unit
                      onSelected = Msg.SelectUnit >> dispatch |}
 
               Form.textItem
                   {| name = "Author"
-                     value = frame.author
+                     value = creasePattern.author
                      onSelected = Msg.ChangeAuthor >> dispatch |}
 
               Form.textItem
                   {| name = "Title"
-                     value = frame.title
+                     value = creasePattern.title
                      onSelected = Msg.ChangeTitle >> dispatch |}
 
               Form.multiline
                   {| name = "Description"
-                     value = frame.description
+                     value = creasePattern.description
                      onSelected = Msg.ChangeDescription >> dispatch |} ]
 
         let panel =

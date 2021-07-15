@@ -2,7 +2,6 @@ module CreasePatternTests.CreasePattern
 
 open NUnit.Framework
 open CreasePattern
-open Fold
 open Geometry
 
 [<SetUp>]

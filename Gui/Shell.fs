@@ -9,7 +9,6 @@ module Shell =
     open Avalonia.FuncUI.Components.Hosts
     open Avalonia.FuncUI.Elmish
 
-    open Fold
     open CreasePattern
     open Gui.Components
     open Gui.Widgets
@@ -29,13 +28,13 @@ module Shell =
     let title = "Origami Editor"
 
     let init =
-        let frame = Frame.create
+        let creasePattern = CreasePattern.create
 
         let translation =
-            Translation.create frame.creasePattern Theme.creasePattern.maxLength
+            Translation.create creasePattern Theme.creasePattern.maxLength
 
         { filePath = None
-          frame = frame
+          creasePattern = creasePattern
           showVertices = true
           hover = None
           selected = None
@@ -63,7 +62,7 @@ module Shell =
 
         | FileSettingsMsg fileSettingsMsg ->
             { state with
-                  frame = FileSettings.update fileSettingsMsg state.frame },
+                  creasePattern = FileSettings.update fileSettingsMsg state.creasePattern },
             Cmd.none
 
         | IconBarMsg iconBarMsg -> IconBar.update iconBarMsg state, Cmd.none
@@ -86,7 +85,7 @@ module Shell =
              DockPanel.children [ DockPanel.child Top (FileMenu.view (FileMenuMsg >> dispatch))
                                   DockPanel.child Bottom (InfoBar.view state (InfoBarMsg >> dispatch))
                                   DockPanel.child Left (IconBar.view state (IconBarMsg >> dispatch))
-                                  DockPanel.child Right (FileSettings.view state.frame (FileSettingsMsg >> dispatch))
+                                  DockPanel.child Right (FileSettings.view state.creasePattern (FileSettingsMsg >> dispatch))
                                   CreasePatternCanvas.view state (CreasePatternCanvasMsg >> dispatch) ] ]
 
     type MainWindow() as this =

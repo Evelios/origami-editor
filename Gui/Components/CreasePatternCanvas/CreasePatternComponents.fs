@@ -1,7 +1,5 @@
 namespace Gui.Components.CreasePatternCanvas
 
-
-
 module CreasePatternComponents =
     open Avalonia.Controls.Shapes
     open Avalonia
@@ -9,7 +7,6 @@ module CreasePatternComponents =
     open Avalonia.FuncUI.Types
     open Avalonia.Media
 
-    open Fold
     open Gui
     open CreasePattern
     open Geometry
@@ -36,7 +33,7 @@ module CreasePatternComponents =
         | EdgeAssignment.Mountain -> theme.mountainColor
         | EdgeAssignment.Valley -> theme.valleyColor
         | EdgeAssignment.Unassigned -> theme.unassignedColor
-        | EdgeAssignment.Flat -> theme.flatColor
+    //        | EdgeAssignment.Flat -> theme.flatColor
 
     let edgeLine
         (options: {| translation: Translation

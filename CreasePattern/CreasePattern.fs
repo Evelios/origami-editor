@@ -1,15 +1,34 @@
 ﻿namespace CreasePattern
 
 open FSharp.FGL
-open Fold
 open Geometry
 
 type Label = int
 
 type CreasePattern =
-    CreasePattern of
+    | CreasePattern of
         {| bounds: BoundingBox2D
-           graph: Graph<Point2D, Label, EdgeAssignment> |}
+           graph: Graph<Point2D, Label, EdgeAssignment>
+           unit: LengthUnit
+           author: string
+           title: string
+           description: string |}
+
+    member this.unit =
+        match this with
+        | CreasePattern cp -> cp.unit
+
+    member this.author =
+        match this with
+        | CreasePattern cp -> cp.author
+
+    member this.title =
+        match this with
+        | CreasePattern cp -> cp.title
+
+    member this.description =
+        match this with
+        | CreasePattern cp -> cp.description
 
 
 module CreasePattern =
@@ -23,7 +42,11 @@ module CreasePattern =
     let empty : CreasePattern =
         CreasePattern
             {| bounds = BoundingBox2D.empty
-               graph = Graph.empty |}
+               graph = Graph.empty
+               unit = Unitless
+               author = ""
+               title = ""
+               description = "" |}
 
     (* Accessors *)
 
@@ -46,6 +69,20 @@ module CreasePattern =
 
     (* Modifiers *)
 
+    let setUnit unit (CreasePattern creasePattern) =
+        CreasePattern {| creasePattern with unit = unit |}
+
+    let setAuthor author (CreasePattern creasePattern) =
+        CreasePattern {| creasePattern with author = author |}
+
+    let setTitle title (CreasePattern creasePattern) =
+        CreasePattern {| creasePattern with title = title |}
+
+    let setDescription description (CreasePattern creasePattern) =
+        CreasePattern
+            {| creasePattern with
+                   description = description |}
+
     let addVertices (vertices: Point2D list) (CreasePattern creasePattern: CreasePattern) : CreasePattern =
         let newVertices =
             List.filter (fun v -> not <| Vertices.contains v creasePattern.graph) vertices
@@ -63,7 +100,7 @@ module CreasePattern =
                        creasePattern.graph
                        |> Vertices.addMany graphVertices |}
 
-    let addEdges (edges: Edge list) (CreasePattern cpData as creasePattern) : CreasePattern =
+    let addEdges (edges: Edge list) (creasePattern: CreasePattern) : CreasePattern =
         let vertices : Point2D list =
             List.fold
                 (fun (acc: Point2D list) (edge: Edge) ->
@@ -181,19 +218,39 @@ module CreasePattern =
     (* Serialization & Deserialization *)
 
     /// Convert the frame values in the fold file to a crease pattern
-    let fromFoldValues (vertices: Fold.Vertices) (edges: Fold.Edges) (_: Fold.Faces) : CreasePattern =
-        let coordinates = Array.ofList vertices.coords
+    let fromFoldFrame (frame: Fold.Frame) : CreasePattern =
+        let coordinates = Array.ofList frame.vertices.coords
+
+        let mapEdgeAssignment assignment =
+            match assignment with
+            | Fold.Boundary -> Boundary
+            | Fold.Mountain -> Mountain
+            | Fold.Valley -> Valley
+            | Fold.Unassigned -> Unassigned
+            | Fold.Flat -> Unassigned
+            
+        let mapUnit unit =
+            match unit with
+            | Fold.Meters -> Meters
+            | Fold.Points -> Pixels
+            | Fold.Unitless -> Unitless
+            | _ -> Unitless
 
         let graphEdges =
             List.map2
                 (fun (first, second) -> Edge.betweenWithAssignment coordinates.[first] coordinates.[second])
-                edges.vertices
-                edges.assignment
+                frame.edges.vertices
+                (List.map mapEdgeAssignment frame.edges.assignment)
 
-        empty |> addEdges graphEdges
+        empty
+        |> addEdges graphEdges
+        |> setUnit (mapUnit frame.unit)
+        |> setAuthor frame.author
+        |> setTitle frame.title
+        |> setDescription frame.description
 
     /// Add in the crease pattern values into the fold frame
-    let addToFoldFrame (CreasePattern creasePattern: CreasePattern) (frame: Fold.Frame) : Fold.Frame =
+    let toFoldFrame (CreasePattern creasePattern: CreasePattern) : Fold.Frame =
         let vertexLookup : Map<Point2D, int> =
             Vertices.toVertexList creasePattern.graph
             |> List.indexed
@@ -216,15 +273,34 @@ module CreasePattern =
         let edgeVerticesIndexed =
             List.map (fun (v1, v2) -> (Map.find v1 vertexLookup, Map.find v2 vertexLookup)) edgeVertices
 
+
+        let mapEdgeAssignment assignment =
+            match assignment with
+            | Boundary -> Fold.Boundary
+            | Mountain -> Fold.Mountain
+            | Valley -> Fold.Valley
+            | Unassigned -> Fold.Unassigned
+
         let edges =
             Fold.Edges.create
                 { vertices = edgeVerticesIndexed
                   faces = []
-                  assignment = List.map (fun (_, _, assignment) -> assignment) edges
+                  assignment = List.map (fun (_, _, assignment) -> mapEdgeAssignment assignment) edges
                   foldAngle = []
                   length = []
                   orders = [] }
 
-        frame
-        |> Frame.setVertices vertices
-        |> Frame.setEdges edges
+        let mapUnit unit =
+            match unit with
+            | Meters -> Fold.Meters
+            | Pixels -> Fold.Points
+            | Unitless -> Fold.Unitless
+
+
+        Fold.Frame.empty
+        |> Fold.Frame.setUnit (mapUnit creasePattern.unit)
+        |> Fold.Frame.setAuthor creasePattern.author
+        |> Fold.Frame.setTitle creasePattern.title
+        |> Fold.Frame.setDescription creasePattern.description
+        |> Fold.Frame.setVertices vertices
+        |> Fold.Frame.setEdges edges
