@@ -34,3 +34,6 @@ module Translation =
 
     let pointToVertex (translation: Translation) (point: Point) : Point2D =
         Point2D.xy (point.X / translation.xRatio) (point.Y / translation.yRatio)
+        
+    let positionToVertex (translation: Translation) (point: Point2D) : Point2D =
+        Point2D.xy (point.x / translation.xRatio) (point.y / translation.yRatio)

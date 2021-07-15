@@ -9,6 +9,7 @@ module Theme =
            lightOffWhite = "#f0f0f0"
            offWhite = "#e6e6e6"
            yellow = "#FFA123"
+           lightYellow = "#E4AE67"
            blue = "#4F2DBE"
            green = "#26D81D" |}
 

@@ -198,16 +198,11 @@ module CreasePattern =
                                 (LineSegment2D.from start finish)
                                 |> LineSegment2D.distanceToPoint vertex
 
-                            printfn $"{nextEdge}"
-                            printfn $"{nextDistance}"
-
                             if nextDistance < closestDistance then
                                 (nextDistance, nextEdge)
                             else
                                 closestEdge)
                 defaultCase
-
-        printfn $"{closestDistance}"
 
         if closestDistance < distance then
             Some(asEdge closestEdge)

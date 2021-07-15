@@ -21,23 +21,41 @@ module CreasePatternCanvas =
 
     let theme = {| pointerCloseDistance = 20. |}
 
-    let update (msg: Msg) (state: State) : State =
+    let rec update (msg: Msg) (state: State) : State =
         match msg with
         (* User Actions *)
-        | MouseReleased position ->
-            match (state.hover, state.selected) with
-            | Some hover, Some selected -> state
-            // Todo: select component
-//                { state with selected = None }
-//                |> update (CreaseEdge (Edge.betweenWithAssignment hover selected EdgeAssignment.Unassigned ))
-            | _ -> { state with selected = state.hover }
+        | MouseReleased mousePosition ->
+            let updatedState = update (MouseMove mousePosition) state
 
-        | MousePressed _ -> state
+            match updatedState.pressed, updatedState.hover with
+            | Some (VertexComponent pressed), Some (VertexComponent hover) when pressed <> hover ->
 
-        | MouseMove mousePoint ->
+                { updatedState with
+                      pressed = None
+                      creasePattern =
+                          CreasePattern.addEdge
+                              (Edge.betweenWithAssignment pressed hover Unassigned)
+                              updatedState.creasePattern }
+
+            | Some _, _ -> { updatedState with pressed = None }
+
+            | _ -> updatedState
+
+        | MousePressed mousePosition ->
+            let updatedState = update (MouseMove mousePosition) state
+
+            match updatedState.hover with
+            | Some (VertexComponent _) ->
+                { updatedState with
+                      pressed = updatedState.hover }
+            | _ -> updatedState
+
+
+
+        | MouseMove mousePosition ->
             // The mouse position converted into crease pattern coordinates
             let convertedVertex =
-                Translation.pointToVertex state.translation mousePoint
+                Translation.pointToVertex state.translation mousePosition
 
             let convertedCloseDistance =
                 (theme.pointerCloseDistance
@@ -56,7 +74,7 @@ module CreasePatternCanvas =
                 | None, None -> None
 
             { state with
-                  mousePosition = Some mousePoint
+                  mousePosition = Some mousePosition
                   vertexPosition = Some convertedVertex
                   hover = hover }
 
@@ -92,6 +110,19 @@ module CreasePatternCanvas =
                 (creasePatternComponent CreasePatternComponents.vertexHovered CreasePatternComponents.edgeLineHovered)
                 state.hover
 
+        let pressedElement =
+            Option.map
+                (creasePatternComponent CreasePatternComponents.vertexPressed CreasePatternComponents.edgeLinePressed)
+                state.pressed
+
+        let dragLine =
+            match state.pressed, state.hover, state.vertexPosition with
+            | Some (VertexComponent pressed), Some (VertexComponent hover), _ ->
+                Some(CreasePatternComponents.dragLine state.translation pressed hover)
+            | Some (VertexComponent pressed), _, Some vertexPosition ->
+                Some(CreasePatternComponents.dragLine state.translation pressed vertexPosition)
+            | _ -> None
+
         let selectedElements =
             match state.selected with
             | Some sel -> [ sel ]
@@ -101,13 +132,13 @@ module CreasePatternCanvas =
                 creasePatternComponent CreasePatternComponents.vertexSelected CreasePatternComponents.edgeLineSelected
             )
 
-        // This could be a slow point because of appending to the end of the list
-        // If this gets too slow, cons to the beginning and reverse the list to maintain readability
         let canvasElements =
             []
             |> List.append edgeLines
             |> List.appendIf state.showVertices vertexPoints
+            |> List.consWhenSome dragLine
             |> List.consWhenSome hoverElement
+            |> List.consWhenSome pressedElement
             |> List.append selectedElements
             |> List.rev
 
@@ -128,12 +159,12 @@ module CreasePatternCanvas =
              )
              DockPanel.onPointerPressed (
                  (Event.positionRelativeTo canvasName)
-                 >> Msg.MouseMove
+                 >> Msg.MousePressed
                  >> dispatch
              )
-             DockPanel.onPointerPressed (
+             DockPanel.onPointerReleased (
                  (Event.positionRelativeTo canvasName)
-                 >> Msg.MouseMove
+                 >> Msg.MouseReleased
                  >> dispatch
              )
              DockPanel.children [ canvas state ] ]

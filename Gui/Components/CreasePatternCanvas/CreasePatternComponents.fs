@@ -16,13 +16,33 @@ module CreasePatternComponents =
            vertexSize = 8.
            vertexHoveredSize = 10.
            vertexColor = Theme.colors.darkGray
-           hoveredColor = Theme.colors.yellow
+           hoveredColor = Theme.colors.lightYellow
+           pressedColor = Theme.colors.yellow
            selectedColor = Theme.colors.blue
            boundaryColor = Theme.colors.lighterGray
            mountainColor = Theme.colors.green
            valleyColor = Theme.colors.blue
            unassignedColor = Theme.colors.lighterGray
-           flatColor = Theme.colors.lighterGray |}
+           flatColor = Theme.colors.lighterGray
+           dragColor = Theme.colors.lighterGray |}
+
+
+    (* User Help Components *)
+
+    let dragLine (translation: Translation) (start: Point2D) (finish: Point2D) : IView =
+        let startScaled = start * translation.xRatio
+        let finishScaled = finish * translation.xRatio
+
+        Line.create
+        <| [ Line.startPoint (Point(startScaled.x, startScaled.y))
+             Line.endPoint (Point(finishScaled.x, finishScaled.y))
+             Line.stroke theme.dragColor
+             Line.strokeThickness theme.lineThickness
+             Line.strokeLineCap PenLineCap.Round
+             Line.strokeDashArray [ 5.; 2. ] ]
+        :> IView
+
+
 
 
     (* Edges *)
@@ -63,6 +83,12 @@ module CreasePatternComponents =
                edge = edge
                color = theme.hoveredColor |}
 
+    let edgeLinePressed translation edge =
+        edgeLine
+            {| translation = translation
+               edge = edge
+               color = theme.pressedColor |}
+
     let edgeLineSelected translation edge =
         edgeLine
             {| translation = translation
@@ -102,6 +128,13 @@ module CreasePatternComponents =
             {| translation = translation
                vertex = vertex
                color = theme.hoveredColor
+               size = theme.vertexHoveredSize |}
+
+    let vertexPressed (translation: Translation) (vertex: Point2D) : IView =
+        vertexPoint
+            {| translation = translation
+               vertex = vertex
+               color = theme.pressedColor
                size = theme.vertexHoveredSize |}
 
     let vertexSelected (translation: Translation) (vertex: Point2D) : IView =

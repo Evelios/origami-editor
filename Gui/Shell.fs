@@ -33,14 +33,15 @@ module Shell =
         let translation =
             Translation.create creasePattern Theme.creasePattern.maxLength
 
-        { filePath = None
-          creasePattern = creasePattern
-          showVertices = true
+        { creasePattern = creasePattern
+          filePath = None
+          pressed = None
           hover = None
           selected = None
           selectedReferences = []
           mousePosition = None
           vertexPosition = None
+          showVertices = true
           translation = translation
           pageSize = translation.pageSize }
 

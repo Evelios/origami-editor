@@ -12,13 +12,19 @@ type Direction =
     | Bottom
 
 type State =
-    { creasePattern: CreasePattern
-      showVertices: bool
+    { (* Main Data *)
+      creasePattern: CreasePattern
+      filePath: string option
+
+      (* User Interactivity *)
       hover: Component option
+      pressed: Component option
       selected: Component option
       selectedReferences: Component list
-      translation: Translation
       mousePosition: Point option
       vertexPosition: Point2D option
-      pageSize: Size
-      filePath: string option }
+
+      (* Viewing Options *)
+      showVertices: bool
+      translation: Translation
+      pageSize: Size }
