@@ -10,7 +10,11 @@ module IconBar =
     open Gui.Widgets
     open Utilities.Extensions
 
-    type Msg = | ToggleShowVertices
+    type Msg =
+        | ToggleShowVertices
+        | ToggleFirstAxiom
+        | ToggleSecondAxiom
+        | ToggleThirdAxiom
 
     let update msg state : State =
         match msg with

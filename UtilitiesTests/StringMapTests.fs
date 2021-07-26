@@ -1,4 +1,4 @@
-module FoldTests.StringMapTests
+module UtilitiesTests.StringMapTests
 
 open NUnit.Framework
 open Utilities.Collections

@@ -156,9 +156,9 @@ module CreasePattern =
         |> addEdges boundaries
 
     (* Queries *)
-
+    
     // This function is currently linear but can be sped up with quad-trees
-    // Get the closest vertex that is withing a particular distance
+    /// Get the closest vertex that is withing a particular distance
     let pointWithin distance vertex (CreasePattern creasePattern) : Point2D option =
         let distanceSquared = distance * distance
         let distSquaredToVertex = Point2D.distanceSquaredTo vertex
@@ -181,7 +181,7 @@ module CreasePattern =
         else
             None
 
-    // Get the closest edge that is withing a particular distance
+    /// Get the closest edge that is withing a particular distance
     let edgeWithin (distance: float) (vertex: Point2D) (CreasePattern creasePattern) : Edge option =
         let defaultCase =
             (infinity, ((Point2D.xy infinity infinity), (Point2D.xy -infinity -infinity), EdgeAssignment.Unassigned))

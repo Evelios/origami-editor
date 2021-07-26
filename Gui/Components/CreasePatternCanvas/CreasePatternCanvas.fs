@@ -1,5 +1,7 @@
 namespace Gui.Components.CreasePatternCanvas
 
+open Avalonia.Input
+
 module CreasePatternCanvas =
 
     open Avalonia
@@ -13,7 +15,7 @@ module CreasePatternCanvas =
 
     type Msg =
         | MousePressed of Point
-        | MouseReleased of Point
+        | MouseReleased of Point * KeyModifiers
         | MouseMove of Point
         | CreaseEdge of Edge
 
@@ -24,33 +26,38 @@ module CreasePatternCanvas =
     let rec update (msg: Msg) (state: State) : State =
         match msg with
         (* User Actions *)
-        | MouseReleased mousePosition ->
+        | MouseReleased (mousePosition, keyModifiers) ->
             let updatedState = update (MouseMove mousePosition) state
 
-            match updatedState.pressed, updatedState.hover with
-            | Some (VertexComponent pressed), Some (VertexComponent hover) when pressed <> hover ->
+            if keyModifiers.HasFlag(KeyModifiers.Shift)
+               && updatedState.pressed = updatedState.hover then
+                match updatedState.pressed with
+                | Some pressed ->
+                    { updatedState with
+                          pressed = None
+                          selectedReferences = pressed :: updatedState.selectedReferences }
+                | None -> updatedState
 
-                { updatedState with
-                      pressed = None
-                      creasePattern =
-                          CreasePattern.addEdge
-                              (Edge.betweenWithAssignment pressed hover Unassigned)
-                              updatedState.creasePattern }
+            else
+                match updatedState.pressed, updatedState.hover with
+                | Some (VertexComponent pressed), Some (VertexComponent hover) when pressed <> hover ->
 
-            | Some _, _ -> { updatedState with pressed = None }
+                    { updatedState with
+                          pressed = None
+                          creasePattern =
+                              CreasePattern.addEdge
+                                  (Edge.betweenWithAssignment pressed hover Unassigned)
+                                  updatedState.creasePattern }
 
-            | _ -> updatedState
+                | Some _, _ -> { updatedState with pressed = None }
+
+                | _ -> updatedState
 
         | MousePressed mousePosition ->
             let updatedState = update (MouseMove mousePosition) state
 
-            match updatedState.hover with
-            | Some (VertexComponent _) ->
-                { updatedState with
-                      pressed = updatedState.hover }
-            | _ -> updatedState
-
-
+            { updatedState with
+                  pressed = updatedState.hover }
 
         | MouseMove mousePosition ->
             // The mouse position converted into crease pattern coordinates
@@ -124,13 +131,9 @@ module CreasePatternCanvas =
             | _ -> None
 
         let selectedElements =
-            match state.selected with
-            | Some sel -> [ sel ]
-            | None -> []
-
-            |> List.map (
-                creasePatternComponent CreasePatternComponents.vertexSelected CreasePatternComponents.edgeLineSelected
-            )
+            List.map
+                (creasePatternComponent CreasePatternComponents.vertexSelected CreasePatternComponents.edgeLineSelected)
+                state.selectedReferences
 
         let canvasElements =
             []
@@ -162,9 +165,9 @@ module CreasePatternCanvas =
                  >> Msg.MousePressed
                  >> dispatch
              )
-             DockPanel.onPointerReleased (
-                 (Event.positionRelativeTo canvasName)
-                 >> Msg.MouseReleased
-                 >> dispatch
-             )
+             DockPanel.onPointerReleased
+                 (fun e ->
+                     Msg.MouseReleased((Event.positionRelativeTo canvasName e), e.KeyModifiers)
+                     |> dispatch)
+                 
              DockPanel.children [ canvas state ] ]

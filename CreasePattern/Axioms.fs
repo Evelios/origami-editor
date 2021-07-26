@@ -7,6 +7,7 @@ type Component =
     | EdgeComponent of Edge
 
 
+[<RequireQualifiedAccess>]
 type Axiom =
     | First
     | Second
@@ -54,17 +55,17 @@ module Axioms =
 
     let perform axiom comp1 comp2 : Line2D list =
         match axiom with
-        | First ->
+        | Axiom.First ->
             match comp1, comp2 with
             | VertexComponent v1, VertexComponent v2 -> [ first v1 v2 ]
             | _ -> []
 
-        | Second ->
+        | Axiom.Second ->
             match comp1, comp2 with
             | VertexComponent v1, VertexComponent v2 -> [ second v1 v2 ]
             | _ -> []
 
-        | Third ->
+        | Axiom.Third ->
             match comp1, comp2 with
             | EdgeComponent e1, EdgeComponent e2 -> third e1.line e2.line
             | _ -> []

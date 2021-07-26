@@ -27,6 +27,7 @@ module Shell =
 
     let title = "Origami Editor"
 
+    // TODO: preview next creases
     let init =
         let creasePattern = CreasePattern.create
 
@@ -37,10 +38,10 @@ module Shell =
           filePath = None
           pressed = None
           hover = None
-          selected = None
           selectedReferences = []
           mousePosition = None
           vertexPosition = None
+          axioms = [Axiom.First; Axiom.Second; Axiom.Third]
           showVertices = true
           translation = translation
           pageSize = translation.pageSize }

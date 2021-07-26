@@ -1,11 +1,11 @@
 module CreasePatternCanvasTests
 
 open Avalonia
+open Avalonia.Input
 open Geometry
 open Gui.Components.CreasePatternCanvas
 open NUnit.Framework
 open CreasePattern
-open Geometry
 open Gui
 
 [<SetUp>]
@@ -32,7 +32,7 @@ let testCases =
       { name = "Crease edge by dragging between points"
         messages =
             [ CreasePatternCanvas.Msg.MousePressed(Point(500., 500.))
-              CreasePatternCanvas.Msg.MouseReleased(Point(0., 0.)) ]
+              CreasePatternCanvas.Msg.MouseReleased(Point(0., 0.), KeyModifiers.None) ]
         expected =
             { Shell.init with
                   mousePosition = Some(Point(0., 0.))
@@ -47,11 +47,12 @@ let testCases =
       { name = "Press near point & release off point"
         messages =
             [ CreasePatternCanvas.Msg.MousePressed(Point(500., 500.))
-              CreasePatternCanvas.Msg.MouseReleased(Point(200., 200.)) ]
+              CreasePatternCanvas.Msg.MouseReleased(Point(200., 200.), KeyModifiers.None) ]
         expected =
             { Shell.init with
                   mousePosition = Some(Point(200., 200.))
                   vertexPosition = Some(Point2D.xy 0.4 0.4) } } ]
+
     |> List.map
         (fun testCase ->
             TestCaseData(testCase.messages)
