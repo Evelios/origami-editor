@@ -1,94 +1,74 @@
 namespace Gui
 
-module Shell =
-    open System.IO
+open Avalonia.FuncUI.Types
 
+module Shell =
     open Elmish
     open Avalonia.Controls
-    open Avalonia.FuncUI.DSL
     open Avalonia.FuncUI.Components.Hosts
     open Avalonia.FuncUI.Elmish
+    open Avalonia.FuncUI.DSL
 
-    open CreasePattern
-    open Gui.Components
-    open Gui.Widgets
-    open Gui.Components.CreasePatternCanvas
 
-    type Msg =
-        (* Component Messages *)
-        | FileMenuMsg of FileMenu.Msg
-        | FileSettingsMsg of FileSettings.Msg
-        | IconBarMsg of IconBar.Msg
-        | InfoBarMsg of InfoBar.Msg
-        | CreasePatternCanvasMsg of CreasePatternCanvas.Msg
-
-        (* Global Messages *)
-        | UpdateTitle
+    open Gui.Tabs.CreasePatternTab
+    open Gui.Tabs.ReferenceFinderTab
 
     let title = "Origami Editor"
 
-    // TODO: preview next creases
-    let init =
-        let creasePattern = CreasePattern.create
+    [<RequireQualifiedAccess>]
+    type Tab =
+        | CreasePattern
+        | ReferenceFinder
 
-        let translation =
-            Translation.create creasePattern Theme.creasePattern.maxLength
+    type State =
+        { tab: Tab
+          creasePattern: CreasePatternTabState
+          referenceFinder: ReferenceFinderTabState }
 
-        { creasePattern = creasePattern
-          filePath = None
-          pressed = None
-          hover = None
-          selectedReferences = []
-          mousePosition = None
-          vertexPosition = None
-          axioms = [Axiom.First; Axiom.Second; Axiom.Third]
-          showVertices = true
-          translation = translation
-          pageSize = translation.pageSize }
+    type Msg =
+        | CreasePatternTabMsg of CreasePatternTab.Msg
+        | ReferenceFinderTabMsg of ReferenceFinderTab.Msg
+
+    let init : State =
+        { tab = Tab.CreasePattern
+          creasePattern = CreasePatternTab.init
+          referenceFinder = ReferenceFinderTab.init }
 
     let update (msg: Msg) (state: State) (window: Window) : State * Cmd<Msg> =
         match msg with
+        | CreasePatternTabMsg creasePatternTabMsg ->
+            let creasePatternTabState, cmd =
+                CreasePatternTab.update creasePatternTabMsg state.creasePattern window
 
-        (* Component Messages *)
-        | FileMenuMsg fileMenuMsg ->
-            let newState, fileMenuCommand, external =
-                FileMenu.update fileMenuMsg state window
-
-            let cmd = Cmd.map FileMenuMsg fileMenuCommand
-
-            match external with
-            | FileMenu.External.FoldFileLoaded -> newState, Cmd.ofMsg UpdateTitle
-            | FileMenu.External.DoNothing -> newState, (Cmd.batch [ cmd; Cmd.ofMsg UpdateTitle ])
-
-        | InfoBarMsg infoBarMsg -> InfoBar.update infoBarMsg state, Cmd.none
-
-        | FileSettingsMsg fileSettingsMsg ->
             { state with
-                  creasePattern = FileSettings.update fileSettingsMsg state.creasePattern },
+                  creasePattern = creasePatternTabState },
+            Cmd.map CreasePatternTabMsg cmd
+
+        | ReferenceFinderTabMsg referenceFinderTabMsg ->
+            let referenceFinderTabState =
+                ReferenceFinderTab.update referenceFinderTabMsg state.referenceFinder
+
+            { state with
+                  referenceFinder = referenceFinderTabState },
             Cmd.none
 
-        | IconBarMsg iconBarMsg -> IconBar.update iconBarMsg state, Cmd.none
-
-        | CreasePatternCanvasMsg creasePatternCanvasMsg ->
-            CreasePatternCanvas.update creasePatternCanvasMsg state, Cmd.none
-
-        (* Global Messages*)
-        | UpdateTitle ->
-            window.Title <-
-                match state.filePath with
-                | Some path -> $"{title} - {Path.GetFileNameWithoutExtension(path)}"
-                | None -> title
-
-            state, Cmd.none
-
     let view (state: State) dispatch =
-        DockPanel.create
-        <| [ DockPanel.background Theme.palette.panelBackground
-             DockPanel.children [ DockPanel.child Top (FileMenu.view (FileMenuMsg >> dispatch))
-                                  DockPanel.child Bottom (InfoBar.view state (InfoBarMsg >> dispatch))
-                                  DockPanel.child Left (IconBar.view state (IconBarMsg >> dispatch))
-                                  DockPanel.child Right (FileSettings.view state.creasePattern (FileSettingsMsg >> dispatch))
-                                  CreasePatternCanvas.view state (CreasePatternCanvasMsg >> dispatch) ] ]
+        let creasePattern =
+            CreasePatternTab.view state.creasePattern (CreasePatternTabMsg >> dispatch)
+
+        let referenceFinder =
+            ReferenceFinderTab.view state.referenceFinder (ReferenceFinderTabMsg >> dispatch)
+
+        let tabs : IView list =
+            [ TabItem.create [ TabItem.header "Crease Pattern"
+                               TabItem.content creasePattern ]
+              TabItem.create [ TabItem.header "Reference Finder"
+                               TabItem.content referenceFinder ] ]
+
+
+        TabControl.create [ TabControl.tabStripPlacement Dock.Top // Change this property to tell the app where to show the tab bar
+                            TabControl.viewItems tabs ]
+
 
     type MainWindow() as this =
         inherit HostWindow()

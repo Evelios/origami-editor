@@ -1,4 +1,4 @@
-namespace Utilities.Collections
+namespace Geometry
 
 type Size = { width: float; height: float }
 

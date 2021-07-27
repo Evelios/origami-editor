@@ -8,7 +8,7 @@
     <ItemGroup>
         <AvaloniaResource Include="**\*.xaml" />
     </ItemGroup>
-    
+
     <ItemGroup>
         <PackageReference Include="Avalonia.Desktop" Version="0.9.7" />
         <PackageReference Include="JaggerJo.Avalonia.FuncUI" Version="0.4.0" />
@@ -21,27 +21,30 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CreasePattern\CreasePattern.fsproj" />
-      <ProjectReference Include="..\FoldFile\FoldFile.fsproj" />
-      <ProjectReference Include="..\Utilities\Utilities.fsproj" />
+        <ProjectReference Include="..\CreasePattern\CreasePattern.fsproj" />
+        <ProjectReference Include="..\FoldFile\FoldFile.fsproj" />
+        <ProjectReference Include="..\Utilities\Utilities.fsproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Include="Translation.fs" />
-      <Compile Include="Types.fs" />
-      <Compile Include="Theme.fs" />
-      <Compile Include="FileLoader.fs" />
-      <Compile Include="Widgets\Icons.fs" />
-      <Compile Include="Widgets\Form.fs" />
-      <Compile Include="Widgets\Dialogs.fs" />
-      <Compile Include="Widgets\DockPanel.fs" />
-      <Compile Include="Components\FileMenu.fs" />
-      <Compile Include="Components\FileSettings.fs" />
-      <Compile Include="Components\CreasePatternCanvas\CreasePatternComponents.fs" />
-      <Compile Include="Components\CreasePatternCanvas\CreasePatternCanvas.fs" />
-      <Compile Include="Components\IconBar.fs" />
-      <Compile Include="Components\InfoBar.fs" />
-      <Compile Include="Shell.fs" />
-      <Compile Include="Program.fs" />
+        <Compile Include="Translation.fs" />
+        <Compile Include="Types.fs" />
+        <Compile Include="Theme.fs" />
+        <Compile Include="FileLoader.fs" />
+        <Compile Include="Widgets\Icons.fs" />
+        <Compile Include="Widgets\Form.fs" />
+        <Compile Include="Widgets\Dialogs.fs" />
+        <Compile Include="Widgets\DockPanel.fs" />
+        <Compile Include="Widgets\CreasePatternDrawing.fs" />
+        <Compile Include="Tabs\CreasePatternTab\IconBar.fs" />
+        <Compile Include="Tabs\CreasePatternTab\InfoBar.fs" />
+        <Compile Include="Tabs\CreasePatternTab\FileSettings.fs" />
+        <Compile Include="Tabs\CreasePatternTab\FileMenu.fs" />
+        <Compile Include="Tabs\CreasePatternTab\Drawing\CreasePatternComponents.fs" />
+        <Compile Include="Tabs\CreasePatternTab\Drawing\CreasePatternCanvas.fs" />
+        <Compile Include="Tabs\CreasePatternTab\CreasePatternTab.fs" />
+        <Compile Include="Tabs\ReferenceFinderTab.fs" />
+        <Compile Include="Shell.fs" />
+        <Compile Include="Program.fs" />
     </ItemGroup>
 </Project>

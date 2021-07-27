@@ -1,4 +1,4 @@
-namespace Gui
+namespace Gui.Tabs.CreasePatternTab
 
 open Avalonia.FuncUI.Types
 open CreasePattern
@@ -8,6 +8,7 @@ module FileSettings =
     open Avalonia.FuncUI.DSL
     open Avalonia.Controls
     open Gui.Widgets
+    open Gui
 
     type Msg =
         | SelectUnit of LengthUnit

@@ -17,7 +17,6 @@
         <Compile Include="Extensions\EventExtensions.fs" />
         <Compile Include="Extensions\ImageExtensions.fs" />
         <Compile Include="Collections\StringMap.fs" />
-        <Compile Include="Data\Size.fs" />
     </ItemGroup>
 
     <ItemGroup>

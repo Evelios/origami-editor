@@ -1,4 +1,4 @@
-namespace Gui.Components.CreasePatternCanvas
+namespace Gui.Tabs.CreasePatternTab.Drawing
 
 module CreasePatternComponents =
     open Avalonia.Controls.Shapes

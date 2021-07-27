@@ -1,9 +1,10 @@
 namespace Gui
 
 open Avalonia
+
 open CreasePattern
-open Utilities.Collections
 open Geometry
+
 
 type Direction =
     | Left
@@ -11,8 +12,9 @@ type Direction =
     | Right
     | Bottom
 
-type State =
-    { creasePattern: CreasePattern
+
+type CreasePatternTabState =
+    { creasePattern: CreasePattern.CreasePattern
       filePath: string option
 
       (* User Interactivity *)
@@ -27,3 +29,10 @@ type State =
       showVertices: bool
       translation: Translation
       pageSize: Size }
+
+type ReferenceFinderTabState =
+    { x: float
+      y: float
+      xInput: string
+      yInput: string
+      creasePattern: CreasePattern }

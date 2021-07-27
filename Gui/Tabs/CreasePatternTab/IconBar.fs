@@ -1,4 +1,4 @@
-namespace Gui.Components
+namespace Gui.Tabs.CreasePatternTab
 
 module IconBar =
     open Avalonia.Controls
@@ -16,13 +16,16 @@ module IconBar =
         | ToggleSecondAxiom
         | ToggleThirdAxiom
 
-    let update msg state : State =
+    let update msg state : CreasePatternTabState =
         match msg with
         | ToggleShowVertices ->
             { state with
                   showVertices = not state.showVertices }
+        | ToggleFirstAxiom -> state
+        | ToggleSecondAxiom -> state
+        | ToggleThirdAxiom -> state
 
-    let view (state: State) dispatch =
+    let view (state: CreasePatternTabState) dispatch =
         let colorToggle isActive =
             if isActive then
                 Theme.colors.yellow

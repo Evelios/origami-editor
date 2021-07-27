@@ -1,16 +1,14 @@
-namespace Gui.Components.CreasePatternCanvas
-
-open Avalonia.Input
+namespace Gui.Tabs.CreasePatternTab.Drawing
 
 module CreasePatternCanvas =
 
     open Avalonia
     open Avalonia.Controls
     open Avalonia.FuncUI.DSL
+    open Avalonia.Input
 
-    open CreasePattern
     open Gui
-    open Utilities.Collections
+    open CreasePattern
     open Utilities.Extensions
 
     type Msg =
@@ -23,7 +21,7 @@ module CreasePatternCanvas =
 
     let theme = {| pointerCloseDistance = 20. |}
 
-    let rec update (msg: Msg) (state: State) : State =
+    let rec update (msg: Msg) (state: CreasePatternTabState) : CreasePatternTabState =
         match msg with
         (* User Actions *)
         | MouseReleased (mousePosition, keyModifiers) ->
@@ -95,7 +93,7 @@ module CreasePatternCanvas =
     type ViewState = { showVertices: bool }
 
 
-    let canvas (state: State) =
+    let canvas (state: CreasePatternTabState) =
         let edgeLines =
             List.map
                 (CreasePatternComponents.edgeLineDefault state.translation)
@@ -152,7 +150,7 @@ module CreasePatternCanvas =
                         Canvas.name canvasName ]
 
 
-    let view (state: State) dispatch =
+    let view (state: CreasePatternTabState) dispatch =
         DockPanel.create
         <| [ DockPanel.background Theme.palette.canvasBackdrop
              DockPanel.onPointerMoved (

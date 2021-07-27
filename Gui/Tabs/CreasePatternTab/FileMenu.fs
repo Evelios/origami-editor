@@ -1,4 +1,4 @@
-namespace Gui
+namespace Gui.Tabs.CreasePatternTab
 
 open System
 
@@ -13,6 +13,7 @@ module FileMenu =
     open Fold
     open CreasePattern
     open Gui.Widgets
+    open Gui
 
     type External =
         | FoldFileLoaded
@@ -29,10 +30,14 @@ module FileMenu =
         | SavedFile
         | ErrorSavingFile of exn
 
-    let update msg state window : State * Cmd<Msg> * External =
+    let update msg state window : CreasePatternTabState * Cmd<Msg> * External =
 
         match msg with
-        | NewFile -> { state with creasePattern = CreasePattern.create }, Cmd.none, DoNothing
+        | NewFile ->
+            { state with
+                  creasePattern = CreasePattern.create },
+            Cmd.none,
+            DoNothing
         | OpenFoldFile ->
             let fileDialogTask =
                 Dialogs.openFileDialogTask "Fold File" Fold.extensions window
@@ -83,7 +88,13 @@ module FileMenu =
             let examplesDirectory =
                 Path.Join(__SOURCE_DIRECTORY__, "..", "..", "Assets", "Examples")
 
-            Directory.GetFiles(examplesDirectory, "*.fold")
+            let exampleFiles =
+                try
+                    Directory.GetFiles(examplesDirectory, "*.fold")
+                with _ -> [||]
+
+
+            exampleFiles
             |> Array.map
                 (fun path ->
                     MenuItem.create [ MenuItem.header (Path.GetFileNameWithoutExtension(path))
