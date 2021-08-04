@@ -38,7 +38,7 @@ module CreasePatternCanvas =
 
             else
                 match updatedState.pressed, updatedState.hover with
-                | Some (VertexComponent pressed), Some (VertexComponent hover) when pressed <> hover ->
+                | Some (VertexElement pressed), Some (VertexElement hover) when pressed <> hover ->
 
                     { updatedState with
                           pressed = None
@@ -74,8 +74,8 @@ module CreasePatternCanvas =
 
             let hover =
                 match vertexWithin, edgeWithin with
-                | Some vertex, _ -> Some(VertexComponent vertex)
-                | None, Some edge -> Some(EdgeComponent edge)
+                | Some vertex, _ -> Some(VertexElement vertex)
+                | None, Some edge -> Some(EdgeElement edge)
                 | None, None -> None
 
             { state with
@@ -107,8 +107,8 @@ module CreasePatternCanvas =
 
         let creasePatternComponent vertexView edgeView ``component`` =
             match ``component`` with
-            | VertexComponent vertex -> vertexView state.translation vertex
-            | EdgeComponent edge -> edgeView state.translation edge
+            | VertexElement vertex -> vertexView state.translation vertex
+            | EdgeElement edge -> edgeView state.translation edge
 
         let hoverElement =
             Option.map
@@ -122,9 +122,9 @@ module CreasePatternCanvas =
 
         let dragLine =
             match state.pressed, state.hover, state.vertexPosition with
-            | Some (VertexComponent pressed), Some (VertexComponent hover), _ ->
+            | Some (VertexElement pressed), Some (VertexElement hover), _ ->
                 Some(CreasePatternComponents.dragLine state.translation pressed hover)
-            | Some (VertexComponent pressed), _, Some vertexPosition ->
+            | Some (VertexElement pressed), _, Some vertexPosition ->
                 Some(CreasePatternComponents.dragLine state.translation pressed vertexPosition)
             | _ -> None
 

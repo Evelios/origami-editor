@@ -65,7 +65,7 @@ module Line2D =
         Point2D.distanceTo line.start line.finish
 
     (* Queries *)
-
+    
     let pointClosestTo (point: Point2D) (line: Line2D) : Point2D =
         let v : Vector2D = line.start |> Point2D.vectorTo point
         let lineDirection = direction line

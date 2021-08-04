@@ -18,9 +18,9 @@ type CreasePatternTabState =
       filePath: string option
 
       (* User Interactivity *)
-      hover: Component option
-      pressed: Component option
-      selectedReferences: Component list
+      hover: GraphElement option
+      pressed: GraphElement option
+      selectedReferences: GraphElement list
       mousePosition: Point option
       vertexPosition: Point2D option
 

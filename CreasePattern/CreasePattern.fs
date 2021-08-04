@@ -33,7 +33,6 @@ type CreasePattern =
 
 module CreasePattern =
     open FSharp.FGL.Directed
-    open Utilities.Collections
 
     (* Create a crease pattern using the "Unitless" units and a square sheet of paper. The crease pattern is created in
      * the square sheet of paper using cartesian coordinates. The bottom left corner is the origin (0, 0) and the paper
@@ -60,11 +59,16 @@ module CreasePattern =
             (creasePattern.bounds.maxY
              - creasePattern.bounds.minY)
 
-    let edges (CreasePattern creasePattern) =
+    let edges (CreasePattern creasePattern) : Edge list =
         List.map asEdge (Undirected.Edges.toEdgeList creasePattern.graph)
 
     let vertices (CreasePattern creasePattern) : Point2D list =
         List.map fst (Vertices.toVertexList creasePattern.graph)
+
+    let elements creasePattern : GraphElement list =
+        List.map VertexElement (vertices creasePattern)
+        @ List.map (Edge.line >> EdgeElement) (edges creasePattern)
+
 
 
     (* Modifiers *)
@@ -154,9 +158,16 @@ module CreasePattern =
         empty
         |> addVertices vertices
         |> addEdges boundaries
+        
+    let performAxiom axiom creasePattern =
+        let line = Axiom.perform  axiom
+        
+        creasePattern
+        
+        
 
     (* Queries *)
-    
+
     // This function is currently linear but can be sped up with quad-trees
     /// Get the closest vertex that is withing a particular distance
     let pointWithin distance vertex (CreasePattern creasePattern) : Point2D option =
@@ -223,7 +234,7 @@ module CreasePattern =
             | Fold.Valley -> Valley
             | Fold.Unassigned -> Unassigned
             | Fold.Flat -> Unassigned
-            
+
         let mapUnit unit =
             match unit with
             | Fold.Meters -> Meters

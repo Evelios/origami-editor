@@ -43,15 +43,15 @@ type Edge =
 
     member this.LessThan(other) =
         LineSegment2D.from this.crease.start this.crease.finish < LineSegment2D.from
-                                                                        other.crease.start
-                                                                        other.crease.finish
+                                                                      other.crease.start
+                                                                      other.crease.finish
 
     override this.Equals(obj: obj) : bool =
         match obj with
         | :? Edge as other ->
             LineSegment2D.from this.crease.start this.crease.finish = LineSegment2D.from
-                                                                            other.crease.start
-                                                                            other.crease.finish
+                                                                          other.crease.start
+                                                                          other.crease.finish
             && this.assignment = other.assignment
         | _ -> false
 
@@ -74,3 +74,7 @@ module Edge =
 
     let distanceToVertex vertex (Edge edge) =
         edge.line |> LineSegment2D.distanceToPoint vertex
+
+    (* Accessors *)
+
+    let line (e: Edge) : Line2D = e.line

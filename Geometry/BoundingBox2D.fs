@@ -39,3 +39,5 @@ module BoundingBox2D =
                    maxX = max box.maxX point.x
                    minY = min box.minY point.y
                    maxY = max box.maxY point.y |}
+
+    let intersect (line: Line2D) (BoundingBox2D box) : Point2D list = []

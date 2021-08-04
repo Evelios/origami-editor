@@ -42,9 +42,9 @@ module CreasePatternTab =
           mousePosition = None
           vertexPosition = None
           axioms =
-              [ Axiom.First
-                Axiom.Second
-                Axiom.Third ]
+              [ Axiom.One
+                Axiom.Two
+                Axiom.Three ]
           showVertices = true
           translation = translation
           pageSize = translation.pageSize }

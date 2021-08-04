@@ -2,22 +2,42 @@ namespace CreasePattern
 
 open Geometry
 
-type Component =
-    | VertexComponent of Point2D
-    | EdgeComponent of Edge
-
+type GraphElement =
+    | VertexElement of Point2D
+    | EdgeElement of Line2D
 
 [<RequireQualifiedAccess>]
 type Axiom =
-    | First
-    | Second
-    | Third
+    | One of Point2D * Point2D
+    | Two of Point2D * Point2D
+    | Three of Line2D * Line2D
 
-module Axioms =
 
-    let first v1 v2 : Line2D = Line2D.fromTo v1 v2
+module Axiom =
 
-    let second v1 v2 : Line2D =
+    open Utilities.Extensions
+
+    (* Builders *)
+
+    /// Get all the axioms that can be performed between the two graph elements
+    let betweenElements e1 e2 : Axiom list =
+        match e1, e2 with
+        | VertexElement p1, VertexElement p2 -> [ Axiom.One(p1, p2); Axiom.Two(p1, p2) ]
+        | EdgeElement l1, EdgeElement l2 -> [ Axiom.Three(l1, l2) ]
+        | _ -> []
+
+    /// Get the list of axioms that can be performed on a list of graph elements
+    let fromElements elements : Axiom list =
+        List.pairs elements
+        |> List.map (Tuple2.uncurry betweenElements)
+        |> List.concat
+
+
+    (* Actions *)
+
+    let private first v1 v2 : Line2D = Line2D.fromTo v1 v2
+
+    let private second v1 v2 : Line2D =
         Line2D.fromTo v1 v2
         |> Line2D.perpThroughPoint (Point2D.midpoint v1 v2)
 
@@ -26,7 +46,7 @@ module Axioms =
        2. The lines are parallel -> One fold between the two folds
        3. The lines are intersecting -> Two possible folds, the acute angle bisector and the obtuse angle bisector
     *)
-    let third l1 l2 : Line2D list =
+    let private third l1 l2 : Line2D list =
         (* 1. Lines are equal *)
         if l1 = l2 then
             []
@@ -53,19 +73,9 @@ module Axioms =
                 [ Line2D.perpThroughPoint intersection acuteLine
                   acuteLine ]
 
-    let perform axiom comp1 comp2 : Line2D list =
-        match axiom with
-        | Axiom.First ->
-            match comp1, comp2 with
-            | VertexComponent v1, VertexComponent v2 -> [ first v1 v2 ]
-            | _ -> []
-
-        | Axiom.Second ->
-            match comp1, comp2 with
-            | VertexComponent v1, VertexComponent v2 -> [ second v1 v2 ]
-            | _ -> []
-
-        | Axiom.Third ->
-            match comp1, comp2 with
-            | EdgeComponent e1, EdgeComponent e2 -> third e1.line e2.line
-            | _ -> []
+    /// Get the result of performing an axiom action
+    let perform action : Line2D list =
+        match action with
+        | Axiom.One (p1, p2) -> [ first p1 p2 ]
+        | Axiom.Two (p1, p2) -> [ second p1 p2 ]
+        | Axiom.Three (l1, l2) -> third l1 l2
