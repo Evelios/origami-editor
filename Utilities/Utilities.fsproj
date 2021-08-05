@@ -17,6 +17,7 @@
         <Compile Include="Extensions\EventExtensions.fs" />
         <Compile Include="Extensions\ImageExtensions.fs" />
         <Compile Include="Extensions\TupleExtensions.fs" />
+        <Compile Include="Extensions\StringExtensions.fs" />
         <Compile Include="Collections\StringMap.fs" />
         <Compile Include="Collections\Tree.fs" />
     </ItemGroup>

@@ -33,6 +33,7 @@ type CreasePattern =
 
 module CreasePattern =
     open FSharp.FGL.Directed
+    open Utilities.Extensions
 
     (* Create a crease pattern using the "Unitless" units and a square sheet of paper. The crease pattern is created in
      * the square sheet of paper using cartesian coordinates. The bottom left corner is the origin (0, 0) and the paper
@@ -166,22 +167,20 @@ module CreasePattern =
         |> addVertices vertices
         |> addEdges boundaries
 
-    let performAxiom axiom creasePattern =
-        let line = Axiom.perform axiom
-
-        creasePattern
-
-
+    /// Run the axiom and add in the line segment(s) created by the axiom onto the crease pattern
+    let performAxiom axiom (CreasePattern cpData as creasePattern) =
+        Axiom.perform axiom
+        |> List.filterMap (Boolean2D.boundingBoxAndLine cpData.bounds)
+        |> List.map (fun line -> Edge.atWithAssignment line EdgeAssignment.Unassigned)
+        |> fun edges -> addEdges edges creasePattern
 
     (* Queries *)
 
-    // This function is currently linear but can be sped up with quad-trees
-    /// Get the closest vertex that is withing a particular distance
-    let pointWithin distance vertex (CreasePattern creasePattern) : Point2D option =
-        let distanceSquared = distance * distance
+    /// Get the vertex in the crease pattern that is the closest to a given vertex
+    let closestVertex vertex (CreasePattern creasePattern) : (Point2D * float) option =
         let distSquaredToVertex = Point2D.distanceSquaredTo vertex
 
-        let vertexDistance, closestVertex =
+        let closestDistanceSquared, closestVertex =
             Vertices.tovertexList creasePattern.graph
             |> List.fold
                 (fun (distanceSquared, closestVertex) (nextVertex, _) ->
@@ -194,10 +193,22 @@ module CreasePattern =
                         (distanceSquared, closestVertex))
                 (infinity, Point2D.xy infinity infinity)
 
-        if vertexDistance < distanceSquared then
-            Some closestVertex
+        if closestDistanceSquared < infinity then
+            Some(closestVertex, sqrt closestDistanceSquared)
         else
             None
+
+
+    // This function is currently linear but can be sped up with quad-trees
+    /// Get the closest vertex that is withing a particular distance
+    let pointWithin maxDist vertex creasePattern : Point2D option =
+        match closestVertex vertex creasePattern with
+        | Some (vertex, distance) ->
+            if distance < maxDist then
+                Some vertex
+            else
+                None
+        | None -> None
 
     /// Get the closest edge that is withing a particular distance
     let edgeWithin (distance: float) (vertex: Point2D) (creasePattern: CreasePattern) : Edge option =

@@ -35,4 +35,5 @@ type ReferenceFinderTabState =
       y: float
       xInput: string
       yInput: string
+      referenceFinder: ReferenceFinder
       creasePattern: CreasePattern }

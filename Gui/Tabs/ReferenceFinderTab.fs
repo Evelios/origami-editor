@@ -1,5 +1,7 @@
 namespace Gui.Tabs.ReferenceFinderTab
 
+open Geometry
+
 module ReferenceFinderTab =
     open Avalonia.Controls
     open Avalonia.FuncUI.DSL
@@ -9,25 +11,40 @@ module ReferenceFinderTab =
     open CreasePattern
     open Gui
     open Gui.Widgets
+    open Utilities.Extensions
 
     type Msg =
         | ChangeXInput of string
         | ChangeYInput of string
+        | RunReferenceFinder
 
-    let init : ReferenceFinderTabState =
-        { x = 0.
-          y = 0.
-          xInput = "0"
-          yInput = "0"
+    let init: ReferenceFinderTabState =
+        { x = 0.5
+          y = 0.5
+          xInput = "0.5"
+          yInput = "0.5"
+          referenceFinder = ReferenceFinder.init
           creasePattern = CreasePattern.create }
 
     let update (msg: Msg) (state: ReferenceFinderTabState) : ReferenceFinderTabState =
         match msg with
-        | ChangeXInput xString -> state
-        | ChangeYInput yString -> state
+        | ChangeXInput xString ->
+            match String.parseFloat xString with
+            | Some newX -> { state with x = newX }
+            | None -> state
+        | ChangeYInput yString ->
+            match String.parseFloat yString with
+            | Some newY -> { state with y = newY }
+            | None -> state
+        | RunReferenceFinder ->
+            printf $"{ReferenceFinder.bestFoldSequenceTo (Point2D.xy state.x state.y) state.referenceFinder}"
+
+            { state with
+                  creasePattern = ReferenceFinder.bestFoldSequenceTo (Point2D.xy state.x state.y) state.referenceFinder }
+
 
     let view (state: ReferenceFinderTabState) dispatch =
-        let coordinates : IView list =
+        let coordinates: IView list =
             [ Form.textItem
                 {| name = "X"
                    value = state.xInput
@@ -37,18 +54,22 @@ module ReferenceFinderTab =
                      value = state.yInput
                      onSelected = ChangeYInput >> dispatch |} ]
 
+        let actionButton =
+            Button.create [ Button.onClick (fun _ -> dispatch RunReferenceFinder)
+                            Button.content "Find fold sequences" ]
+
+
         let toolBar =
             StackPanel.create
             <| [ StackPanel.orientation Orientation.Horizontal
                  StackPanel.background Theme.palette.panelBackground
-                 StackPanel.children coordinates ]
+                 StackPanel.children (coordinates @ [ actionButton ]) ]
 
         let creasePattern =
             DockPanel.create
             <| [ DockPanel.background Theme.palette.canvasBackdrop
                  DockPanel.children [ CreasePatternDrawing.create state.creasePattern ] ]
 
-        StackPanel.create
-        <| [ StackPanel.orientation Orientation.Vertical
-             StackPanel.children [ toolBar
-                                   creasePattern ] ]
+        DockPanel.create
+        <| [ DockPanel.children [ View.withAttr (StackPanel.dock Dock.Top) toolBar
+                                  creasePattern ] ]

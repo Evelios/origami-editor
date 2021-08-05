@@ -59,15 +59,17 @@ module Vector2D =
 
     let xy (x: float) (y: float) : Vector2D = { x = x; y = y }
 
-    let scale x y (vector: Vector2D) = { x = vector.x * x; y = vector.y * y }
 
-    
     (* Accessors *)
 
     let magnitude v = sqrt (v.x ** 2. + v.y ** 2.)
 
-    
+
     (* Modifiers *)
+
+    let scale x y (vector: Vector2D) = { x = vector.x * x; y = vector.y * y }
+
+    let mul scale (v: Vector2D) = v * scale
 
     let neg v = { x = -v.x; y = -v.y }
 

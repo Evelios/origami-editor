@@ -41,10 +41,10 @@ module Axiom =
 
     (* Actions *)
 
-    let private first v1 v2 : Line2D = Line2D.fromTo v1 v2
+    let private first v1 v2 : Line2D = Line2D.through v1 v2
 
     let private second v1 v2 : Line2D =
-        Line2D.fromTo v1 v2
+        Line2D.through v1 v2
         |> Line2D.perpThroughPoint (Point2D.midpoint v1 v2)
 
     (* Try to fold two lines through the angle bisectors. This has three possible cases.
@@ -61,9 +61,9 @@ module Axiom =
             let midpoint p =
                 (Point2D.midpoint p (Line2D.pointClosestTo p e2))
 
-            match Line2D.intersection e1 e2 with
+            match Line2D.intersect e1 e2 with
             (* 2. Lines are parallel*)
-            | None -> [ Line2D.fromTo (midpoint e1.start) (midpoint e1.finish) ]
+            | None -> [ Line2D.through (midpoint e1.start) (midpoint e1.finish) ]
 
             (* 3. Lines are intersecting *)
             | Some intersection ->
@@ -74,7 +74,7 @@ module Axiom =
                         e1.start
 
                 // We need to make sure that we get the acute and the obtuse angle bisectors
-                let acuteLine = Line2D.fromTo linePoint intersection
+                let acuteLine = Line2D.through linePoint intersection
 
                 [ Line2D.perpThroughPoint intersection acuteLine
                   acuteLine ]

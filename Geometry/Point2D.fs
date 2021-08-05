@@ -66,6 +66,10 @@ module Point2D =
 
     let scale x y (point: Point2D) = { x = point.x * x; y = point.y * y }
 
+    (* Modifiers *)
+
+    let translate (v: Vector2D) (p: Point2D) = p + v
+
     (* Queries *)
 
     let distanceSquaredTo (p1: Point2D) (p2: Point2D) : float =

@@ -51,7 +51,7 @@ type Line2D =
 
 module Line2D =
     (* Builders *)
-    let fromTo (start: Point2D) (finish: Point2D) = { start = start; finish = finish }
+    let through (start: Point2D) (finish: Point2D) = { start = start; finish = finish }
 
     let private toLineSegment (line: Line2D) : LineSegment2D =
         LineSegment2D.from line.start line.finish
@@ -83,7 +83,7 @@ module Line2D =
         else
             Point2D.distanceTo point (pointClosestTo point line)
 
-    let atPointInDirection (point: Point2D) (direction: Vector2D) : Line2D = fromTo point (point + direction)
+    let atPointInDirection (point: Point2D) (direction: Vector2D) : Line2D = through point (point + direction)
 
     let perpThroughPoint (point: Point2D) (line: Line2D) : Line2D =
         atPointInDirection point (Vector2D.rotate (Angle.inDegrees 90.<deg>) (direction line))
@@ -107,7 +107,7 @@ module Line2D =
 
         d1 = d2 || Vector2D.neg d1 = d2
 
-    let intersection (first: Line2D) (second: Line2D) : Point2D option =
+    let intersect (first: Line2D) (second: Line2D) : Point2D option =
         if areParallel first second then
             None
         else

@@ -26,6 +26,17 @@ module List =
         | Some e -> e :: list
         | None -> list
 
+    /// Perform a mapping operation on a list and filter out all values that are None
+    let filterMap f list : 'a list =
+        List.fold
+            (fun acc a ->
+                match f a with
+                | Some b -> b :: acc
+                | None -> acc)
+            []
+            list
+        |> List.rev
+
     /// Get all unique pairs of a list
     let rec pairs l =
         match l with

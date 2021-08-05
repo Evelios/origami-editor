@@ -18,7 +18,7 @@ type Edge =
 
     member this.line =
         match this with
-        | Edge edge -> Line2D.fromTo edge.line.start edge.line.finish
+        | Edge edge -> Line2D.through edge.line.start edge.line.finish
 
 
     member this.assignment =
@@ -69,7 +69,8 @@ module Edge =
     let betweenWithAssignment start finish assignment =
         atWithAssignment (LineSegment2D.from start finish) assignment
 
-    let vertices (edge: Edge) = edge.line.start, edge.line.finish
+
+    (* Modifiers *)
 
     let scale (x: float) (Edge edge: Edge) =
         Edge {| edge with line = edge.line * x |}
@@ -77,7 +78,10 @@ module Edge =
     let distanceToVertex vertex (Edge edge) =
         edge.line |> LineSegment2D.distanceToPoint vertex
 
+
     (* Accessors *)
+
+    let vertices (edge: Edge) = edge.line.start, edge.line.finish
 
     let line (e: Edge) : Line2D = e.line
 

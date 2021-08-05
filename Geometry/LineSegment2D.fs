@@ -91,6 +91,12 @@ module LineSegment2D =
 
     (* Queries *)
 
+    let areParallel (first: LineSegment2D) (second: LineSegment2D) : bool =
+        let d1 = direction first
+        let d2 = direction second
+
+        d1 = d2 || Vector2D.neg d1 = d2
+
     let pointClosestTo (point: Point2D) (line: LineSegment2D) =
         if point = line.start || point = line.finish then
             point
@@ -98,7 +104,7 @@ module LineSegment2D =
             let v = line.start |> Point2D.vectorTo point
             let lineLength = length line
 
-            let dotProduct : float =
+            let dotProduct: float =
                 match Vector2D.dotProduct v (direction line) with
                 | dotProduct when dotProduct < 0. -> 0.
                 | dotProduct when dotProduct > lineLength -> lineLength
@@ -114,3 +120,29 @@ module LineSegment2D =
 
     let distanceToPoint (point: Point2D) (line: LineSegment2D) : float =
         Point2D.distanceTo point (pointClosestTo point line)
+
+
+    /// Try to find the intersection between two lines. If the lines are parallel (even if they are overlapping) then no
+    /// intersection is returned
+    let intersect (lhs: LineSegment2D) (rhs: LineSegment2D) : Point2D option =
+        if areParallel lhs rhs then
+            None
+        else
+            // http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+            let p = lhs.start
+            let q = rhs.start
+            let r = lhs.finish - lhs.start
+            let s = rhs.finish - rhs.start
+
+            let t =
+                Vector2D.crossProduct (q - p) s
+                / Vector2D.crossProduct r s
+
+            let u =
+                Vector2D.crossProduct (p - q) r
+                / Vector2D.crossProduct s r
+
+            if (0.0 <= t && t <= 1.0) && (0.0 <= u && u <= 1.0) then
+                p + (t * r) |> Some
+            else
+                None

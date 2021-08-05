@@ -8,12 +8,18 @@ let pointDistanceTestCases =
       "Near start point", (Point2D.xy 5. 6.), 1.
       "Near end point", (Point2D.xy 7. 5.), 2.
       "Away from corner", (Point2D.xy -3. 1.), 5.
-      "Distance to segment", (Point2D.xy 3. 1.), 4.]
-    |> List.map (fun (name, point, expected) -> TestCaseData(point).SetName(name).Returns(expected))
+      "Distance to segment", (Point2D.xy 3. 1.), 4. ]
+    |> List.map
+        (fun (name, point, expected) ->
+            TestCaseData(point)
+                .SetName(name)
+                .Returns(expected))
 
 [<TestCaseSource(nameof pointDistanceTestCases)>]
 let ``Distance to point`` point =
-    let line = LineSegment2D.from (Point2D.xy 0. 5.) (Point2D.xy 5. 5.)
+    let line =
+        LineSegment2D.from (Point2D.xy 0. 5.) (Point2D.xy 5. 5.)
+
     LineSegment2D.distanceToPoint point line
 
 let pointClosestToTestCases =
@@ -27,8 +33,7 @@ let pointClosestToTestCases =
     |> List.map (fun (point, line, expected) -> TestCaseData(point, line).Returns(expected))
 
 [<TestCaseSource(nameof pointClosestToTestCases)>]
-let ``Point closest to line`` point line =
-    LineSegment2D.pointClosestTo point line
+let ``Point closest to line`` point line = LineSegment2D.pointClosestTo point line
 
 let pointOnLineTestCases =
     let line =
@@ -43,3 +48,16 @@ let pointOnLineTestCases =
 [<TestCaseSource(nameof pointOnLineTestCases)>]
 let ``Point is on line`` point line =
     Assert.That(LineSegment2D.isPointOnLine point line)
+
+// TODO: Fuzz test that when there is an intersection. The intersection should be on both lines
+[<Test>]
+let ``Line Segment Intersection`` () =
+    let l1 =
+        LineSegment2D.from (Point2D.xy 1. 4.) (Point2D.xy 4. 1.)
+
+    let l2 =
+        LineSegment2D.from (Point2D.xy 1. 1.) (Point2D.xy 4. 4.)
+
+    let expected = Some(Point2D.xy 2.5 2.5)
+    let actual = LineSegment2D.intersect l1 l2
+    Assert.AreEqual(expected, actual)

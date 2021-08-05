@@ -23,7 +23,24 @@ type BoundingBox2D =
         match this with
         | BoundingBox2D this -> this.maxY
 
+    member this.tl =
+        match this with
+        | BoundingBox2D this -> Point2D.xy this.minX this.maxY
+
+    member this.tr =
+        match this with
+        | BoundingBox2D this -> Point2D.xy this.maxX this.maxY
+
+    member this.br =
+        match this with
+        | BoundingBox2D this -> Point2D.xy this.maxX this.minY
+
+    member this.bl =
+        match this with
+        | BoundingBox2D this -> Point2D.xy this.minX this.minY
+
 module BoundingBox2D =
+    (* Builders *)
 
     let empty =
         BoundingBox2D
@@ -31,6 +48,9 @@ module BoundingBox2D =
                maxX = -infinity
                minY = infinity
                maxY = -infinity |}
+
+
+    (* Modifiers *)
 
     let containingPoint (point: Point2D) (BoundingBox2D box) =
         BoundingBox2D
@@ -40,4 +60,10 @@ module BoundingBox2D =
                    minY = min box.minY point.y
                    maxY = max box.maxY point.y |}
 
-    let intersect (line: Line2D) (BoundingBox2D box) : Point2D list = []
+    (* Queries *)
+
+    let lineSegments (bbox: BoundingBox2D) =
+        [ LineSegment2D.from bbox.tl bbox.tr
+          LineSegment2D.from bbox.tr bbox.bl
+          LineSegment2D.from bbox.bl bbox.br
+          LineSegment2D.from bbox.br bbox.tl ]

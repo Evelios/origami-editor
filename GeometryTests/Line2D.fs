@@ -9,7 +9,7 @@ let Setup () = ()
 
 let pointClosestToTestCases =
     let line =
-        Line2D.fromTo (Point2D.xy 0. 5.) (Point2D.xy 5. 5.)
+        Line2D.through (Point2D.xy 0. 5.) (Point2D.xy 5. 5.)
 
     [ (Point2D.xy 0. 5.), line, (Point2D.xy 0. 5.)
       (Point2D.xy 5. 5.), line, (Point2D.xy 5. 5.)
@@ -21,7 +21,7 @@ let ``Point closest to line`` vertex line = Line2D.pointClosestTo vertex line
 
 let pointOnLineTestCases =
     let line =
-        Line2D.fromTo (Point2D.xy 0. 5.) (Point2D.xy 5. 5.)
+        Line2D.through (Point2D.xy 0. 5.) (Point2D.xy 5. 5.)
 
     [ (Point2D.xy 0. 5.), line
       (Point2D.xy 5. 5.), line
@@ -43,3 +43,15 @@ let ``Vertex is on line`` vertex line =
 //        && Line2D.pointOnLine point perpLine
 //
 //    Assert.DoesNotThrow(fun () -> Check.QuickThrowOnFailure perpTests)
+
+[<Test>]
+let ``Line Intersection`` () =
+    let l1 =
+        Line2D.through (Point2D.xy 1. 4.) (Point2D.xy 4. 1.)
+
+    let l2 =
+        Line2D.through (Point2D.xy 1. 1.) (Point2D.xy 4. 4.)
+
+    let expected = Some(Point2D.xy 2.5 2.5)
+    let actual = Line2D.intersect l1 l2
+    Assert.AreEqual(expected, actual)
