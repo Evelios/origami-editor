@@ -4,10 +4,16 @@ open Geometry
 
 type GraphElement =
     | VertexElement of Point2D
-    | EdgeElement of Line2D
+    | EdgeElement of Edge
 
 [<RequireQualifiedAccess>]
 type Axiom =
+    | One
+    | Two
+    | Three
+
+[<RequireQualifiedAccess>]
+type AxiomAction =
     | One of Point2D * Point2D
     | Two of Point2D * Point2D
     | Three of Line2D * Line2D
@@ -20,14 +26,14 @@ module Axiom =
     (* Builders *)
 
     /// Get all the axioms that can be performed between the two graph elements
-    let betweenElements e1 e2 : Axiom list =
+    let betweenElements e1 e2 : AxiomAction list =
         match e1, e2 with
-        | VertexElement p1, VertexElement p2 -> [ Axiom.One(p1, p2); Axiom.Two(p1, p2) ]
-        | EdgeElement l1, EdgeElement l2 -> [ Axiom.Three(l1, l2) ]
+        | VertexElement p1, VertexElement p2 -> [ AxiomAction.One(p1, p2); AxiomAction.Two(p1, p2) ]
+        | EdgeElement e1, EdgeElement e2 -> [ AxiomAction.Three(e1.line, e2.line) ]
         | _ -> []
 
     /// Get the list of axioms that can be performed on a list of graph elements
-    let fromElements elements : Axiom list =
+    let fromElements elements : AxiomAction list =
         List.pairs elements
         |> List.map (Tuple2.uncurry betweenElements)
         |> List.concat
@@ -46,26 +52,26 @@ module Axiom =
        2. The lines are parallel -> One fold between the two folds
        3. The lines are intersecting -> Two possible folds, the acute angle bisector and the obtuse angle bisector
     *)
-    let private third l1 l2 : Line2D list =
+    let private third e1 e2 : Line2D list =
         (* 1. Lines are equal *)
-        if l1 = l2 then
+        if e1 = e2 then
             []
 
         else
             let midpoint p =
-                (Point2D.midpoint p (Line2D.pointClosestTo p l2))
+                (Point2D.midpoint p (Line2D.pointClosestTo p e2))
 
-            match Line2D.intersection l1 l2 with
+            match Line2D.intersection e1 e2 with
             (* 2. Lines are parallel*)
-            | None -> [ Line2D.fromTo (midpoint l1.start) (midpoint l1.finish) ]
+            | None -> [ Line2D.fromTo (midpoint e1.start) (midpoint e1.finish) ]
 
             (* 3. Lines are intersecting *)
             | Some intersection ->
                 let linePoint =
-                    if l1.start = intersection then
-                        l1.finish
+                    if e1.start = intersection then
+                        e1.finish
                     else
-                        l1.start
+                        e1.start
 
                 // We need to make sure that we get the acute and the obtuse angle bisectors
                 let acuteLine = Line2D.fromTo linePoint intersection
@@ -76,6 +82,6 @@ module Axiom =
     /// Get the result of performing an axiom action
     let perform action : Line2D list =
         match action with
-        | Axiom.One (p1, p2) -> [ first p1 p2 ]
-        | Axiom.Two (p1, p2) -> [ second p1 p2 ]
-        | Axiom.Three (l1, l2) -> third l1 l2
+        | AxiomAction.One (p1, p2) -> [ first p1 p2 ]
+        | AxiomAction.Two (p1, p2) -> [ second p1 p2 ]
+        | AxiomAction.Three (e1, e2) -> third e1 e2

@@ -53,6 +53,7 @@ module CreasePatternDrawing =
             | Boundary -> Theme.colors.lighterGray
             | Mountain -> Theme.colors.green
             | Valley -> Theme.colors.blue
+            | Flat -> Theme.colors.lighterGray
             | Unassigned -> Theme.colors.lighterGray
         | _ -> stateColor state
 

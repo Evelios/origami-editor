@@ -8,12 +8,13 @@
     <ItemGroup>
         <Compile Include="Types.fs" />
         <Compile Include="Edge.fs" />
-        <Compile Include="Axiom.fs" />
+        <Compile Include="AxiomAction.fs" />
         <Compile Include="CreasePattern.fs" />
         <Compile Include="ReferenceFinder.fs" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Aether" Version="8.3.1" />
       <PackageReference Include="FSharp.FGL" Version="0.0.1" />
       <PackageReference Include="MathNet.Spatial" Version="0.6.0" />
     </ItemGroup>

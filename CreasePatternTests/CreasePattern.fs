@@ -3,6 +3,7 @@ module CreasePatternTests.CreasePattern
 open NUnit.Framework
 open CreasePattern
 open Geometry
+open Utilities.Extensions
 
 [<SetUp>]
 let Setup () = ()
@@ -33,7 +34,20 @@ let redundantElementsTestCases =
 [<TestCaseSource(nameof redundantElementsTestCases)>]
 let ``Adding Redundant Elements`` given actual = Assert.AreEqual(given, actual)
 
+[<Test>]
+let ``Get edges from crease pattern``() =
+    let edges =
+        [ Point2D.xy 0. 0., Point2D.xy 1. 1., EdgeAssignment.Flat
+          Point2D.xy 1. 1., Point2D.xy 0. 0., EdgeAssignment.Flat
+          Point2D.xy 1. 0., Point2D.xy 0. 1., EdgeAssignment.Flat ]
+        |> List.map (Tuple3.map Edge.betweenWithAssignment)
 
+    let creasePatternEdges =
+        CreasePattern.empty
+        |> CreasePattern.addEdges edges
+        |> CreasePattern.edges
+
+    CollectionAssert.AreEqual(Set.ofList edges, Set.ofList creasePatternEdges)
 
 [<Literal>]
 let closeDistance = 0.1

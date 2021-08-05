@@ -4,8 +4,8 @@ type EdgeAssignment =
     | Boundary
     | Mountain
     | Valley
+    | Flat
     | Unassigned
-//    | Flat
 
 type LengthUnit =
     | Meters

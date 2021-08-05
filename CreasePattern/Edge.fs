@@ -69,6 +69,8 @@ module Edge =
     let betweenWithAssignment start finish assignment =
         atWithAssignment (LineSegment2D.from start finish) assignment
 
+    let vertices (edge: Edge) = edge.line.start, edge.line.finish
+
     let scale (x: float) (Edge edge: Edge) =
         Edge {| edge with line = edge.line * x |}
 
@@ -78,3 +80,5 @@ module Edge =
     (* Accessors *)
 
     let line (e: Edge) : Line2D = e.line
+
+    let assignment (e: Edge) : EdgeAssignment = e.assignment

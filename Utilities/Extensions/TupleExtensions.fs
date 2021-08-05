@@ -9,6 +9,8 @@ module Tuple2 =
 
     let swap (x, y) = (y, x)
 
+    let map f (x, y) = f x y
+
     let mapFst f (x, y) = f x, y
 
     let mapSnd f (x, y) = x, f y
@@ -26,3 +28,6 @@ module Tuple2 =
         match f y with
         | Some y' -> Some(x, y')
         | None -> None
+
+module Tuple3 =
+    let map f (x, y, z) = f x y z

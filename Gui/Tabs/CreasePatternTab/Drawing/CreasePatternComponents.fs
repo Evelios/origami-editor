@@ -43,8 +43,6 @@ module CreasePatternComponents =
         :> IView
 
 
-
-
     (* Edges *)
 
     let private edgeColor (edgeType: EdgeAssignment) : string =
@@ -53,7 +51,7 @@ module CreasePatternComponents =
         | EdgeAssignment.Mountain -> theme.mountainColor
         | EdgeAssignment.Valley -> theme.valleyColor
         | EdgeAssignment.Unassigned -> theme.unassignedColor
-    //        | EdgeAssignment.Flat -> theme.flatColor
+        | EdgeAssignment.Flat -> theme.flatColor
 
     let edgeLine
         (options: {| translation: Translation
