@@ -1,8 +1,12 @@
 module GeometryTests.Line2D
 
-open FsCheck
 open NUnit.Framework
+open FsCheck
+open FsCheck.NUnit
+
+
 open Geometry
+open Utilities.Extensions
 
 [<SetUp>]
 let Setup () = ()
@@ -33,16 +37,15 @@ let pointOnLineTestCases =
 let ``Vertex is on line`` vertex line =
     Assert.That(Line2D.isPointOnLine vertex line)
 
-// Need to create a generator for Line2D objects that creates objects with different starting points
-//[<Test>]
-//let ``Line perpendicular through point`` () =
-//    let perpTests (point: Point2D) (line: Line2D) =
-//        let perpLine = Line2D.perpThroughPoint point line
-//
-//        Line2D.isPerpendicularTo perpLine line
-//        && Line2D.pointOnLine point perpLine
-//
-//    Assert.DoesNotThrow(fun () -> Check.QuickThrowOnFailure perpTests)
+[<Property>]
+let ``Line perpendicular through point`` () =
+    let perpTests (point, line) =
+        let perpLine = Line2D.perpThroughPoint point line
+
+        Line2D.arePerpendicular perpLine line
+        && Line2D.isPointOnLine point perpLine
+
+    Prop.forAll (Arb.fromGen (Gen.map2 Tuple2.pair Generators.point2D Generators.line2D)) perpTests
 
 [<Test>]
 let ``Line Intersection`` () =
@@ -55,3 +58,14 @@ let ``Line Intersection`` () =
     let expected = Some(Point2D.xy 2.5 2.5)
     let actual = Line2D.intersect l1 l2
     Assert.AreEqual(expected, actual)
+
+[<Property>]
+let ``Intersection lies on both lines`` () =
+    let intersectionOnLines (l1, l2) =
+        match Line2D.intersect l1 l2 with
+        | Some intersection ->
+            Line2D.isPointOnLine intersection l1
+            && Line2D.isPointOnLine intersection l2
+        | None -> true
+
+    Prop.forAll (Arb.fromGen (Gen.map2 Tuple2.pair Generators.line2D Generators.line2D)) intersectionOnLines

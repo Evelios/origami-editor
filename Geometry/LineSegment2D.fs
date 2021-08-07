@@ -76,8 +76,24 @@ type LineSegment2D =
 module LineSegment2D =
     (* Builders *)
 
+    /// Generate a line segment from two points. This doesn't perform any checks ensuring that the points are not equal.
+    /// If that is the behavior that you want you should use <see cref="safeFrom"/> function.
     let from (start: Point2D) (finish: Point2D) =
         LineSegment2D {| start = start; finish = finish |}
+
+    /// Safely create a line segment. This function returns `None` when the two points are almost equal.
+    /// This has to do with the <see cref="Geometry.Internal.Tolerance"/>.
+    let safeFrom (start: Point2D) (finish: Point2D) =
+        if start = finish then
+            None
+        else
+            Some(from start finish)
+
+    /// Create a line segment starting at point in a particular direction and length
+    let fromPointAndVector (start: Point2D) (direction: Vector2D) =
+        LineSegment2D
+            {| start = start
+               finish = start + direction |}
 
 
     (* Attributes *)
@@ -104,7 +120,7 @@ module LineSegment2D =
             let v = line.start |> Point2D.vectorTo point
             let lineLength = length line
 
-            let dotProduct: float =
+            let dotProduct : float =
                 match Vector2D.dotProduct v (direction line) with
                 | dotProduct when dotProduct < 0. -> 0.
                 | dotProduct when dotProduct > lineLength -> lineLength

@@ -1,6 +1,8 @@
 namespace Utilities.Extensions
 
 module Tuple2 =
+    let pair x y = x, y
+    
     let replicate x = x, x
 
     let curry f x y = f (x, y)

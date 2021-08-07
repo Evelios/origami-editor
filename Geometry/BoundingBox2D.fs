@@ -42,12 +42,21 @@ type BoundingBox2D =
 module BoundingBox2D =
     (* Builders *)
 
+    // Creates an infinitely small bounding box. This can be used when growing a bounding box around objects
     let empty =
         BoundingBox2D
             {| minX = infinity
                maxX = -infinity
                minY = infinity
                maxY = -infinity |}
+
+    /// Create a bounding box that contains the two points
+    let from (p1: Point2D) (p2: Point2D) =
+        BoundingBox2D
+            {| minX = min p1.x p2.x
+               maxX = max p1.x p2.x
+               minY = min p1.y p2.y
+               maxY = max p1.y p2.y |}
 
 
     (* Modifiers *)

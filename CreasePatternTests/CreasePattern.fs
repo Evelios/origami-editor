@@ -35,7 +35,7 @@ let redundantElementsTestCases =
 let ``Adding Redundant Elements`` given actual = Assert.AreEqual(given, actual)
 
 [<Test>]
-let ``Get edges from crease pattern``() =
+let ``Get edges from crease pattern`` () =
     let edges =
         [ Point2D.xy 0. 0., Point2D.xy 1. 1., EdgeAssignment.Flat
           Point2D.xy 1. 1., Point2D.xy 0. 0., EdgeAssignment.Flat
@@ -47,7 +47,9 @@ let ``Get edges from crease pattern``() =
         |> CreasePattern.addEdges edges
         |> CreasePattern.edges
 
-    CollectionAssert.AreEqual(Set.ofList edges, Set.ofList creasePatternEdges)
+    printf $"{creasePatternEdges}"
+    
+    CollectionAssert.AreEqual(edges, creasePatternEdges)
 
 [<Literal>]
 let closeDistance = 0.1

@@ -38,7 +38,7 @@ let basic () =
 
     let edges =
         Edges.create
-            { vertices = [ (3, 2); (3, 1); (2, 0); (1, 0) ]
+            { vertices = [ (2, 3); (1, 3); (0, 2); (0, 1) ]
               faces = []
               assignment =
                   [ Fold.Boundary

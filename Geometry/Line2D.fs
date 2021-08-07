@@ -53,6 +53,11 @@ module Line2D =
     (* Builders *)
     let through (start: Point2D) (finish: Point2D) = { start = start; finish = finish }
 
+    /// Create a line starting at point in a particular direction and length
+    let fromPointAndVector (start: Point2D) (direction: Vector2D) =
+        { start = start
+          finish = start + direction }
+
     let private toLineSegment (line: Line2D) : LineSegment2D =
         LineSegment2D.from line.start line.finish
 
@@ -65,7 +70,7 @@ module Line2D =
         Point2D.distanceTo line.start line.finish
 
     (* Queries *)
-    
+
     let pointClosestTo (point: Point2D) (line: Line2D) : Point2D =
         let v : Vector2D = line.start |> Point2D.vectorTo point
         let lineDirection = direction line

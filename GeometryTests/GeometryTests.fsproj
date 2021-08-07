@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="Generators.fs" />
         <Compile Include="Point2D.fs" />
         <Compile Include="LineSegment2D.fs" />
         <Compile Include="Line2D.fs" />

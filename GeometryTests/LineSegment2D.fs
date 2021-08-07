@@ -1,6 +1,10 @@
 module GeometryTests.LineSegment2D
 
 open NUnit.Framework
+open FsCheck
+open FsCheck.NUnit
+
+open Utilities.Extensions
 open Geometry
 
 let pointDistanceTestCases =
@@ -49,7 +53,6 @@ let pointOnLineTestCases =
 let ``Point is on line`` point line =
     Assert.That(LineSegment2D.isPointOnLine point line)
 
-// TODO: Fuzz test that when there is an intersection. The intersection should be on both lines
 [<Test>]
 let ``Line Segment Intersection`` () =
     let l1 =
@@ -61,3 +64,16 @@ let ``Line Segment Intersection`` () =
     let expected = Some(Point2D.xy 2.5 2.5)
     let actual = LineSegment2D.intersect l1 l2
     Assert.AreEqual(expected, actual)
+
+[<Property>]
+let ``Intersection lies on both line segments`` () =
+    let intersectionOnLines (l1, l2) =
+        match LineSegment2D.intersect l1 l2 with
+        | Some intersection ->
+            LineSegment2D.isPointOnLine intersection l1
+            && LineSegment2D.isPointOnLine intersection l2
+        | None -> true
+
+    Prop.forAll
+        (Arb.fromGen (Gen.map2 Tuple2.pair Generators.lineSegment2D Generators.lineSegment2D))
+        intersectionOnLines
