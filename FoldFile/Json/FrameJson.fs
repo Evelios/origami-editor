@@ -34,7 +34,6 @@ module FrameJson =
         | "edgeOrders" -> "edgeOrders"
         | name -> Json.snakeCase name
 
-
     /// Convert the frame type to a json serializable type
     let toJsonType (frame: Frame) : FrameJson =
         let stringWithDefault =

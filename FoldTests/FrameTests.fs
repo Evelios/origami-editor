@@ -127,4 +127,4 @@ let ``Serialize and Deserialize`` () =
         |> FrameJson.fromJson
         |> (=) frame
 
-    Prop.forAll (Arb.fromGen Generators.frame) originalMatchesSerialization
+    Prop.forAll (Arb.fromGen Gen.frame) originalMatchesSerialization

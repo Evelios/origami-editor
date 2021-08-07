@@ -2,6 +2,9 @@ module CreasePatternTests.FoldDeserialization
 
 
 open NUnit.Framework
+open FsCheck
+open FsCheck.NUnit
+
 open Fold
 open CreasePattern
 open Geometry
@@ -10,7 +13,58 @@ open Geometry
 let SetUp () = ()
 
 [<Test>]
-let ``Convert metadata`` () =
+let ``Basic Serialization`` () =
+    // Given
+    let v =
+        {| bl = Point2D.xy 0. 0.
+           br = Point2D.xy 0. 1.
+           tr = Point2D.xy 1. 1.
+           tl = Point2D.xy 1. 0. |}
+
+    let creasePattern =
+        CreasePattern.empty
+        |> CreasePattern.addEdges [ Edge.betweenWithAssignment v.bl v.br Boundary
+                                    Edge.betweenWithAssignment v.br v.tr Boundary
+                                    Edge.betweenWithAssignment v.tr v.tl Boundary
+                                    Edge.betweenWithAssignment v.tl v.bl Boundary ]
+
+    /// Expect
+    let vertices =
+        Vertices.create
+            { coords =
+                  [ Point2D.xy 0. 0.
+                    Point2D.xy 0. 1.
+                    Point2D.xy 1. 0.
+                    Point2D.xy 1. 1. ]
+              vertices = []
+              faces = [] }
+
+    let edges =
+        Edges.create
+            { vertices = [ (2, 3); (1, 3); (0, 2); (0, 1) ]
+              faces = []
+              assignment =
+                  [ Fold.Boundary
+                    Fold.Boundary
+                    Fold.Boundary
+                    Fold.Boundary ]
+              foldAngle = []
+              length = []
+              orders = [] }
+
+    let expected =
+        Frame.empty
+        |> Frame.setVertices vertices
+        |> Frame.setEdges edges
+
+
+    /// When
+    let actual = CreasePattern.toFoldFrame creasePattern
+
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``Deserialize metadata`` () =
     let given =
         Frame.empty
         |> Frame.setUnit Fold.LengthUnit.Meters
@@ -28,7 +82,7 @@ let ``Convert metadata`` () =
     Assert.AreEqual(expected, CreasePattern.fromFoldFrame given)
 
 [<Test>]
-let ``Set graph`` () =
+let ``Deserialize edges`` () =
     /// Given
     let vertices =
         Vertices.create
@@ -64,7 +118,7 @@ let ``Set graph`` () =
         |> Frame.setVertices vertices
         |> Frame.setEdges edges
         |> Frame.setFaces faces
-        
+
 
     /// Expect
 
@@ -82,3 +136,17 @@ let ``Set graph`` () =
                                     Edge.betweenWithAssignment v.tl v.bl Boundary ]
 
     Assert.AreEqual(expected, CreasePattern.fromFoldFrame frame)
+
+
+[<Property>]
+let ``Serialize & Deserialize`` () =
+    let originalMatchesSerialization creasePattern =
+        creasePattern
+        |> CreasePattern.toJson
+        |> CreasePattern.fromJson
+        |> (fun x ->
+            printfn $"{x}"
+            x)
+        |> (=) creasePattern
+
+    Prop.forAll (Arb.fromGen Gen.creasePattern) originalMatchesSerialization

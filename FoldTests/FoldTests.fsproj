@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="Generators.fs" />
+        <Compile Include="Gen.fs" />
         <Compile Include="Util.fs" />
         <Compile Include="FrameTests.fs" />
         <Compile Include="FoldTests.fs" />

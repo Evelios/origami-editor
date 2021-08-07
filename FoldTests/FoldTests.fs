@@ -87,10 +87,10 @@ let Serialization source = FoldJson.toJsonUnformatted source
 
 [<Property>]
 let ``Serialize and Deserialize`` () =
-    let originalMatchesSerialization frame =
-        frame
+    let originalMatchesSerialization fold =
+        fold
         |> FoldJson.toJson
         |> FoldJson.fromJson
-        |> (=) frame
+        |> (=) fold
 
-    Prop.forAll (Arb.fromGen Generators.fold) originalMatchesSerialization
+    Prop.forAll (Arb.fromGen Gen.fold) originalMatchesSerialization

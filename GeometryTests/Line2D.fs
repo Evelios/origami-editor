@@ -45,7 +45,7 @@ let ``Line perpendicular through point`` () =
         Line2D.arePerpendicular perpLine line
         && Line2D.isPointOnLine point perpLine
 
-    Prop.forAll (Arb.fromGen (Gen.map2 Tuple2.pair Generators.point2D Generators.line2D)) perpTests
+    Prop.forAll (Arb.fromGen (Gen.map2 Tuple2.pair Gen.point2D Gen.line2D)) perpTests
 
 [<Test>]
 let ``Line Intersection`` () =
@@ -68,4 +68,4 @@ let ``Intersection lies on both lines`` () =
             && Line2D.isPointOnLine intersection l2
         | None -> true
 
-    Prop.forAll (Arb.fromGen (Gen.map2 Tuple2.pair Generators.line2D Generators.line2D)) intersectionOnLines
+    Prop.forAll (Arb.fromGen (Gen.map2 Tuple2.pair Gen.line2D Gen.line2D)) intersectionOnLines

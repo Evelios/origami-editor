@@ -58,6 +58,13 @@ module BoundingBox2D =
                minY = min p1.y p2.y
                maxY = max p1.y p2.y |}
 
+    (* Accessors *)
+
+    let corners (bbox: BoundingBox2D) =
+        {| tl = (Point2D.xy bbox.minX bbox.maxY)
+           tr = (Point2D.xy bbox.maxX bbox.maxY)
+           br = (Point2D.xy bbox.maxY bbox.minY)
+           bl = (Point2D.xy bbox.minX bbox.minX) |}
 
     (* Modifiers *)
 

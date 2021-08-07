@@ -7,6 +7,14 @@ module Gen =
     let map7 fn a b c d e f g =
         Gen.apply (Gen.apply (Gen.apply (Gen.apply (Gen.apply (Gen.apply (Gen.map fn a) b) c) d) e) f) g
 
+    let floatBetween low high =
+        let fraction (a, b, c) = double a + double b / double c
+
+        Arb.generate<int>
+        |> Gen.three
+        |> Gen.filter (fun (_, _, c) -> c <> 0)
+        |> Gen.map fraction
+
 
     let float =
         Arb.generate<NormalFloat> |> Gen.map float

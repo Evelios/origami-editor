@@ -15,15 +15,16 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="Gen.fs" />
         <Compile Include="CreasePattern.fs" />
         <Compile Include="Axioms.fs" />
-        <Compile Include="FoldDeserialization.fs" />
-        <Compile Include="FoldSerialization.fs" />
+        <Compile Include="JsonConversion.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\CreasePattern\CreasePattern.fsproj" />
+      <ProjectReference Include="..\GeometryTests\GeometryTests.fsproj" />
     </ItemGroup>
 
 </Project>

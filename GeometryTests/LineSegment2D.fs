@@ -75,5 +75,5 @@ let ``Intersection lies on both line segments`` () =
         | None -> true
 
     Prop.forAll
-        (Arb.fromGen (Gen.map2 Tuple2.pair Generators.lineSegment2D Generators.lineSegment2D))
+        (Arb.fromGen (Gen.map2 Tuple2.pair Gen.lineSegment2D Gen.lineSegment2D))
         intersectionOnLines

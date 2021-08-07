@@ -1,6 +1,7 @@
 ﻿namespace CreasePattern
 
 open FSharp.FGL
+open Fold.Json
 open Geometry
 
 type Label = int
@@ -75,6 +76,11 @@ module CreasePattern =
 
     (* Modifiers *)
 
+    let setBoundingBox boundingBox (CreasePattern creasePattern) =
+        CreasePattern
+            {| creasePattern with
+                   bounds = boundingBox |}
+
     let setUnit unit (CreasePattern creasePattern) =
         CreasePattern {| creasePattern with unit = unit |}
 
@@ -116,20 +122,15 @@ module CreasePattern =
                 []
                 edges
 
-        printfn $"{vertices}"
-
         let creasePatternWithVertices = addVertices vertices creasePattern
-
-        printfn $"{creasePatternWithVertices}"
 
         let graphEdges =
             List.map (fun (Edge edge) -> (edge.line.start, edge.line.finish, edge.assignment)) edges
+
         match creasePatternWithVertices with
 
         | CreasePattern cpVertData ->
             try
-                printfn $"{cpVertData.graph}"
-
                 CreasePattern
                     {| cpVertData with
                            graph = Undirected.Edges.addMany graphEdges cpVertData.graph |}
@@ -140,31 +141,6 @@ module CreasePattern =
     /// Try adding an edge to the crease pattern. If the edge already exists, the same crease pattern will be returned
     let addEdge (edge: Edge) (creasePattern: CreasePattern) : CreasePattern = addEdges [ edge ] creasePattern
 
-    (* Builder *)
-
-    ///  Create a basic crease pattern within a 0 -> 1 grid system with edge boundaries
-    let create : CreasePattern =
-        let corners =
-            {| tl = (Point2D.xy 0. 1.)
-               tr = (Point2D.xy 1. 1.)
-               br = (Point2D.xy 1. 0.)
-               bl = (Point2D.xy 0. 0.) |}
-
-        let vertices =
-            [ corners.tl
-              corners.tr
-              corners.bl
-              corners.br ]
-
-        let boundaries =
-            [ Edge.betweenWithAssignment corners.tl corners.tr EdgeAssignment.Boundary
-              Edge.betweenWithAssignment corners.tr corners.br EdgeAssignment.Boundary
-              Edge.betweenWithAssignment corners.br corners.bl EdgeAssignment.Boundary
-              Edge.betweenWithAssignment corners.bl corners.tl EdgeAssignment.Boundary ]
-
-        empty
-        |> addVertices vertices
-        |> addEdges boundaries
 
     /// Run the axiom and add in the line segment(s) created by the axiom onto the crease pattern
     let performAxiom axiom (CreasePattern cpData as creasePattern) =
@@ -237,6 +213,34 @@ module CreasePattern =
             Some closestEdge
         else
             None
+
+    (* Builders *)
+
+    /// Create a rectangular crease pattern from it's bounding box
+    let withBoundingBox boundingBox =
+        let corners = BoundingBox2D.corners boundingBox
+
+        let vertices =
+            [ corners.tl
+              corners.tr
+              corners.bl
+              corners.br ]
+
+        let boundaries =
+            [ Edge.betweenWithAssignment corners.tl corners.tr EdgeAssignment.Boundary
+              Edge.betweenWithAssignment corners.tr corners.br EdgeAssignment.Boundary
+              Edge.betweenWithAssignment corners.br corners.bl EdgeAssignment.Boundary
+              Edge.betweenWithAssignment corners.bl corners.tl EdgeAssignment.Boundary ]
+
+        empty
+        |> setBoundingBox boundingBox
+        |> addVertices vertices
+        |> addEdges boundaries
+
+    ///  Create a basic crease pattern within a 0 -> 1 grid system with edge boundaries
+    let create : CreasePattern =
+        BoundingBox2D.from (Point2D.xy 1. 1.) (Point2D.xy 0. 0.)
+        |> withBoundingBox
 
 
     (* Serialization & Deserialization *)
@@ -323,3 +327,17 @@ module CreasePattern =
         |> Fold.Frame.setDescription creasePattern.description
         |> Fold.Frame.setVertices vertices
         |> Fold.Frame.setEdges foldEdges
+
+
+    // Todo: Remove this declaration. This is temporarily done to avoid naming clashes
+    open Fold
+
+    let toJson creasePattern =
+        Fold.empty
+        |> Fold.setKeyFrame (toFoldFrame creasePattern)
+        |> FoldJson.toJson
+
+    let fromJson json =
+        FoldJson.fromJson json
+        |> (fun fold -> fold.keyFrame)
+        |> fromFoldFrame

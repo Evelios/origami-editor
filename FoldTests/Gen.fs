@@ -1,7 +1,6 @@
-module FoldTests.Generators
+module FoldTests.Gen
 
 open FsCheck
-open FsCheck.NUnit
 
 open Fold
 open Utilities
