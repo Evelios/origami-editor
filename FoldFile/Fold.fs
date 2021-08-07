@@ -61,7 +61,7 @@ module Fold =
               classes = Set.remove theClass file.classes }
 
     let withoutClasses file : Fold = { file with classes = Set.empty }
-    let setKeyframe keyFrame file : Fold = { file with keyFrame = keyFrame }
+    let setKeyFrame keyFrame file : Fold = { file with keyFrame = keyFrame }
     let setFrames frames file : Fold = { file with frames = frames }
 
 

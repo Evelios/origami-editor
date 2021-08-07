@@ -1,7 +1,11 @@
 module FoldTests.FrameTests
 
 open NUnit.Framework
+open FsCheck
+open FsCheck.NUnit
+
 open Fold
+open Fold.Json
 open Geometry
 
 [<SetUp>]
@@ -36,9 +40,7 @@ let testCases =
       { Frame.empty with
             vertices =
                 { Vertices.empty with
-                      coords =
-                          [ Point2D.xy -1. -1.
-                            Point2D.xy 1. 1. ] } }
+                      coords = [ Point2D.xy -1. -1.; Point2D.xy 1. 1. ] } }
       """{"frame_unit":"unit","vertices_coords":[[0.5,1],[2.5,2.5]]}""",
       { Frame.empty with
             vertices =
@@ -108,10 +110,21 @@ let testCases =
 let deserializationTestCases = Util.toTest testCases
 
 [<TestCaseSource("deserializationTestCases")>]
-let Deserialization source = FrameJson.FromJson source
+let Deserialization source = FrameJson.fromJson source
 
 
 let serializationTestCases = Util.toTestReverse testCases
 
 [<TestCaseSource("serializationTestCases")>]
-let Serialization source = FrameJson.ToJsonUnformatted source
+let Serialization source = FrameJson.toJsonUnformatted source
+
+
+[<Property>]
+let ``Serialize and Deserialize`` () =
+    let originalMatchesSerialization frame =
+        frame
+        |> FrameJson.toJson
+        |> FrameJson.fromJson
+        |> (=) frame
+
+    Prop.forAll (Arb.fromGen Generators.frame) originalMatchesSerialization

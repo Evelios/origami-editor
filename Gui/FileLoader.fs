@@ -1,12 +1,14 @@
 namespace Gui
 
-open System
 
 
 module FileLoader =
+    open System
     open System.IO
     open FSharp.Json
+
     open Fold
+    open Fold.Json
 
     type Error =
         | OsError of exn

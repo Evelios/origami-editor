@@ -1,8 +1,12 @@
-module FoldFileTests.FileTests
+module FoldFileTests.FoldTests
 
 open FoldTests
 open NUnit.Framework
+open FsCheck
+open FsCheck.NUnit
+
 open Fold
+open Fold.Json
 
 [<SetUp>]
 let Setup () = ()
@@ -80,3 +84,13 @@ let serializationTestCases = Util.toTestReverse testCases
 
 [<TestCaseSource("serializationTestCases")>]
 let Serialization source = FoldJson.toJsonUnformatted source
+
+[<Property>]
+let ``Serialize and Deserialize`` () =
+    let originalMatchesSerialization frame =
+        frame
+        |> FoldJson.toJson
+        |> FoldJson.fromJson
+        |> (=) frame
+
+    Prop.forAll (Arb.fromGen Generators.fold) originalMatchesSerialization

@@ -1,6 +1,8 @@
-﻿namespace Fold
+﻿namespace Fold.Json
 
 open FSharp.Json
+
+open Fold
 open Geometry
 
 type FrameJson =
@@ -118,12 +120,12 @@ module FrameJson =
     let private jsonConfigUnformatted =
         JsonConfig.create (jsonFieldNaming = nameConversion, serializeNone = SerializeNone.Omit, unformatted = true)
 
-    let ToJson (frame: Frame) : string =
+    let toJson (frame: Frame) : string =
         Json.serializeEx jsonConfig (toJsonType frame)
 
-    let ToJsonUnformatted (frame: Frame) : string =
+    let toJsonUnformatted (frame: Frame) : string =
         Json.serializeEx jsonConfigUnformatted (toJsonType frame)
 
-    let FromJson json : Frame =
+    let fromJson json : Frame =
         Json.deserializeEx<FrameJson> jsonConfig json
         |> fromJsonType

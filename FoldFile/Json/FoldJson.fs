@@ -1,6 +1,8 @@
-﻿namespace Fold
+﻿namespace Fold.Json
 
 open FSharp.Json
+
+open Fold
 open Geometry
 
 type FoldFileJson =
