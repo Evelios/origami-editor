@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FoldFile", "FoldFile\FoldFile.fsproj", "{910E7600-0739-47A4-B5B4-3A3C6BC0F0D4}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Fold", "Fold\Fold.fsproj", "{910E7600-0739-47A4-B5B4-3A3C6BC0F0D4}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FoldTests", "FoldTests\FoldTests.fsproj", "{144F6CB9-9160-4CBC-B064-AFF9918DF983}"
 EndProject

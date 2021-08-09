@@ -4,6 +4,16 @@
         <TargetFramework>net5.0</TargetFramework>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <WarnOn>3390;$(WarnOn)</WarnOn>
+        <PackageVersion>0.0.1</PackageVersion>
+        <Title>Geometry</Title>
+        <Authors>Thomas Waters</Authors>
+        <Company />
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>Fsharp.Geometry</PackageId>
+        <Description>A functional geometry library for working with 2D spatial structures.</Description>
+        <Copyright>Thomas Waters</Copyright>
+        <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
+        <PackageTags>geometry</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
