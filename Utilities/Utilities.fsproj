@@ -21,6 +21,8 @@
         <Compile Include="Collections\StringMap.fs" />
         <Compile Include="Collections\Tree.fs" />
         <Compile Include="Gen.fs" />
+        <Compile Include="Debug.fs" />
+        <Compile Include="Log.fs" />
     </ItemGroup>
 
     <ItemGroup>

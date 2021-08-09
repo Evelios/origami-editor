@@ -5,13 +5,19 @@ open Utilities.Collections
 type ReferenceFinder = ReferenceFinder of Tree<CreasePattern>
 
 module ReferenceFinder =
+    open Geometry
+    open Utilities
+
     (* Builders *)
 
     let init =
-        let maxDepth = 5
+        let maxDepth = 1
+
+        let boundingBox =
+            BoundingBox2D.from (Point2D.xy 0. 0.) (Point2D.xy 1. 1.)
 
         let rec createNode creasePattern currentDepth =
-            if currentDepth < maxDepth then
+            if currentDepth >= maxDepth then
                 Tree.fromLeaf creasePattern
             else
                 let children =
@@ -21,8 +27,12 @@ module ReferenceFinder =
                     |> List.map (fun cp -> createNode cp (currentDepth + 1))
 
                 Tree.fromNode creasePattern children
+                
+        let creasePattern =
+            (CreasePattern.withBoundingBox boundingBox)
+            |> Debug.log "Crease Pattern"
 
-        createNode CreasePattern.create 0
+        createNode creasePattern 0
         |> ReferenceFinder
 
 
@@ -36,10 +46,12 @@ module ReferenceFinder =
     /// Get the first crease pattern that creates a point close to the desired point
     let bestFoldSequenceTo target referenceFinder =
         fold
-            (fun (_, lowestError as bestPatternAndError) nextCreasePattern ->
-                match CreasePattern.closestVertex target nextCreasePattern with
-                | Some (_, currentError) when currentError < lowestError -> nextCreasePattern, currentError
-                | _ -> bestPatternAndError)
+            (fun bestPatternAndError nextCreasePattern ->
+                match bestPatternAndError with
+                | _, lowestError as bestPatternAndError ->
+                    match CreasePattern.closestVertex target nextCreasePattern with
+                    | Some (_, currentError) when currentError < lowestError -> nextCreasePattern, currentError
+                    | _ -> bestPatternAndError)
 
             (CreasePattern.empty, infinity)
             referenceFinder

@@ -144,9 +144,6 @@ let ``Serialize & Deserialize`` () =
         creasePattern
         |> CreasePattern.toJson
         |> CreasePattern.fromJson
-        |> (fun x ->
-            printfn $"{x}"
-            x)
         |> (=) creasePattern
 
     Prop.forAll (Arb.fromGen Gen.creasePattern) originalMatchesSerialization

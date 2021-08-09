@@ -3,6 +3,7 @@
 open FSharp.FGL
 open Fold.Json
 open Geometry
+open Utilities
 
 type Label = int
 
@@ -135,7 +136,7 @@ module CreasePattern =
                     {| cpVertData with
                            graph = Undirected.Edges.addMany graphEdges cpVertData.graph |}
             with e ->
-                printfn $"Failed to add crease pattern edges: {e}"
+                Log.error $"Failed to add crease pattern edges: {e}"
                 creasePattern
 
     /// Try adding an edge to the crease pattern. If the edge already exists, the same crease pattern will be returned
