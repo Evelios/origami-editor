@@ -21,7 +21,7 @@ let redundantElementsTestCases =
        |> CreasePattern.addVertices [ v1; v2 ],
        CreasePattern.create
        |> CreasePattern.addVertices [ v1; v2 ]
-       |> CreasePattern.addVertices [ v1; v2 ])
+       |> CreasePattern.addVertices [ v1; v2 ] )
 
       ("Adding Redundant Edges",
        CreasePattern.create |> CreasePattern.addEdge edge,

@@ -6,9 +6,9 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FoldTests", "FoldTests\Fold
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Utilities", "Utilities\Utilities.fsproj", "{C2E36D54-47EB-4F04-B2FC-7B58ECBBC379}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CreasePattern", "CreasePattern\CreasePattern.fsproj", "{8A5FD212-A4F0-4CBA-A4BF-631B044AAEB0}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Origami", "Origami\Origami.fsproj", "{8A5FD212-A4F0-4CBA-A4BF-631B044AAEB0}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CreasePatternTests", "CreasePatternTests\CreasePatternTests.fsproj", "{DACBD2CE-E14F-44EE-B752-12543919BCE3}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "OrigamiTests", "OrigamiTests\OrigamiTests.fsproj", "{DACBD2CE-E14F-44EE-B752-12543919BCE3}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gui", "Gui\Gui.fsproj", "{A754205B-4549-4ACF-81AF-BC9EEFDAC918}"
 EndProject

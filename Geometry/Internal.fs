@@ -6,6 +6,8 @@ open LanguagePrimitives
 module Internal =
 
     [<Literal>]
-    let Epsilon : float = 1e-8
+    let DigitPrecision : int = 8
+
+    let Epsilon : float = 10. ** (float -DigitPrecision)
 
     let internal almostEqual (a: float) (b: float) : bool = abs (a - b) < FloatWithMeasure Epsilon

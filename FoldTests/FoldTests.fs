@@ -9,7 +9,7 @@ open Fold
 open Fold.Json
 
 [<SetUp>]
-let Setup () = ()
+let Setup () = Gen.ArbFold.Register()
 
 
 [<TestCase>]
@@ -86,11 +86,8 @@ let serializationTestCases = Util.toTestReverse testCases
 let Serialization source = FoldJson.toJsonUnformatted source
 
 [<Property>]
-let ``Serialize and Deserialize`` () =
-    let originalMatchesSerialization fold =
-        fold
-        |> FoldJson.toJson
-        |> FoldJson.fromJson
-        |> (=) fold
-
-    Prop.forAll (Arb.fromGen Gen.fold) originalMatchesSerialization
+let ``Serialize and Deserialize`` fold =
+    fold
+    |> FoldJson.toJson
+    |> FoldJson.fromJson
+    |> (=) fold

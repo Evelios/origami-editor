@@ -2,9 +2,11 @@ module CreasePatternTests.Gen
 
 open FsCheck
 
+
 open Utilities
 open CreasePattern
 open GeometryTests
+
 
 let edgeAssignment = Gen.ofType<EdgeAssignment>
 

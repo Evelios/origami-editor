@@ -18,6 +18,7 @@
         <Compile Include="Extensions\ImageExtensions.fs" />
         <Compile Include="Extensions\TupleExtensions.fs" />
         <Compile Include="Extensions\StringExtensions.fs" />
+        <Compile Include="Extensions\MapExtensions.fs" />
         <Compile Include="Collections\StringMap.fs" />
         <Compile Include="Collections\Tree.fs" />
         <Compile Include="Gen.fs" />

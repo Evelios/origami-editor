@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CreasePattern\CreasePattern.fsproj" />
+        <ProjectReference Include="..\Origami\Origami.fsproj" />
         <ProjectReference Include="..\Fold\Fold.fsproj" />
         <ProjectReference Include="..\Utilities\Utilities.fsproj" />
     </ItemGroup>

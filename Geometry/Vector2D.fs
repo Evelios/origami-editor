@@ -40,7 +40,8 @@ type Vector2D =
         almostEqual this.x other.x
         && almostEqual this.y other.y
 
-    override this.GetHashCode() = HashCode.Combine(this.x, this.x)
+    override this.GetHashCode() =
+        HashCode.Combine(Math.Round(this.x, DigitPrecision), Math.Round(this.y, DigitPrecision))
 
     static member (*)(vector: Vector2D, scale: float) : Vector2D =
         { x = vector.x * scale

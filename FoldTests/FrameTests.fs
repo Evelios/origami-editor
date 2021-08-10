@@ -9,7 +9,7 @@ open Fold.Json
 open Geometry
 
 [<SetUp>]
-let Setup () = ()
+let Setup () = Gen.ArbFold.Register()
 
 let testCases =
     [ """{"frame_unit":"unit"}""",
@@ -120,11 +120,8 @@ let Serialization source = FrameJson.toJsonUnformatted source
 
 
 [<Property>]
-let ``Serialize and Deserialize`` () =
-    let originalMatchesSerialization frame =
-        frame
-        |> FrameJson.toJson
-        |> FrameJson.fromJson
-        |> (=) frame
-
-    Prop.forAll (Arb.fromGen Gen.frame) originalMatchesSerialization
+let ``Serialize and Deserialize`` frame =
+    frame
+    |> FrameJson.toJson
+    |> FrameJson.fromJson
+    |> (=) frame

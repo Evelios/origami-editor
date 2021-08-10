@@ -4,6 +4,7 @@
         <TargetFramework>net5.0</TargetFramework>
         <IsPackable>false</IsPackable>
         <GenerateProgramFile>false</GenerateProgramFile>
+        <RootNamespace>CreasePatternTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,6 +17,7 @@
 
     <ItemGroup>
         <Compile Include="Gen.fs" />
+        <Compile Include="Graph.fs" />
         <Compile Include="CreasePattern.fs" />
         <Compile Include="Axioms.fs" />
         <Compile Include="JsonConversion.fs" />
@@ -23,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CreasePattern\CreasePattern.fsproj" />
+      <ProjectReference Include="..\Origami\Origami.fsproj" />
       <ProjectReference Include="..\GeometryTests\GeometryTests.fsproj" />
     </ItemGroup>
 

@@ -1,7 +1,9 @@
 ﻿namespace Geometry
 
 open System
+open System
 open FSharp.Json
+open Utilities
 
 [<CustomEquality>]
 [<CustomComparison>]
@@ -41,7 +43,8 @@ type Point2D =
         almostEqual this.x other.x
         && almostEqual this.y other.y
 
-    override this.GetHashCode() = HashCode.Combine(this.x, this.x)
+    override this.GetHashCode() =
+        HashCode.Combine(Math.Round(this.x, DigitPrecision), Math.Round(this.y, DigitPrecision))
 
     static member (-)(lhs: Point2D, rhs: Point2D) : Vector2D =
         Vector2D.xy (lhs.x - rhs.x) (lhs.y - rhs.y)
@@ -56,7 +59,7 @@ type Point2D =
     static member (/)(lhs: Point2D, rhs: float) : Point2D = { x = lhs.x / rhs; y = lhs.y / rhs }
 
     static member (/)(lhs: float, rhs: Point2D) : Point2D = rhs / lhs
-    
+
 
 module Point2D =
     (* Builders *)

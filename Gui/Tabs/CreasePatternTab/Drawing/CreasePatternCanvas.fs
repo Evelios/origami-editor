@@ -95,13 +95,13 @@ module CreasePatternCanvas =
 
     let canvas (state: CreasePatternTabState) =
         let edgeLines =
-            List.map
+            Seq.map
                 (CreasePatternComponents.edgeLineDefault state.translation)
                 (CreasePattern.edges state.creasePattern)
-            |> List.rev
+            |> Seq.rev
 
         let vertexPoints =
-            List.map
+            Seq.map
                 (CreasePatternComponents.vertexDefault state.translation)
                 (CreasePattern.vertices state.creasePattern)
 
@@ -135,8 +135,8 @@ module CreasePatternCanvas =
 
         let canvasElements =
             []
-            |> List.append edgeLines
-            |> List.appendIf state.showVertices vertexPoints
+            |> List.append (List.ofSeq edgeLines)
+            |> List.appendIf state.showVertices (List.ofSeq vertexPoints)
             |> List.consWhenSome dragLine
             |> List.consWhenSome hoverElement
             |> List.consWhenSome pressedElement
@@ -167,5 +167,5 @@ module CreasePatternCanvas =
                  (fun e ->
                      Msg.MouseReleased((Event.positionRelativeTo canvasName e), e.KeyModifiers)
                      |> dispatch)
-                 
+
              DockPanel.children [ canvas state ] ]

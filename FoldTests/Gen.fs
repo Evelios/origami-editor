@@ -48,3 +48,8 @@ let fold =
         foldClasses
         frame
         (Gen.listOf frame)
+
+type ArbFold =
+    static member Frame() = Arb.fromGen frame
+    static member Fold() = Arb.fromGen fold
+    static member Register() = Arb.register<ArbFold> () |> ignore

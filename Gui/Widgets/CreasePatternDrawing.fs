@@ -101,7 +101,7 @@ module CreasePatternDrawing =
 
         let edges =
             CreasePattern.edges creasePattern
-            |> List.map
+            |> Seq.map
                 (fun edge ->
                     drawEdge
                         {| translation = translation
@@ -110,7 +110,7 @@ module CreasePatternDrawing =
 
         let vertices =
             CreasePattern.vertices creasePattern
-            |> List.map
+            |> Seq.map
                 (fun vertex ->
                     drawVertex
                         {| translation = translation
@@ -118,12 +118,12 @@ module CreasePatternDrawing =
                            size = 4.
                            state = ComponentState.Default |})
 
-        let components = edges @ vertices
+        let components = Seq.append edges vertices
 
         Canvas.create [ Canvas.height size
                         Canvas.width size
                         Canvas.background Theme.palette.canvasBackground
-                        Canvas.children components
+                        Canvas.children (List.ofSeq components)
                         // TODO: fix name
                         Canvas.name "TODO: Fix Me" ]
 

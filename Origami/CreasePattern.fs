@@ -1,20 +1,12 @@
 ﻿namespace CreasePattern
 
-open FSharp.FGL
 open Fold.Json
 open Geometry
-open Utilities
 
 type Label = int
 
 type CreasePattern =
-    | CreasePattern of
-        {| bounds: BoundingBox2D
-           graph: Graph<Point2D, Label, EdgeAssignment>
-           unit: LengthUnit
-           author: string
-           title: string
-           description: string |}
+    | CreasePattern of CreasePatternData
 
     member this.unit =
         match this with
@@ -32,6 +24,14 @@ type CreasePattern =
         match this with
         | CreasePattern cp -> cp.description
 
+and CreasePatternData =
+    { bounds: BoundingBox2D
+      graph: Graph
+      unit: LengthUnit
+      author: string
+      title: string
+      description: string }
+
 
 module CreasePattern =
     open FSharp.FGL.Directed
@@ -43,12 +43,12 @@ module CreasePattern =
      *)
     let empty : CreasePattern =
         CreasePattern
-            {| bounds = BoundingBox2D.empty
-               graph = Graph.empty
-               unit = Unitless
-               author = ""
-               title = ""
-               description = "" |}
+            { bounds = BoundingBox2D.empty
+              graph = Graph.empty
+              unit = Unitless
+              author = ""
+              title = ""
+              description = "" }
 
     (* Accessors *)
 
@@ -62,16 +62,12 @@ module CreasePattern =
             (creasePattern.bounds.maxY
              - creasePattern.bounds.minY)
 
-    let edges (CreasePattern creasePattern) : Edge list =
-        Undirected.Edges.toEdgeList creasePattern.graph
-        |> List.map asEdge
+    let edges (CreasePattern creasePattern) : Edge seq = Graph.edges creasePattern.graph
 
-    let vertices (CreasePattern creasePattern) : Point2D list =
-        List.map fst (Vertices.toVertexList creasePattern.graph)
+    let vertices (CreasePattern creasePattern) : Point2D seq = Graph.vertices creasePattern.graph
 
-    let elements creasePattern : GraphElement list =
-        List.map VertexElement (vertices creasePattern)
-        @ List.map EdgeElement (edges creasePattern)
+    let elements creasePattern : GraphElement seq =
+        Seq.append (Seq.map VertexElement (vertices creasePattern)) (Seq.map EdgeElement (edges creasePattern))
 
 
 
@@ -79,69 +75,42 @@ module CreasePattern =
 
     let setBoundingBox boundingBox (CreasePattern creasePattern) =
         CreasePattern
-            {| creasePattern with
-                   bounds = boundingBox |}
+            { creasePattern with
+                  bounds = boundingBox }
 
     let setUnit unit (CreasePattern creasePattern) =
-        CreasePattern {| creasePattern with unit = unit |}
+        CreasePattern { creasePattern with unit = unit }
 
     let setAuthor author (CreasePattern creasePattern) =
-        CreasePattern {| creasePattern with author = author |}
+        CreasePattern { creasePattern with author = author }
 
     let setTitle title (CreasePattern creasePattern) =
-        CreasePattern {| creasePattern with title = title |}
+        CreasePattern { creasePattern with title = title }
 
     let setDescription description (CreasePattern creasePattern) =
         CreasePattern
-            {| creasePattern with
-                   description = description |}
+            { creasePattern with
+                  description = description }
 
-    let addVertices (vertices: Point2D list) (CreasePattern creasePattern: CreasePattern) : CreasePattern =
-        let newVertices =
-            List.filter (fun v -> not <| Vertices.contains v creasePattern.graph) vertices
-
-        let graphVertices =
-            List.map (fun vertex -> (vertex, vertex.GetHashCode())) newVertices
-
-        let newBounds =
-            List.fold (fun b v -> BoundingBox2D.containingPoint v b) creasePattern.bounds newVertices
-
+    let mapGraph f (CreasePattern creasePatternData) =
         CreasePattern
-            {| creasePattern with
-                   bounds = newBounds
-                   graph =
-                       creasePattern.graph
-                       |> Vertices.addMany graphVertices |}
+            { creasePatternData with
+                  graph = f creasePatternData.graph }
 
-    let addEdges (edges: Edge list) (creasePattern: CreasePattern) : CreasePattern =
-        let vertices : Point2D list =
-            List.fold
-                (fun (acc: Point2D list) (edge: Edge) ->
-                    acc
-                    @ [ edge.crease.start
-                        edge.crease.finish ])
-                []
-                edges
+    let addVertex vertex creasePattern : CreasePattern =
+        mapGraph (Graph.addVertex vertex) creasePattern
 
-        let creasePatternWithVertices = addVertices vertices creasePattern
+    let addVertices vertices creasePattern : CreasePattern =
+        mapGraph (Graph.addVertices vertices) creasePattern
 
-        let graphEdges =
-            List.map (fun (Edge edge) -> (edge.line.start, edge.line.finish, edge.assignment)) edges
 
-        match creasePatternWithVertices with
+    let addEdges (edges: Edge seq) creasePattern : CreasePattern =
+        mapGraph (Graph.addEdges edges) creasePattern
 
-        | CreasePattern cpVertData ->
-            try
-                CreasePattern
-                    {| cpVertData with
-                           graph = Undirected.Edges.addMany graphEdges cpVertData.graph |}
-            with e ->
-                Log.error $"Failed to add crease pattern edges: {e}"
-                creasePattern
 
     /// Try adding an edge to the crease pattern. If the edge already exists, the same crease pattern will be returned
-    let addEdge (edge: Edge) (creasePattern: CreasePattern) : CreasePattern = addEdges [ edge ] creasePattern
-
+    let addEdge (edges: Edge) creasePattern : CreasePattern =
+        mapGraph (Graph.addEdges [ edges ]) creasePattern
 
     /// Run the axiom and add in the line segment(s) created by the axiom onto the crease pattern
     let performAxiom axiom (CreasePattern cpData as creasePattern) =
@@ -153,13 +122,13 @@ module CreasePattern =
     (* Queries *)
 
     /// Get the vertex in the crease pattern that is the closest to a given vertex
-    let closestVertex vertex (CreasePattern creasePattern) : (Point2D * float) option =
+    let closestVertex vertex (CreasePattern creasePatternData) : (Point2D * float) option =
         let distSquaredToVertex = Point2D.distanceSquaredTo vertex
 
         let closestDistanceSquared, closestVertex =
-            Vertices.toVertexList creasePattern.graph
-            |> List.fold
-                (fun (distanceSquared, closestVertex) (nextVertex, _) ->
+            Graph.vertices creasePatternData.graph
+            |> Seq.fold
+                (fun (distanceSquared, closestVertex) nextVertex ->
                     let nextDistanceSquared = distSquaredToVertex nextVertex
 
                     if nextDistanceSquared < distanceSquared then
@@ -196,7 +165,7 @@ module CreasePattern =
 
         let closestDistance, closestEdge =
             edges creasePattern
-            |> List.fold
+            |> Seq.fold
                 (fun closestEdge nextEdge ->
                     match closestEdge with
                     | closestDistance, _ as closestEdge ->
@@ -221,12 +190,6 @@ module CreasePattern =
     let withBoundingBox boundingBox =
         let corners = BoundingBox2D.corners boundingBox
 
-        let vertices =
-            [ corners.tl
-              corners.tr
-              corners.bl
-              corners.br ]
-
         let boundaries =
             [ Edge.betweenWithAssignment corners.tl corners.tr EdgeAssignment.Boundary
               Edge.betweenWithAssignment corners.tr corners.br EdgeAssignment.Boundary
@@ -235,7 +198,6 @@ module CreasePattern =
 
         empty
         |> setBoundingBox boundingBox
-        |> addVertices vertices
         |> addEdges boundaries
 
     ///  Create a basic crease pattern within a 0 -> 1 grid system with edge boundaries
@@ -282,17 +244,18 @@ module CreasePattern =
     let toFoldFrame (creasePattern: CreasePattern) : Fold.Frame =
         let vertexLookup : Map<Point2D, int> =
             vertices creasePattern
-            |> List.indexed
-            |> List.fold (fun map (id, vert) -> Map.add vert id map) Map.empty
+            |> Seq.indexed
+            |> Seq.fold (fun map (id, vert) -> Map.add vert id map) Map.empty
 
         let vertices =
             Fold.Vertices.create
-                { coords = vertices creasePattern
+                { coords = vertices creasePattern |> List.ofSeq
                   vertices = []
                   faces = [] }
 
         let edgeVertices : (Point2D * Point2D) list =
-            List.map Edge.vertices (edges creasePattern)
+            Seq.map Edge.vertices (edges creasePattern)
+            |> List.ofSeq
 
         let edgeVerticesIndexed =
             List.map (fun (v1, v2) -> (Map.find v1 vertexLookup, Map.find v2 vertexLookup)) edgeVertices
@@ -309,7 +272,9 @@ module CreasePattern =
             Fold.Edges.create
                 { vertices = edgeVerticesIndexed
                   faces = []
-                  assignment = List.map (Edge.assignment >> mapEdgeAssignment) (edges creasePattern)
+                  assignment =
+                      Seq.map (Edge.assignment >> mapEdgeAssignment) (edges creasePattern)
+                      |> List.ofSeq
                   foldAngle = []
                   length = []
                   orders = [] }

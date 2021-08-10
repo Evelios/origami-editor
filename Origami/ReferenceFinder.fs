@@ -22,6 +22,7 @@ module ReferenceFinder =
             else
                 let children =
                     CreasePattern.elements creasePattern
+                    |> List.ofSeq
                     |> Axiom.fromElements
                     |> List.map (fun axiom -> CreasePattern.performAxiom axiom creasePattern)
                     |> List.map (fun cp -> createNode cp (currentDepth + 1))
