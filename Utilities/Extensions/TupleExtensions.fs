@@ -31,7 +31,7 @@ module Tuple2 =
         | Some y' -> Some(x, y')
         | None -> None
         
-    let ofList (x, y) = [x; y]
+    let toList (x, y) = [x; y]
 
 module Tuple3 =
     let map f (x, y, z) = f x y z

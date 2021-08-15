@@ -21,13 +21,15 @@
         <Compile Include="Extensions\MapExtensions.fs" />
         <Compile Include="Collections\StringMap.fs" />
         <Compile Include="Collections\Tree.fs" />
+        <Compile Include="Collections\UnorderedTuple2.fs" />
         <Compile Include="Gen.fs" />
         <Compile Include="Debug.fs" />
         <Compile Include="Log.fs" />
+        <Compile Include="Tests.fs" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="FsCheck" Version="2.15.3" />
+      <PackageReference Include="FsCheck" Version="2.16.0" />
       <PackageReference Include="FSharp.Json" Version="0.4.0" />
       <PackageReference Include="JaggerJo.Avalonia.FuncUI.DSL" Version="0.4.0" />
     </ItemGroup>

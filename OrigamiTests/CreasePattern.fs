@@ -8,7 +8,6 @@ open Utilities.Extensions
 [<SetUp>]
 let Setup () = ()
 
-
 let redundantElementsTestCases =
     let v1 = Point2D.xy 0. 0.
     let v2 = Point2D.xy 1. 1.
@@ -21,7 +20,7 @@ let redundantElementsTestCases =
        |> CreasePattern.addVertices [ v1; v2 ],
        CreasePattern.create
        |> CreasePattern.addVertices [ v1; v2 ]
-       |> CreasePattern.addVertices [ v1; v2 ] )
+       |> CreasePattern.addVertices [ v1; v2 ])
 
       ("Adding Redundant Edges",
        CreasePattern.create |> CreasePattern.addEdge edge,
@@ -48,7 +47,7 @@ let ``Get edges from crease pattern`` () =
         |> CreasePattern.edges
 
     printf $"{creasePatternEdges}"
-    
+
     CollectionAssert.AreEqual(edges, creasePatternEdges)
 
 [<Literal>]

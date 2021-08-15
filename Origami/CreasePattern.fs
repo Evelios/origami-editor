@@ -73,10 +73,13 @@ module CreasePattern =
 
     (* Modifiers *)
 
-    let setBoundingBox boundingBox (CreasePattern creasePattern) =
+    let private setBoundingBox boundingBox (CreasePattern creasePattern) =
         CreasePattern
             { creasePattern with
                   bounds = boundingBox }
+
+    let private expandBoundingBox vertices (CreasePattern cpData as creasePattern) =
+        setBoundingBox (BoundingBox2D.containingPoints vertices cpData.bounds) creasePattern
 
     let setUnit unit (CreasePattern creasePattern) =
         CreasePattern { creasePattern with unit = unit }
@@ -92,25 +95,36 @@ module CreasePattern =
             { creasePattern with
                   description = description }
 
-    let mapGraph f (CreasePattern creasePatternData) =
+    let private mapGraph f (CreasePattern creasePatternData) =
         CreasePattern
             { creasePatternData with
                   graph = f creasePatternData.graph }
 
     let addVertex vertex creasePattern : CreasePattern =
-        mapGraph (Graph.addVertex vertex) creasePattern
+        creasePattern
+        |> expandBoundingBox [ vertex ]
+        |> mapGraph (Graph.addVertex vertex)
 
+    /// Add vertices, if any of the vertices lie outside the bounding box of the current crease pattern, then then
+    /// bounds are expanded to encompass the bounding box.
     let addVertices vertices creasePattern : CreasePattern =
-        mapGraph (Graph.addVertices vertices) creasePattern
+        creasePattern
+        |> expandBoundingBox vertices
+        |> mapGraph (Graph.addVertices vertices)
 
-
+    /// Add multiple edge creases to the crease pattern. If the edge does not lie within the current bounds of the
+    /// crease pattern, this function expands the bounding box.
     let addEdges (edges: Edge seq) creasePattern : CreasePattern =
-        mapGraph (Graph.addEdges edges) creasePattern
+        creasePattern
+        |> expandBoundingBox (Edge.seqVertices edges)
+        |> mapGraph (Graph.addEdges edges)
 
 
     /// Try adding an edge to the crease pattern. If the edge already exists, the same crease pattern will be returned
-    let addEdge (edges: Edge) creasePattern : CreasePattern =
-        mapGraph (Graph.addEdges [ edges ]) creasePattern
+    let addEdge (edge: Edge) creasePattern : CreasePattern =
+        creasePattern
+        |> expandBoundingBox (Tuple2.toList (Edge.vertices edge))
+        |> mapGraph (Graph.addEdges [ edge ])
 
     /// Run the axiom and add in the line segment(s) created by the axiom onto the crease pattern
     let performAxiom axiom (CreasePattern cpData as creasePattern) =
@@ -218,7 +232,7 @@ module CreasePattern =
             | Fold.Mountain -> Mountain
             | Fold.Valley -> Valley
             | Fold.Unassigned -> Unassigned
-            | Fold.Flat -> Unassigned
+            | Fold.Flat -> Flat
 
         let mapUnit unit =
             match unit with

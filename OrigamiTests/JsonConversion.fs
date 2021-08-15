@@ -8,9 +8,11 @@ open FsCheck.NUnit
 open Fold
 open CreasePattern
 open Geometry
+open Utilities
+open Utilities.Test
 
 [<SetUp>]
-let SetUp () = ()
+let SetUp () = Gen.ArbOrigami.Register()
 
 [<Test>]
 let ``Basic Serialization`` () =
@@ -32,16 +34,16 @@ let ``Basic Serialization`` () =
     let vertices =
         Vertices.create
             { coords =
-                  [ Point2D.xy 0. 0.
-                    Point2D.xy 0. 1.
+                  [ Point2D.xy 1. 1.
                     Point2D.xy 1. 0.
-                    Point2D.xy 1. 1. ]
+                    Point2D.xy 0. 0.
+                    Point2D.xy 0. 1. ]
               vertices = []
               faces = [] }
 
     let edges =
         Edges.create
-            { vertices = [ (2, 3); (1, 3); (0, 2); (0, 1) ]
+            { vertices = [ (0, 1); (1, 2); (2, 3); (3, 0) ]
               faces = []
               assignment =
                   [ Fold.Boundary
@@ -139,11 +141,10 @@ let ``Deserialize edges`` () =
 
 
 [<Property>]
-let ``Serialize & Deserialize`` () =
-    let originalMatchesSerialization creasePattern =
+let ``Serialize & Deserialize`` creasePattern =
+    let deserialized =
         creasePattern
         |> CreasePattern.toJson
         |> CreasePattern.fromJson
-        |> (=) creasePattern
 
-    Prop.forAll (Arb.fromGen Gen.creasePattern) originalMatchesSerialization
+    creasePattern .=. deserialized

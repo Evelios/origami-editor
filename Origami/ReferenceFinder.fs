@@ -31,7 +31,6 @@ module ReferenceFinder =
                 
         let creasePattern =
             (CreasePattern.withBoundingBox boundingBox)
-            |> Debug.log "Crease Pattern"
 
         createNode creasePattern 0
         |> ReferenceFinder

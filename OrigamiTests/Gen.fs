@@ -1,27 +1,34 @@
-module CreasePatternTests.Gen
+namespace CreasePatternTests
 
-open FsCheck
+module Gen =
 
-
-open Utilities
-open CreasePattern
-open GeometryTests
+    open FsCheck
 
 
-let edgeAssignment = Gen.ofType<EdgeAssignment>
+    open Utilities
+    open CreasePattern
+    open GeometryTests
 
-let creasePattern =
-    let boundingBoxGen = Gen.boundingBox2D
 
-    let lineInBoundingBox =
-        GenBuilder.gen.Bind(boundingBoxGen, Gen.lineSegment2DInBoundingBox2D)
+    let edgeAssignment = Gen.ofType<EdgeAssignment>
 
-    let creaseInBoundingBox =
-        Gen.map2 Edge.atWithAssignment lineInBoundingBox edgeAssignment
+    let creasePattern =
+        let boundingBoxGen = Gen.boundingBox2D
 
-    Gen.map2
-        (fun boundingBox creases ->
-            CreasePattern.withBoundingBox boundingBox
-            |> CreasePattern.addEdges creases)
-        boundingBoxGen
-        (Gen.listOf creaseInBoundingBox)
+        let lineInBoundingBox =
+            GenBuilder.gen.Bind(boundingBoxGen, Gen.lineSegment2DInBoundingBox2D)
+
+        let creaseInBoundingBox =
+            Gen.map2 Edge.atWithAssignment lineInBoundingBox edgeAssignment
+
+        Gen.map2
+            (fun boundingBox creases ->
+                CreasePattern.withBoundingBox boundingBox
+                |> CreasePattern.addEdges creases)
+            boundingBoxGen
+            (Gen.listOf creaseInBoundingBox)
+
+    type ArbOrigami =
+        static member CreasePattern() = Arb.fromGen creasePattern
+
+        static member Register() = Arb.register<ArbOrigami> () |> ignore

@@ -1,7 +1,7 @@
 namespace CreasePattern
 
 open Geometry
-open Utilities
+open Utilities.Collections
 open Utilities.Extensions
 
 type PointId = int
@@ -10,7 +10,7 @@ type Graph = Graph of GraphData
 
 and GraphData =
     { vertices: Map<PointId, Point2D>
-      edges: Map<PointId * PointId, EdgeAssignment> }
+      edges: Map<UnorderedTuple2<PointId>, EdgeAssignment> }
 
 module Graph =
 
@@ -38,24 +38,25 @@ module Graph =
     /// Check to see if the edge exists in the graph. The edge is checked for assignment and endpoint location. The
     /// endpoints can ve in any order since the graph is undirected.
     let private edgeExists (edge: Edge) (Graph graphData) =
+        let endpointIds =
+            UnorderedTuple2.from (edge.crease.start.GetHashCode()) (edge.crease.finish.GetHashCode())
+
         Map.exists
-            (fun (first, second) assignment ->
+            (fun existingIds assignment ->
                 edge.assignment = assignment
-                && ((edge.crease.start.GetHashCode() = first
-                     && edge.crease.finish.GetHashCode() = second)
-                    || (edge.crease.start.GetHashCode() = second
-                        && edge.crease.finish.GetHashCode() = first)))
+                && endpointIds = existingIds)
             graphData.edges
 
     /// Get all the edges within the graph
     let edges (Graph graphData as graph) =
-        Debug.print "Query Edges" graph
-
         graphData.edges
         |> Map.toSeq
         |> Seq.map
-            (fun ((startId, finishId), assignment) ->
-                Edge.betweenWithAssignment (getVertex startId graph) (getVertex finishId graph) assignment)
+            (fun (endpointIds, assignment) ->
+                Edge.betweenWithAssignment
+                    (getVertex (UnorderedTuple2.fst endpointIds) graph)
+                    (getVertex (UnorderedTuple2.snd endpointIds) graph)
+                    assignment)
 
     /// Get all the vertices within the graph
     let vertices (Graph graphData) = Map.values graphData.vertices
@@ -86,7 +87,10 @@ module Graph =
         let newEdgeMap =
             Seq.fold
                 (fun accGraph (edge: Edge) ->
-                    Map.add (edge.crease.start.GetHashCode(), edge.crease.finish.GetHashCode()) edge.assignment accGraph)
+                    Map.add
+                        (UnorderedTuple2.ofTuple (edge.crease.start.GetHashCode(), edge.crease.finish.GetHashCode()))
+                        edge.assignment
+                        accGraph)
                 graphData.edges
                 edges
 
@@ -102,11 +106,6 @@ module Graph =
                       edge.crease.finish ])
                 edges
             |> Seq.concat
-
-        Debug.print (
-            Seq.toList newVertices
-            |> List.map (fun vert -> vert.GetHashCode())
-        )
 
         let newEdges =
             Seq.filter (fun edge -> not <| edgeExists edge graph) edges

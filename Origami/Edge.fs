@@ -2,6 +2,7 @@ namespace CreasePattern
 
 open System
 open Geometry
+open Utilities.Extensions
 
 [<CustomEquality>]
 [<CustomComparison>]
@@ -82,6 +83,11 @@ module Edge =
     (* Accessors *)
 
     let vertices (edge: Edge) = edge.line.start, edge.line.finish
+    
+    let seqVertices (edges: Edge seq) =
+        Seq.map vertices edges
+        |> Seq.map Tuple2.toList
+        |> Seq.concat
 
     let line (e: Edge) : Line2D = e.line
 

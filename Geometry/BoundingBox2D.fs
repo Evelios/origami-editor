@@ -68,6 +68,8 @@ module BoundingBox2D =
 
     (* Modifiers *)
 
+    /// Get a bounding box that contains the new point. If the box does not contain the new point, the box will grow
+    /// to fit the new point. If the point is within the box, the same bounding box is returned.
     let containingPoint (point: Point2D) (BoundingBox2D box) =
         BoundingBox2D
             {| box with
@@ -76,8 +78,12 @@ module BoundingBox2D =
                    minY = min box.minY point.y
                    maxY = max box.maxY point.y |}
 
+    let containingPoints points box =
+        Seq.fold (fun box point -> containingPoint point box) box points
+
     (* Queries *)
 
+    /// Get the four line segments surrounding the bounding box.
     let lineSegments (bbox: BoundingBox2D) =
         [ LineSegment2D.from bbox.tl bbox.tr
           LineSegment2D.from bbox.tr bbox.bl
