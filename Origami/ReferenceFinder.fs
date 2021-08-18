@@ -11,7 +11,7 @@ module ReferenceFinder =
     (* Builders *)
 
     let init =
-        let maxDepth = 1
+        let maxDepth = 3
 
         let boundingBox =
             BoundingBox2D.from (Point2D.xy 0. 0.) (Point2D.xy 1. 1.)

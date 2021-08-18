@@ -6,7 +6,6 @@ open FsCheck
 open FsCheck.NUnit
 
 open Fold
-open Fold.Json
 
 [<SetUp>]
 let Setup () = Gen.ArbFold.Register()
@@ -16,9 +15,9 @@ let Setup () = Gen.ArbFold.Register()
 let UpdateKeyFrame () =
     let expected =
         { Fold.empty with
-              keyFrame =
+              KeyFrame =
                   { Frame.empty with
-                        author = "The Author" } }
+                        Author = "The Author" } }
 
     let actual =
         Fold.updateFrame 0 (Frame.setAuthor "The Author") Fold.empty
@@ -29,65 +28,62 @@ let UpdateKeyFrame () =
 let UpdateFirstFrame () =
     let expected =
         { Fold.empty with
-              frames =
+              Frames =
                   [ { Frame.empty with
-                          author = "The Author" } ] }
+                          Author = "The Author" } ] }
 
     let actual =
         Fold.updateFrame
             1
             (Frame.setAuthor "The Author")
             { Fold.empty with
-                  frames = [ Frame.empty ] }
+                  Frames = [ Frame.empty ] }
 
     Assert.AreEqual(expected, actual)
 
 (* Serialization and Deserialization *)
 
 let testCases =
-    [ """{"file_spec":1,"frame_unit":"unit"}""", { Fold.empty with spec = 1 }
+    [ """{"file_spec":1,"frame_unit":"unit"}""", { Fold.empty with Spec = 1 }
 
       """{"file_spec":1,"file_creator":"The Creator","frame_unit":"unit"}""",
       { Fold.empty with
-            creator = "The Creator" }
+            Creator = "The Creator" }
 
       """{"file_spec":1,"file_author":"The Author","frame_unit":"unit"}""",
       { Fold.empty with
-            author = "The Author" }
+            Author = "The Author" }
 
-      """{"file_spec":1,"file_title":"The Title","frame_unit":"unit"}""", { Fold.empty with title = "The Title" }
+      """{"file_spec":1,"file_title":"The Title","frame_unit":"unit"}""", { Fold.empty with Title = "The Title" }
 
       """{"file_spec":1,"file_description":"The Description","frame_unit":"unit"}""",
       { Fold.empty with
-            description = "The Description" }
+            Description = "The Description" }
 
       """{"file_spec":1,"file_classes":["singleModel"],"frame_unit":"unit"}""",
       { Fold.empty with
-            classes = Set.ofList [ FileClass.SingleModel ] }
+            Classes = Set.ofList [ FileClass.SingleModel ] }
       """{"file_spec":1,"frame_author":"The Author","frame_unit":"unit"}""",
       { Fold.empty with
-            keyFrame =
+            KeyFrame =
                 { Frame.empty with
-                      author = "The Author" } }
+                      Author = "The Author" } }
       """{"file_spec":1,"file_frames":[{"frame_author":"The Author","frame_unit":"unit"}],"frame_unit":"unit"}""",
       { Fold.empty with
-            frames =
+            Frames =
                 [ { Frame.empty with
-                        author = "The Author" } ] } ]
+                        Author = "The Author" } ] } ]
 
 let deserializationTestCases = Util.toTest testCases
 
 [<TestCaseSource("deserializationTestCases")>]
-let Deserialization source = FoldJson.fromJson source
+let Deserialization source = Fold.fromJson source
 
 let serializationTestCases = Util.toTestReverse testCases
 
 [<TestCaseSource("serializationTestCases")>]
-let Serialization source = FoldJson.toJsonUnformatted source
+let Serialization source = Fold.toJsonUnformatted source
 
 [<Property>]
 let ``Serialize and Deserialize`` fold =
-    fold
-    |> FoldJson.toJson
-    |> FoldJson.fromJson
-    |> (=) fold
+    fold |> Fold.toJson |> Fold.fromJson |> (=) fold

@@ -2,7 +2,7 @@ namespace Utilities.Extensions
 
 module Tuple2 =
     let pair x y = x, y
-    
+
     let replicate x = x, x
 
     let curry f x y = f (x, y)
@@ -16,6 +16,7 @@ module Tuple2 =
     let mapFst f (x, y) = f x, y
 
     let mapSnd f (x, y) = x, f y
+    let mapBoth f (x, y) = f x, f y
 
     let extendFst f (x, y) = f (x, y), y
 
@@ -30,8 +31,8 @@ module Tuple2 =
         match f y with
         | Some y' -> Some(x, y')
         | None -> None
-        
-    let toList (x, y) = [x; y]
+
+    let toList (x, y) = [ x; y ]
 
 module Tuple3 =
     let map f (x, y, z) = f x y z

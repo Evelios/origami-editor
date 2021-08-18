@@ -1,17 +1,21 @@
 namespace Geometry
 
-type Size = { width: float; height: float }
+type Size =
+    private
+        { width: float
+          height: float }
+    member this.Width = this.width
+    member this.Height = this.height
 
 module Size =
 
     let create width height = { width = width; height = height }
 
-    let scale scale size =
-        { width = size.width * scale
-          height = size.height * scale }
+    let scale scale (size: Size) =
+        { width = size.Width * scale
+          height = size.Height * scale }
 
-    let normalizeBelowOne size = scale (1. / max size.width size.height) size
-    
-    let withMaxSize size =
-        normalizeBelowOne >> scale size
-        
+    let normalizeBelowOne (size: Size) =
+        scale (1. / max size.Width size.Height) size
+
+    let withMaxSize size = normalizeBelowOne >> scale size

@@ -10,6 +10,7 @@ type rad
 type deg
 
 type Angle =
+    private
     | Radians of float<rad>
 
     (* Operators *)

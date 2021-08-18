@@ -3,7 +3,6 @@ module FoldTests.ExampleFileReading
 open System.IO
 open NUnit.Framework
 open Fold
-open Fold.Json
 
 [<SetUp>]
 let Setup () = ()
@@ -16,5 +15,5 @@ let exampleFoldFiles =
 let exampleFileParsing path =
     Assert.DoesNotThrow(fun () ->
         File.ReadAllText path
-        |> FoldJson.fromJson
+        |> Fold.fromJson
         |> ignore)

@@ -6,19 +6,17 @@ open Utilities.Extensions
 
 type PointId = int
 
-type Graph = Graph of GraphData
-
-and GraphData =
-    { vertices: Map<PointId, Point2D>
-      edges: Map<UnorderedTuple2<PointId>, EdgeAssignment> }
+type Graph =
+    private
+        { vertices: Map<PointId, Point2D>
+          edges: Map<UnorderedTuple2<PointId>, EdgeAssignment> }
 
 module Graph =
 
     (* Builder *)
     let empty =
-        Graph
-            { vertices = Map.empty
-              edges = Map.empty }
+        { vertices = Map.empty
+          edges = Map.empty }
 
     (* Accessors *)
 
@@ -28,28 +26,28 @@ module Graph =
     ///     Raised when the point is not in the graph. This shouldn't happen
     ///     unless the graph was put into an invalid state.
     /// </exception>
-    let private getVertex pointId (Graph graphData) = Map.find pointId graphData.vertices
+    let private getVertex pointId graph = Map.find pointId graph.vertices
 
     // TODO: this check may be problematic. Ensure that the id isn't sensitive to tolerances
     /// Determine if the point is in the graph. This point checks for both equality and id existence
-    let private vertexExists (vertex: Point2D) (Graph graphData) =
-        Map.exists (fun id point -> vertex.GetHashCode() = id && vertex = point) graphData.vertices
+    let private vertexExists (vertex: Point2D) graph =
+        Map.exists (fun id point -> vertex.GetHashCode() = id && vertex = point) graph.vertices
 
     /// Check to see if the edge exists in the graph. The edge is checked for assignment and endpoint location. The
     /// endpoints can ve in any order since the graph is undirected.
-    let private edgeExists (edge: Edge) (Graph graphData) =
+    let private edgeExists (edge: Edge) graph =
         let endpointIds =
-            UnorderedTuple2.from (edge.crease.start.GetHashCode()) (edge.crease.finish.GetHashCode())
+            UnorderedTuple2.from (edge.Crease.Start.GetHashCode()) (edge.Crease.Finish.GetHashCode())
 
         Map.exists
             (fun existingIds assignment ->
                 edge.assignment = assignment
                 && endpointIds = existingIds)
-            graphData.edges
+            graph.edges
 
     /// Get all the edges within the graph
-    let edges (Graph graphData as graph) =
-        graphData.edges
+    let edges graph =
+        graph.edges
         |> Map.toSeq
         |> Seq.map
             (fun (endpointIds, assignment) ->
@@ -57,15 +55,16 @@ module Graph =
                     (getVertex (UnorderedTuple2.fst endpointIds) graph)
                     (getVertex (UnorderedTuple2.snd endpointIds) graph)
                     assignment)
+        |> Seq.sort
 
     /// Get all the vertices within the graph
-    let vertices (Graph graphData) = Map.values graphData.vertices
+    let vertices graph = Map.values graph.vertices |> Seq.sort
 
 
     (* Modifiers *)
 
     /// Adds any new vertices to the graph. Any vertices that already exist will not be added
-    let addVertices vertices (Graph graphData as graph) =
+    let addVertices vertices graph =
         let verticesToAdd =
             vertices
             |> Seq.filter (fun vertex -> not <| vertexExists vertex graph)
@@ -73,39 +72,31 @@ module Graph =
         let newVerticesMap =
             Seq.fold
                 (fun accGraph vertex -> Map.add (vertex.GetHashCode()) vertex accGraph)
-                graphData.vertices
+                graph.vertices
                 verticesToAdd
 
-        Graph
-            { graphData with
-                  vertices = newVerticesMap }
+        { graph with vertices = newVerticesMap }
 
     /// Adds any vertex to the graph. Any vertices that already exist will not be added
     let addVertex vertex graph = addVertices [ vertex ] graph
 
-    let private addEdgesUnsafe (edges: Edge seq) (Graph graphData) =
+    let private addEdgesUnsafe (edges: Edge seq) graph =
         let newEdgeMap =
             Seq.fold
                 (fun accGraph (edge: Edge) ->
                     Map.add
-                        (UnorderedTuple2.ofTuple (edge.crease.start.GetHashCode(), edge.crease.finish.GetHashCode()))
+                        (UnorderedTuple2.ofTuple (edge.Crease.Start.GetHashCode(), edge.Crease.Finish.GetHashCode()))
                         edge.assignment
                         accGraph)
-                graphData.edges
+                graph.edges
                 edges
 
-        Graph { graphData with edges = newEdgeMap }
+        { graph with edges = newEdgeMap }
 
 
     /// Add edges to the graph
     let addEdges (edges: Edge seq) graph =
-        let newVertices =
-            Seq.map
-                (fun (edge: Edge) ->
-                    [ edge.crease.start
-                      edge.crease.finish ])
-                edges
-            |> Seq.concat
+        let newVertices = Edge.seqVertices edges |> Set.ofSeq
 
         let newEdges =
             Seq.filter (fun edge -> not <| edgeExists edge graph) edges

@@ -22,8 +22,6 @@
         <Compile Include="Faces.fs" />
         <Compile Include="Frame.fs" />
         <Compile Include="Fold.fs" />
-        <Compile Include="Json\FrameJson.fs" />
-        <Compile Include="Json\FoldJson.fs" />
     </ItemGroup>
 
     <ItemGroup>

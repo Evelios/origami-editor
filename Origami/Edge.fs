@@ -7,24 +7,17 @@ open Utilities.Extensions
 [<CustomEquality>]
 [<CustomComparison>]
 type Edge =
-    | Edge of
-        {| line: LineSegment2D
-           assignment: EdgeAssignment |}
+    { crease: LineSegment2D
+      assignment: EdgeAssignment }
 
     (* Accessors *)
 
-    member this.crease =
-        match this with
-        | Edge edge -> edge.line
+    member this.Crease = this.crease
 
     member this.line =
-        match this with
-        | Edge edge -> Line2D.through edge.line.start edge.line.finish
+        Line2D.through this.Crease.Start this.Crease.Finish
 
-
-    member this.assignment =
-        match this with
-        | Edge edge -> edge.assignment
+    member this.Assignment = this.assignment
 
     (* Interfaces *)
 
@@ -43,29 +36,28 @@ type Edge =
         else 1
 
     member this.LessThan(other) =
-        LineSegment2D.from this.crease.start this.crease.finish < LineSegment2D.from
-                                                                      other.crease.start
-                                                                      other.crease.finish
+        if this.crease = other.crease then
+            this.assignment < other.assignment
+        else
+            this.crease < other.crease
 
     override this.Equals(obj: obj) : bool =
         match obj with
         | :? Edge as other ->
-            LineSegment2D.from this.crease.start this.crease.finish = LineSegment2D.from
-                                                                          other.crease.start
-                                                                          other.crease.finish
+            this.crease = other.crease
             && this.assignment = other.assignment
         | _ -> false
 
-    override this.GetHashCode() : int = failwith "not implemented"
+    override this.GetHashCode() : int =
+        HashCode.Combine(this.crease, this.assignment)
 
 module Edge =
 
     (* Builders *)
 
-    let atWithAssignment line assignment =
-        Edge
-            {| line = line
-               assignment = assignment |}
+    let atWithAssignment crease assignment =
+        { crease = crease
+          assignment = assignment }
 
     let betweenWithAssignment start finish assignment =
         atWithAssignment (LineSegment2D.from start finish) assignment
@@ -73,17 +65,17 @@ module Edge =
 
     (* Modifiers *)
 
-    let scale (x: float) (Edge edge: Edge) =
-        Edge {| edge with line = edge.line * x |}
+    let scale (x: float) edge = { edge with crease = edge.crease * x }
 
-    let distanceToVertex vertex (Edge edge) =
-        edge.line |> LineSegment2D.distanceToPoint vertex
+    let distanceToVertex vertex edge =
+        edge.crease
+        |> LineSegment2D.distanceToPoint vertex
 
 
     (* Accessors *)
 
-    let vertices (edge: Edge) = edge.line.start, edge.line.finish
-    
+    let vertices (edge: Edge) = edge.Crease.Start, edge.Crease.Finish
+
     let seqVertices (edges: Edge seq) =
         Seq.map vertices edges
         |> Seq.map Tuple2.toList

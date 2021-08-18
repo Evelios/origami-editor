@@ -11,7 +11,6 @@ module FileMenu =
     open System.IO
 
     open Fold
-    open Fold.Json
     open CreasePattern
     open Gui.Widgets
     open Gui
@@ -56,7 +55,7 @@ module FileMenu =
             match FileLoader.loadFoldFile path with
             | Ok foldContents ->
                 { state with
-                      creasePattern = CreasePattern.fromFoldFrame foldContents.keyFrame },
+                      creasePattern = CreasePattern.fromFoldFrame foldContents.KeyFrame },
                 Cmd.none,
                 FoldFileLoaded
 
@@ -74,7 +73,7 @@ module FileMenu =
             let foldText =
                 Fold.empty
                 |> Fold.setKeyFrame (CreasePattern.toFoldFrame state.creasePattern)
-                |> FoldJson.toJson
+                |> Fold.toJson
 
             let writeToFile () =
                 async { File.WriteAllText(path, foldText) }

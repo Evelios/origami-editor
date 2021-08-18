@@ -1,16 +1,18 @@
 ﻿namespace Geometry
 
 open System
-open System
 open FSharp.Json
-open Utilities
 
 [<CustomEquality>]
 [<CustomComparison>]
 [<RequireQualifiedAccess>]
 type Point2D =
-    { x: float
-      y: float }
+    private
+        { x: float
+          y: float }
+
+    member this.X = this.x
+    member this.Y = this.y
 
     (* Comparable interfaces *)
 
@@ -43,8 +45,7 @@ type Point2D =
         almostEqual this.x other.x
         && almostEqual this.y other.y
 
-    override this.GetHashCode() =
-        HashCode.Combine(Math.Round(this.x, DigitPrecision), Math.Round(this.y, DigitPrecision))
+    override this.GetHashCode() = HashCode.Combine(this.x, this.y)
 
     static member (-)(lhs: Point2D, rhs: Point2D) : Vector2D =
         Vector2D.xy (lhs.x - rhs.x) (lhs.y - rhs.y)
@@ -66,8 +67,9 @@ module Point2D =
 
     let xy (x: float) (y: float) : Point2D = { x = x; y = y }
 
+    let ofPolar r a = xy (r * Angle.cos a) (r * Angle.sin a)
 
-    let scale x y (point: Point2D) = { x = point.x * x; y = point.y * y }
+    let scale x y (point: Point2D) : Point2D = { x = point.x * x; y = point.y * y }
 
     (* Modifiers *)
 

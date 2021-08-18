@@ -34,8 +34,8 @@ module CreasePatternComponents =
         let finishScaled = finish * translation.xRatio
 
         Line.create
-        <| [ Line.startPoint (Point(startScaled.x, startScaled.y))
-             Line.endPoint (Point(finishScaled.x, finishScaled.y))
+        <| [ Line.startPoint (Point(startScaled.X, startScaled.Y))
+             Line.endPoint (Point(finishScaled.X, finishScaled.Y))
              Line.stroke theme.dragColor
              Line.strokeThickness theme.lineThickness
              Line.strokeLineCap PenLineCap.Round
@@ -62,8 +62,8 @@ module CreasePatternComponents =
             Edge.scale options.translation.yRatio options.edge
 
         Line.create
-        <| [ Line.startPoint (Point(scaledEdge.crease.start.x, scaledEdge.crease.start.y))
-             Line.endPoint (Point(scaledEdge.crease.finish.x, scaledEdge.crease.finish.y))
+        <| [ Line.startPoint (Point(scaledEdge.Crease.Start.X, scaledEdge.Crease.Start.Y))
+             Line.endPoint (Point(scaledEdge.Crease.Finish.X, scaledEdge.Crease.Finish.Y))
              Line.stroke options.color
              Line.strokeThickness theme.lineThickness
              Line.strokeLineCap PenLineCap.Round ]
@@ -108,8 +108,8 @@ module CreasePatternComponents =
         Ellipse.create
         <| [ Ellipse.width options.size
              Ellipse.height options.size
-             Ellipse.left (scaledVertex.x - options.size / 2.)
-             Ellipse.top (scaledVertex.y - options.size / 2.)
+             Ellipse.left (scaledVertex.X - options.size / 2.)
+             Ellipse.top (scaledVertex.Y - options.size / 2.)
              Ellipse.fill options.color ]
         :> IView
 

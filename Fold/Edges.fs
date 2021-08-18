@@ -10,21 +10,21 @@ type EdgeAssignment =
     | [<JsonUnionCase("U")>] Unassigned
 
 type Edges =
-    { vertices: (int * int) list
-      faces: (int * int option) list
-      assignment: EdgeAssignment list
-      foldAngle: float list // should be angle
-      length: float list
-      orders: (int (*edge id*)  * int (*edge id*)  * int (*order*) ) list }
+    { Vertices: (int * int) list
+      Faces: (int * int option) list
+      Assignment: EdgeAssignment list
+      FoldAngle: float list // should be angle
+      Length: float list
+      Orders: (int (*edge id*)  * int (*edge id*)  * int (*order*) ) list }
 
 module Edges =
-    
-    let create a: Edges = a
-    
-    let empty: Edges =
-        { vertices = []
-          faces = []
-          assignment = []
-          foldAngle = []
-          length = []
-          orders = [] }
+
+    let create a : Edges = a
+
+    let empty : Edges =
+        { Vertices = []
+          Faces = []
+          Assignment = []
+          FoldAngle = []
+          Length = []
+          Orders = [] }

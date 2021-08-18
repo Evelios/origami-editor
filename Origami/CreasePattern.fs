@@ -1,36 +1,16 @@
 ﻿namespace CreasePattern
 
-open Fold.Json
 open Geometry
 
 type Label = int
 
 type CreasePattern =
-    | CreasePattern of CreasePatternData
-
-    member this.unit =
-        match this with
-        | CreasePattern cp -> cp.unit
-
-    member this.author =
-        match this with
-        | CreasePattern cp -> cp.author
-
-    member this.title =
-        match this with
-        | CreasePattern cp -> cp.title
-
-    member this.description =
-        match this with
-        | CreasePattern cp -> cp.description
-
-and CreasePatternData =
-    { bounds: BoundingBox2D
-      graph: Graph
-      unit: LengthUnit
-      author: string
-      title: string
-      description: string }
+    { Bounds: BoundingBox2D
+      Graph: Graph
+      Unit: LengthUnit
+      Author: string
+      Title: string
+      Description: string }
 
 
 module CreasePattern =
@@ -42,29 +22,28 @@ module CreasePattern =
      * has a width and height of 1.
      *)
     let empty : CreasePattern =
-        CreasePattern
-            { bounds = BoundingBox2D.empty
-              graph = Graph.empty
-              unit = Unitless
-              author = ""
-              title = ""
-              description = "" }
+        { Bounds = BoundingBox2D.empty
+          Graph = Graph.empty
+          Unit = Unitless
+          Author = ""
+          Title = ""
+          Description = "" }
 
     (* Accessors *)
 
     let private asEdge (start, finish, assignment) =
         Edge.betweenWithAssignment start finish assignment
 
-    let size (CreasePattern creasePattern) =
+    let size creasePattern =
         Size.create
-            (creasePattern.bounds.maxX
-             - creasePattern.bounds.minX)
-            (creasePattern.bounds.maxY
-             - creasePattern.bounds.minY)
+            (creasePattern.Bounds.MaxX
+             - creasePattern.Bounds.MinX)
+            (creasePattern.Bounds.MaxY
+             - creasePattern.Bounds.MinY)
 
-    let edges (CreasePattern creasePattern) : Edge seq = Graph.edges creasePattern.graph
+    let edges creasePattern : Edge seq = Graph.edges creasePattern.Graph
 
-    let vertices (CreasePattern creasePattern) : Point2D seq = Graph.vertices creasePattern.graph
+    let vertices creasePattern : Point2D seq = Graph.vertices creasePattern.Graph
 
     let elements creasePattern : GraphElement seq =
         Seq.append (Seq.map VertexElement (vertices creasePattern)) (Seq.map EdgeElement (edges creasePattern))
@@ -73,32 +52,27 @@ module CreasePattern =
 
     (* Modifiers *)
 
-    let private setBoundingBox boundingBox (CreasePattern creasePattern) =
-        CreasePattern
-            { creasePattern with
-                  bounds = boundingBox }
+    let private setBoundingBox boundingBox creasePattern =
+        { creasePattern with
+              Bounds = boundingBox }
 
-    let private expandBoundingBox vertices (CreasePattern cpData as creasePattern) =
-        setBoundingBox (BoundingBox2D.containingPoints vertices cpData.bounds) creasePattern
+    let private expandBoundingBox vertices creasePattern =
+        setBoundingBox (BoundingBox2D.containingPoints vertices creasePattern.Bounds) creasePattern
 
-    let setUnit unit (CreasePattern creasePattern) =
-        CreasePattern { creasePattern with unit = unit }
+    let setUnit unit creasePattern = { creasePattern with Unit = unit }
 
-    let setAuthor author (CreasePattern creasePattern) =
-        CreasePattern { creasePattern with author = author }
+    let setAuthor author creasePattern = { creasePattern with Author = author }
 
-    let setTitle title (CreasePattern creasePattern) =
-        CreasePattern { creasePattern with title = title }
+    let setTitle title creasePattern = { creasePattern with Title = title }
 
-    let setDescription description (CreasePattern creasePattern) =
-        CreasePattern
-            { creasePattern with
-                  description = description }
+    let setDescription description creasePattern =
 
-    let private mapGraph f (CreasePattern creasePatternData) =
-        CreasePattern
-            { creasePatternData with
-                  graph = f creasePatternData.graph }
+        { creasePattern with
+              Description = description }
+
+    let private mapGraph f creasePattern =
+        { creasePattern with
+              Graph = f creasePattern.Graph }
 
     let addVertex vertex creasePattern : CreasePattern =
         creasePattern
@@ -127,20 +101,20 @@ module CreasePattern =
         |> mapGraph (Graph.addEdges [ edge ])
 
     /// Run the axiom and add in the line segment(s) created by the axiom onto the crease pattern
-    let performAxiom axiom (CreasePattern cpData as creasePattern) =
+    let performAxiom axiom creasePattern =
         Axiom.perform axiom
-        |> List.filterMap (Boolean2D.boundingBoxAndLine cpData.bounds)
+        |> List.filterMap (Boolean2D.boundingBoxAndLine creasePattern.Bounds)
         |> List.map (fun line -> Edge.atWithAssignment line EdgeAssignment.Unassigned)
         |> fun edges -> addEdges edges creasePattern
 
     (* Queries *)
 
     /// Get the vertex in the crease pattern that is the closest to a given vertex
-    let closestVertex vertex (CreasePattern creasePatternData) : (Point2D * float) option =
+    let closestVertex vertex creasePattern : (Point2D * float) option =
         let distSquaredToVertex = Point2D.distanceSquaredTo vertex
 
         let closestDistanceSquared, closestVertex =
-            Graph.vertices creasePatternData.graph
+            Graph.vertices creasePattern.Graph
             |> Seq.fold
                 (fun (distanceSquared, closestVertex) nextVertex ->
                     let nextDistanceSquared = distSquaredToVertex nextVertex
@@ -202,13 +176,9 @@ module CreasePattern =
 
     /// Create a rectangular crease pattern from it's bounding box
     let withBoundingBox boundingBox =
-        let corners = BoundingBox2D.corners boundingBox
-
         let boundaries =
-            [ Edge.betweenWithAssignment corners.tl corners.tr EdgeAssignment.Boundary
-              Edge.betweenWithAssignment corners.tr corners.br EdgeAssignment.Boundary
-              Edge.betweenWithAssignment corners.br corners.bl EdgeAssignment.Boundary
-              Edge.betweenWithAssignment corners.bl corners.tl EdgeAssignment.Boundary ]
+            BoundingBox2D.lineSegments boundingBox
+            |> List.map (fun crease -> Edge.atWithAssignment crease EdgeAssignment.Boundary)
 
         empty
         |> setBoundingBox boundingBox
@@ -224,7 +194,7 @@ module CreasePattern =
 
     /// Convert the frame values in the fold file to a crease pattern
     let fromFoldFrame (frame: Fold.Frame) : CreasePattern =
-        let coordinates = Array.ofList frame.vertices.coords
+        let coordinates = Array.ofList frame.Vertices.Coordinates
 
         let mapEdgeAssignment assignment =
             match assignment with
@@ -244,15 +214,17 @@ module CreasePattern =
         let graphEdges =
             List.map2
                 (fun (first, second) -> Edge.betweenWithAssignment coordinates.[first] coordinates.[second])
-                frame.edges.vertices
-                (List.map mapEdgeAssignment frame.edges.assignment)
+                frame.Edges.Vertices
+                (List.map mapEdgeAssignment frame.Edges.Assignment)
 
-        empty
-        |> addEdges graphEdges
-        |> setUnit (mapUnit frame.unit)
-        |> setAuthor frame.author
-        |> setTitle frame.title
-        |> setDescription frame.description
+        let creasePattern =
+            empty
+            |> addEdges graphEdges
+            |> setUnit (mapUnit frame.Unit)
+            |> setAuthor frame.Author
+            |> setTitle frame.Title
+            |> setDescription frame.Description
+        creasePattern
 
     /// Add in the crease pattern values into the fold frame
     let toFoldFrame (creasePattern: CreasePattern) : Fold.Frame =
@@ -263,12 +235,13 @@ module CreasePattern =
 
         let vertices =
             Fold.Vertices.create
-                { coords = vertices creasePattern |> List.ofSeq
-                  vertices = []
-                  faces = [] }
+                { Coordinates = vertices creasePattern |> List.ofSeq
+                  Vertices = []
+                  Faces = [] }
 
         let edgeVertices : (Point2D * Point2D) list =
-            Seq.map Edge.vertices (edges creasePattern)
+            edges creasePattern
+            |> Seq.map Edge.vertices
             |> List.ofSeq
 
         let edgeVerticesIndexed =
@@ -284,14 +257,14 @@ module CreasePattern =
 
         let foldEdges =
             Fold.Edges.create
-                { vertices = edgeVerticesIndexed
-                  faces = []
-                  assignment =
+                { Vertices = edgeVerticesIndexed
+                  Faces = []
+                  Assignment =
                       Seq.map (Edge.assignment >> mapEdgeAssignment) (edges creasePattern)
                       |> List.ofSeq
-                  foldAngle = []
-                  length = []
-                  orders = [] }
+                  FoldAngle = []
+                  Length = []
+                  Orders = [] }
 
         let mapUnit unit =
             match unit with
@@ -301,10 +274,10 @@ module CreasePattern =
 
 
         Fold.Frame.empty
-        |> Fold.Frame.setUnit (mapUnit creasePattern.unit)
-        |> Fold.Frame.setAuthor creasePattern.author
-        |> Fold.Frame.setTitle creasePattern.title
-        |> Fold.Frame.setDescription creasePattern.description
+        |> Fold.Frame.setUnit (mapUnit creasePattern.Unit)
+        |> Fold.Frame.setAuthor creasePattern.Author
+        |> Fold.Frame.setTitle creasePattern.Title
+        |> Fold.Frame.setDescription creasePattern.Description
         |> Fold.Frame.setVertices vertices
         |> Fold.Frame.setEdges foldEdges
 
@@ -315,9 +288,9 @@ module CreasePattern =
     let toJson creasePattern =
         Fold.empty
         |> Fold.setKeyFrame (toFoldFrame creasePattern)
-        |> FoldJson.toJson
+        |> Fold.toJson
 
     let fromJson json =
-        FoldJson.fromJson json
-        |> (fun fold -> fold.keyFrame)
+        Fold.fromJson json
+        |> (fun fold -> fold.KeyFrame)
         |> fromFoldFrame

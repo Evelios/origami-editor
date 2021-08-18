@@ -1,5 +1,7 @@
 namespace Gui.Tabs.CreasePatternTab.Drawing
 
+open Utilities
+
 module CreasePatternCanvas =
 
     open Avalonia
@@ -71,7 +73,7 @@ module CreasePatternCanvas =
 
             let edgeWithin =
                 CreasePattern.edgeWithin convertedCloseDistance convertedVertex state.creasePattern
-
+                
             let hover =
                 match vertexWithin, edgeWithin with
                 | Some vertex, _ -> Some(VertexElement vertex)
@@ -143,8 +145,8 @@ module CreasePatternCanvas =
             |> List.append selectedElements
             |> List.rev
 
-        Canvas.create [ Canvas.height state.pageSize.height
-                        Canvas.width state.pageSize.width
+        Canvas.create [ Canvas.height state.pageSize.Height
+                        Canvas.width state.pageSize.Width
                         Canvas.background Theme.palette.canvasBackground
                         Canvas.children canvasElements
                         Canvas.name canvasName ]

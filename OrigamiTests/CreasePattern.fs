@@ -37,16 +37,15 @@ let ``Adding Redundant Elements`` given actual = Assert.AreEqual(given, actual)
 let ``Get edges from crease pattern`` () =
     let edges =
         [ Point2D.xy 0. 0., Point2D.xy 1. 1., EdgeAssignment.Flat
-          Point2D.xy 1. 1., Point2D.xy 0. 0., EdgeAssignment.Flat
-          Point2D.xy 1. 0., Point2D.xy 0. 1., EdgeAssignment.Flat ]
+          Point2D.xy 1. 0., Point2D.xy 0. 1., EdgeAssignment.Flat
+          Point2D.xy 1. 1., Point2D.xy 1. 1., EdgeAssignment.Flat ]
         |> List.map (Tuple3.map Edge.betweenWithAssignment)
 
     let creasePatternEdges =
         CreasePattern.empty
         |> CreasePattern.addEdges edges
         |> CreasePattern.edges
-
-    printf $"{creasePatternEdges}"
+        |> List.ofSeq
 
     CollectionAssert.AreEqual(edges, creasePatternEdges)
 
@@ -89,6 +88,6 @@ let edgeCloseTestCases =
 
 [<TestCaseSource(nameof edgeCloseTestCases)>]
 let ``Point Close To Edge`` edge test =
-    CreasePattern.create
+    CreasePattern.empty
     |> CreasePattern.addEdge edge
     |> CreasePattern.edgeWithin closeDistance test

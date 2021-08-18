@@ -1,17 +1,19 @@
 module CreasePatternTests.Axioms
 
+open NUnit.Framework
+open FsCheck
+open FsCheck.NUnit
+
 open CreasePattern
 open Geometry
-open FsCheck
-open NUnit.Framework
+open GeometryTests
 
-// Todo: Create generators for points
-//[<Test>]
-//let ``Axiom one: points are on resulting line`` () =
-//    let axiomOne (p1: Point2D) (p2: Point2D) =
-//        let result = Axioms.first p1 p2
-//
-//        Line2D.isPointOnLine p1 result
-//        && Line2D.isPointOnLine p2 result
-//
-//    Check.QuickThrowOnFailure axiomOne
+[<SetUp>]
+let SetUp () = Gen.ArbGeometry.Register()
+
+[<Property>]
+let ``Axiom one: points are on resulting line`` p1 p2 =
+    let result = Axiom.first p1 p2
+
+    Line2D.isPointOnLine p1 result
+    && Line2D.isPointOnLine p2 result

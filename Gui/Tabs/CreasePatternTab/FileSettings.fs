@@ -33,22 +33,22 @@ module FileSettings =
 
               Form.dropdownSelection
                   {| name = "Units"
-                     selected = creasePattern.unit
+                     selected = creasePattern.Unit
                      onSelected = Msg.SelectUnit >> dispatch |}
 
               Form.textItem
                   {| name = "Author"
-                     value = creasePattern.author
+                     value = creasePattern.Author
                      onSelected = Msg.ChangeAuthor >> dispatch |}
 
               Form.textItem
                   {| name = "Title"
-                     value = creasePattern.title
+                     value = creasePattern.Title
                      onSelected = Msg.ChangeTitle >> dispatch |}
 
               Form.multiline
                   {| name = "Description"
-                     value = creasePattern.description
+                     value = creasePattern.Description
                      onSelected = Msg.ChangeDescription >> dispatch |} ]
 
         let panel =

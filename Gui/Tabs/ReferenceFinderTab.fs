@@ -18,11 +18,13 @@ module ReferenceFinderTab =
         | ChangeYInput of string
         | RunReferenceFinder
 
-    let init: ReferenceFinderTabState =
-        { x = 0.5
-          y = 0.5
-          xInput = "0.5"
-          yInput = "0.5"
+    let init : ReferenceFinderTabState =
+        let x, y = 0.33, 0.33
+
+        { x = x
+          y = y
+          xInput = x.ToString()
+          yInput = y.ToString()
           referenceFinder = ReferenceFinder.init
           creasePattern = CreasePattern.create }
 
@@ -37,14 +39,12 @@ module ReferenceFinderTab =
             | Some newY -> { state with y = newY }
             | None -> state
         | RunReferenceFinder ->
-            printf $"{ReferenceFinder.bestFoldSequenceTo (Point2D.xy state.x state.y) state.referenceFinder}"
-
             { state with
                   creasePattern = ReferenceFinder.bestFoldSequenceTo (Point2D.xy state.x state.y) state.referenceFinder }
 
 
     let view (state: ReferenceFinderTabState) dispatch =
-        let coordinates: IView list =
+        let coordinates : IView list =
             [ Form.textItem
                 {| name = "X"
                    value = state.xInput

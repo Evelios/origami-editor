@@ -70,9 +70,9 @@ module CreasePatternDrawing =
 
         Line.create
         <| [ Line.startPoint
-             <| Point(scaledEdge.crease.start.x, scaledEdge.crease.start.y)
+             <| Point(scaledEdge.Crease.Start.X, scaledEdge.Crease.Start.Y)
              Line.endPoint
-             <| Point(scaledEdge.crease.finish.x, scaledEdge.crease.finish.y)
+             <| Point(scaledEdge.Crease.Finish.X, scaledEdge.Crease.Finish.Y)
              Line.stroke (edgeColor options.state options.edge.assignment)
              Line.strokeThickness theme.lineThickness
              Line.strokeLineCap PenLineCap.Round ]
@@ -90,8 +90,8 @@ module CreasePatternDrawing =
         Ellipse.create
         <| [ Ellipse.width options.size
              Ellipse.height options.size
-             Ellipse.left (scaledVertex.x - options.size / 2.)
-             Ellipse.top (scaledVertex.y - options.size / 2.)
+             Ellipse.left (scaledVertex.X - options.size / 2.)
+             Ellipse.top (scaledVertex.Y - options.size / 2.)
              Ellipse.fill (vertexColor options.state) ]
         :> IView
 

@@ -6,16 +6,12 @@ open Geometry
 [<CustomEquality>]
 [<CustomComparison>]
 type LineSegment2D =
-    | LineSegment2D of {| start: Point2D; finish: Point2D |}
+    private
+        { start: Point2D
+          finish: Point2D }
 
-    member this.start =
-        match this with
-        | LineSegment2D line -> line.start
-
-    member this.finish =
-        match this with
-        | LineSegment2D line -> line.finish
-
+    member this.Start = this.start
+    member this.Finish = this.finish
 
     interface IComparable<LineSegment2D> with
         member this.CompareTo(line) = this.Comparison(line)
@@ -31,7 +27,7 @@ type LineSegment2D =
         elif this.LessThan(other) then -1
         else 1
 
-    member this.LessThan(LineSegment2D other: LineSegment2D) =
+    member this.LessThan(other: LineSegment2D) =
         let firstLower = min this.start this.finish
 
         let firstGreater = max this.start this.finish
@@ -54,18 +50,16 @@ type LineSegment2D =
                 && this.finish = other.start)
         | _ -> false
 
-    static member (*)(LineSegment2D lhs: LineSegment2D, rhs: float) : LineSegment2D =
-        LineSegment2D
-            {| start = lhs.start * rhs
-               finish = lhs.finish * rhs |}
+    static member (*)(lhs: LineSegment2D, rhs: float) : LineSegment2D =
+        { start = lhs.start * rhs
+          finish = lhs.finish * rhs }
 
 
     static member (*)(lhs: float, rhs: LineSegment2D) : LineSegment2D = rhs * lhs
 
-    static member (/)(LineSegment2D lhs: LineSegment2D, rhs: float) : LineSegment2D =
-        LineSegment2D
-            {| start = lhs.start / rhs
-               finish = lhs.finish / rhs |}
+    static member (/)(lhs: LineSegment2D, rhs: float) : LineSegment2D =
+        { start = lhs.start / rhs
+          finish = lhs.finish / rhs }
 
 
     static member (/)(lhs: float, rhs: LineSegment2D) : LineSegment2D = rhs / lhs
@@ -78,8 +72,7 @@ module LineSegment2D =
 
     /// Generate a line segment from two points. This doesn't perform any checks ensuring that the points are not equal.
     /// If that is the behavior that you want you should use <see cref="safeFrom"/> function.
-    let from (start: Point2D) (finish: Point2D) =
-        LineSegment2D {| start = start; finish = finish |}
+    let from (start: Point2D) (finish: Point2D) = { start = start; finish = finish }
 
     /// Safely create a line segment. This function returns `None` when the two points are almost equal.
     /// This has to do with the <see cref="Geometry.Internal.Tolerance"/>.
@@ -91,9 +84,8 @@ module LineSegment2D =
 
     /// Create a line segment starting at point in a particular direction and length
     let fromPointAndVector (start: Point2D) (direction: Vector2D) =
-        LineSegment2D
-            {| start = start
-               finish = start + direction |}
+        { start = start
+          finish = start + direction }
 
 
     (* Attributes *)

@@ -29,7 +29,7 @@ let ``Edge insert order independent`` creases =
 let ``Edge start point and end point order independent`` edges =
     let reversedEdges =
         List.map
-            (fun (edge: Edge) -> Edge.betweenWithAssignment edge.crease.finish edge.crease.start edge.assignment)
+            (fun (edge: Edge) -> Edge.betweenWithAssignment edge.Crease.Finish edge.Crease.Start edge.Assignment)
             edges
 
     Graph.addEdges edges Graph.empty

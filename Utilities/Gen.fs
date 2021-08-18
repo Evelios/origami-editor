@@ -1,5 +1,6 @@
 namespace Utilities
 
+open System
 open FsCheck
 open Utilities.Extensions
 
@@ -7,14 +8,13 @@ module Gen =
     let map7 fn a b c d e f g =
         Gen.apply (Gen.apply (Gen.apply (Gen.apply (Gen.apply (Gen.apply (Gen.map fn a) b) c) d) e) f) g
 
+    /// Generates a random number from [0.0, 1.0]
+    let rand =
+        Gen.choose (0, Int32.MaxValue)
+        |> Gen.map (fun x -> float x / (float Int32.MaxValue))
+
     let floatBetween low high =
-        let fraction (a, b, c) = double a + double b / double c
-
-        Arb.generate<int>
-        |> Gen.three
-        |> Gen.filter (fun (_, _, c) -> c <> 0)
-        |> Gen.map fraction
-
+        Gen.map (fun scale -> (low + (high - low)) * scale) rand
 
     let float =
         Arb.generate<NormalFloat> |> Gen.map float

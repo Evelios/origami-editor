@@ -41,9 +41,9 @@ module Axiom =
 
     (* Actions *)
 
-    let private first v1 v2 : Line2D = Line2D.through v1 v2
+    let first v1 v2 : Line2D = Line2D.through v1 v2
 
-    let private second v1 v2 : Line2D =
+    let second v1 v2 : Line2D =
         Line2D.through v1 v2
         |> Line2D.perpThroughPoint (Point2D.midpoint v1 v2)
 
@@ -52,7 +52,7 @@ module Axiom =
        2. The lines are parallel -> One fold between the two folds
        3. The lines are intersecting -> Two possible folds, the acute angle bisector and the obtuse angle bisector
     *)
-    let private third e1 e2 : Line2D list =
+    let third e1 e2 : Line2D list =
         (* 1. Lines are equal *)
         if e1 = e2 then
             []
@@ -63,15 +63,15 @@ module Axiom =
 
             match Line2D.intersect e1 e2 with
             (* 2. Lines are parallel*)
-            | None -> [ Line2D.through (midpoint e1.start) (midpoint e1.finish) ]
+            | None -> [ Line2D.through (midpoint e1.Start) (midpoint e1.Finish) ]
 
             (* 3. Lines are intersecting *)
             | Some intersection ->
                 let linePoint =
-                    if e1.start = intersection then
-                        e1.finish
+                    if e1.Start = intersection then
+                        e1.Finish
                     else
-                        e1.start
+                        e1.Start
 
                 // We need to make sure that we get the acute and the obtuse angle bisectors
                 let acuteLine = Line2D.through linePoint intersection

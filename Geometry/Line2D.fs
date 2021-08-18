@@ -6,8 +6,12 @@ open Geometry
 [<CustomEquality>]
 [<CustomComparison>]
 type Line2D =
-    { start: Point2D
-      finish: Point2D }
+    private
+        { start: Point2D
+          finish: Point2D }
+
+    member this.Start = this.start
+    member this.Finish = this.finish
 
     interface IComparable<Line2D> with
         member this.CompareTo(line) = this.Comparison(line)

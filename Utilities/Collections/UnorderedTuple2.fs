@@ -43,14 +43,12 @@ type UnorderedTuple2<'a when 'a: comparison and 'a: equality> =
     member this.Equals(other: UnorderedTuple2<'a>) =
         match this, other with
         | UnorderedTuple2 (lhs1, lhs2), UnorderedTuple2 (rhs1, rhs2) ->
-            let lhsMin = min lhs1 lhs2
-            let rhsMin = min rhs1 rhs2
-            let lhsMax = max lhs1 lhs2
-            let rhsMax = max rhs1 rhs2
-            lhsMin = rhsMin && lhsMax = rhsMax
+            (lhs1 = rhs1 && lhs2 = rhs2)
+            || (lhs1 = rhs2 && lhs2 = rhs1)
 
     override this.GetHashCode() =
         match this with
+        // the xor operator (^^^) provides order agnostic hash combination
         | UnorderedTuple2 (left, right) -> left.GetHashCode() ^^^ right.GetHashCode()
 
 
@@ -60,4 +58,4 @@ module UnorderedTuple2 =
     let fst (UnorderedTuple2 (a, _)) = a
     let snd (UnorderedTuple2 (_, b)) = b
     let toTuple (UnorderedTuple2 (a, b)) = (a, b)
-    let map f (UnorderedTuple2 (a, b)) = (f a,f b)
+    let map f (UnorderedTuple2 (a, b)) = (f a, f b)
