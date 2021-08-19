@@ -1,12 +1,13 @@
 namespace Gui.Tabs.CreasePatternTab
 
-open Avalonia.FuncUI.Types
-open CreasePattern
-
 module FileSettings =
 
-    open Avalonia.FuncUI.DSL
     open Avalonia.Controls
+    open Avalonia.FuncUI.DSL
+    open Avalonia.FuncUI.Types
+    open Avalonia.Layout
+    
+    open CreasePattern
     open Gui.Widgets
     open Gui
 
@@ -39,12 +40,16 @@ module FileSettings =
               Form.textItem
                   {| name = "Author"
                      value = creasePattern.Author
-                     onSelected = Msg.ChangeAuthor >> dispatch |}
+                     onSelected = Msg.ChangeAuthor >> dispatch
+                     labelPlacement = Orientation.Vertical
+                     |}
 
               Form.textItem
                   {| name = "Title"
                      value = creasePattern.Title
-                     onSelected = Msg.ChangeTitle >> dispatch |}
+                     onSelected = Msg.ChangeTitle >> dispatch
+                     labelPlacement = Orientation.Vertical
+                     |}
 
               Form.multiline
                   {| name = "Description"

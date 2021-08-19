@@ -36,6 +36,7 @@
         <Compile Include="Widgets\Dialogs.fs" />
         <Compile Include="Widgets\DockPanel.fs" />
         <Compile Include="Widgets\CreasePatternDrawing.fs" />
+        <Compile Include="Widgets\Text.fs" />
         <Compile Include="Tabs\CreasePatternTab\IconBar.fs" />
         <Compile Include="Tabs\CreasePatternTab\InfoBar.fs" />
         <Compile Include="Tabs\CreasePatternTab\FileSettings.fs" />

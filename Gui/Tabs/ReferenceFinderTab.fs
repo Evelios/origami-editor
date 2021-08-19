@@ -42,34 +42,51 @@ module ReferenceFinderTab =
             { state with
                   creasePattern = ReferenceFinder.bestFoldSequenceTo (Point2D.xy state.x state.y) state.referenceFinder }
 
-
-    let view (state: ReferenceFinderTabState) dispatch =
+    let private toolBar (state: ReferenceFinderTabState) dispatch =
         let coordinates : IView list =
             [ Form.textItem
                 {| name = "X"
                    value = state.xInput
-                   onSelected = ChangeXInput >> dispatch |}
+                   onSelected = ChangeXInput >> dispatch
+                   labelPlacement = Orientation.Horizontal |}
               Form.textItem
                   {| name = "Y"
                      value = state.yInput
-                     onSelected = ChangeYInput >> dispatch |} ]
+                     onSelected = ChangeYInput >> dispatch
+                     labelPlacement = Orientation.Horizontal |} ]
 
         let actionButton =
             Button.create [ Button.onClick (fun _ -> dispatch RunReferenceFinder)
                             Button.content "Find fold sequences" ]
 
+        StackPanel.create
+        <| [ StackPanel.orientation Orientation.Horizontal
+             StackPanel.background Theme.palette.panelBackground
+             StackPanel.children (coordinates @ [ actionButton ]) ]
 
-        let toolBar =
-            StackPanel.create
-            <| [ StackPanel.orientation Orientation.Horizontal
-                 StackPanel.background Theme.palette.panelBackground
-                 StackPanel.children (coordinates @ [ actionButton ]) ]
+    let private foldSequences =
+        let title = Text.h1 "Fold Sequences"
 
-        let creasePattern =
-            DockPanel.create
-            <| [ DockPanel.background Theme.palette.canvasBackdrop
-                 DockPanel.children [ CreasePatternDrawing.create state.creasePattern ] ]
+        let steps : IView =
+            [ "Crease fold from top to bottom"
+              "Crease left to right" ]
+            |> Text.numberedList
+
+        StackPanel.create
+        <| [ StackPanel.orientation Orientation.Vertical
+             StackPanel.background Theme.palette.panelBackground
+             StackPanel.children [ title; steps ] ]
+
+
+    let private creasePattern cp =
+        DockPanel.create
+        <| [ DockPanel.background Theme.palette.canvasBackdrop
+             DockPanel.children [ CreasePatternDrawing.create cp ] ]
+
+    let view (state: ReferenceFinderTabState) dispatch =
+
 
         DockPanel.create
-        <| [ DockPanel.children [ View.withAttr (StackPanel.dock Dock.Top) toolBar
-                                  creasePattern ] ]
+        <| [ DockPanel.children [ View.withAttr (StackPanel.dock Dock.Top) (toolBar state dispatch)
+                                  View.withAttr (StackPanel.dock Dock.Right) foldSequences
+                                  creasePattern state.creasePattern ] ]
