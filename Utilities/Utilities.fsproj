@@ -22,6 +22,7 @@
         <Compile Include="Collections\StringMap.fs" />
         <Compile Include="Collections\Tree.fs" />
         <Compile Include="Collections\UnorderedTuple2.fs" />
+        <Compile Include="Collections\Percentage.fs" />
         <Compile Include="Gen.fs" />
         <Compile Include="Debug.fs" />
         <Compile Include="Log.fs" />

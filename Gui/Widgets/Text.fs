@@ -9,11 +9,12 @@ module Text =
     open Gui
 
 
-    let h1 text =
+    let h1 text attrs =
         TextBlock.create
         <| [ TextBlock.text text
              TextBlock.margin Theme.spacing.medium
              TextBlock.fontSize Theme.font.h1 ]
+           @ attrs
         :> IView
 
     /// Create a widget of numbered items.
@@ -25,7 +26,8 @@ module Text =
         let numberedItem index text =
             TextBlock.create
             <| [ TextBlock.text $"{index + 1}. {text}"
-                 TextBlock.margin Theme.spacing.small ]
+                 TextBlock.margin Theme.spacing.small
+                 TextBlock.textWrapping Avalonia.Media.TextWrapping.Wrap ]
             :> IView
 
         StackPanel.create

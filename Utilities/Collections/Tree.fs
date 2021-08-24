@@ -5,14 +5,34 @@ type Tree<'INodeData> =
     | LeafNode of 'INodeData
     | InternalNode of 'INodeData * Tree<'INodeData> seq
 
+/// The data needed to create a tree object. Start creating the tree from the base case
+type TreeInitializer<'INodeData> =
+    { BaseCase: 'INodeData
+      Continuation: 'INodeData -> 'INodeData seq
+      Termination: 'INodeData -> bool }
+
 module Tree =
-    
-    let fromLeaf =
-        LeafNode
-        
-    let fromNode node tree =
-        InternalNode (node, tree)
-        
+    (* Builders *)
+
+    let fromLeaf = LeafNode
+
+    let fromNode node tree = InternalNode(node, tree)
+
+    /// Create a tree from the tree initializer data structure. This starts with the base case and grows the tree with
+    /// the continuation function until the termination condition is reached.
+    let fromInitializer initializer =
+        let rec createNode step =
+            if initializer.Termination step then
+                fromLeaf step
+
+            else
+                fromNode step (Seq.map createNode (initializer.Continuation step))
+
+
+        createNode initializer.BaseCase
+
+    (* Modifiers *)
+
     let rec cata fLeaf fNode (tree: Tree<'INodeData>) : 'r =
         let recurse = cata fLeaf fNode
 

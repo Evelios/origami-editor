@@ -26,7 +26,7 @@ module ReferenceFinderTab =
           xInput = x.ToString()
           yInput = y.ToString()
           referenceFinder = ReferenceFinder.init
-          creasePattern = CreasePattern.create }
+          solution = None }
 
     let update (msg: Msg) (state: ReferenceFinderTabState) : ReferenceFinderTabState =
         match msg with
@@ -40,7 +40,9 @@ module ReferenceFinderTab =
             | None -> state
         | RunReferenceFinder ->
             { state with
-                  creasePattern = ReferenceFinder.bestFoldSequenceTo (Point2D.xy state.x state.y) state.referenceFinder }
+                  solution =
+                      ReferenceFinder.bestFoldSequenceTo (Point2D.xy state.x state.y) state.referenceFinder
+                      |> Some }
 
     let private toolBar (state: ReferenceFinderTabState) dispatch =
         let coordinates : IView list =
@@ -64,29 +66,92 @@ module ReferenceFinderTab =
              StackPanel.background Theme.palette.panelBackground
              StackPanel.children (coordinates @ [ actionButton ]) ]
 
-    let private foldSequences =
-        let title = Text.h1 "Fold Sequences"
+    let private foldSequences axiomActions =
+        let title = Text.h1 "Fold Sequences" []
+
+        let pointString (p: Point2D) = $"({p.X}, {p.Y})"
+
+        let lineString (l: Line2D) =
+            $"[{pointString l.Start}; {pointString l.Finish}]"
+
+        // TODO: Allow string wrapping for text boxes and fix the steps width
+        let description axiomAction =
+            match axiomAction with
+            | AxiomAction.One (p1, p2) ->
+                "Axiom One: Crease a line through the two points "
+                + $"{pointString p1} & {pointString p2}"
+            | AxiomAction.Two (p1, p2) ->
+                "Axiom Two: Overlap points and create a line in between the two points "
+                + $"{pointString p1} & {pointString p2}"
+            | AxiomAction.Three (l1, l2) ->
+                "Axiom Three: Line up the two creases and fold to create the angle bisector between "
+                + $"{lineString l1} & {lineString l2}"
 
         let steps : IView =
-            [ "Crease fold from top to bottom"
-              "Crease left to right" ]
+            axiomActions
+            |> List.map description
             |> Text.numberedList
 
         StackPanel.create
         <| [ StackPanel.orientation Orientation.Vertical
              StackPanel.background Theme.palette.panelBackground
-             StackPanel.children [ title; steps ] ]
+             StackPanel.children [ title; steps ]
+             StackPanel.width 200. ]
+
+    let private previews creasePatterns =
+        let panelHeight = 200.
+        let creasePatternHeight = panelHeight * 0.6
+
+        let title =
+            Text.h1 "All Solutions" [ TextBlock.horizontalAlignment HorizontalAlignment.Center ]
+
+        let solutionPreview cp =
+            CreasePatternDrawing.create
+                {| size = creasePatternHeight
+                   creasePattern = cp |}
+            :> IView
+
+        let creasePatternViews =
+            StackPanel.create
+            <| [ StackPanel.orientation Orientation.Horizontal
+                 StackPanel.spacing Theme.spacing.medium
+                 StackPanel.verticalAlignment VerticalAlignment.Center
+                 StackPanel.horizontalAlignment HorizontalAlignment.Center
+                 StackPanel.children (List.map solutionPreview creasePatterns) ]
+
+        StackPanel.create
+        <| [ StackPanel.orientation Orientation.Vertical
+             StackPanel.background Theme.palette.panelBackground
+             StackPanel.spacing Theme.spacing.medium
+             StackPanel.height panelHeight
+             StackPanel.verticalAlignment VerticalAlignment.Center
+             StackPanel.children [ title
+                                   creasePatternViews ] ]
 
 
     let private creasePattern cp =
+        let creasePatternSize = 300.
+
         DockPanel.create
         <| [ DockPanel.background Theme.palette.canvasBackdrop
-             DockPanel.children [ CreasePatternDrawing.create cp ] ]
+             DockPanel.children [ CreasePatternDrawing.create
+                                      {| size = creasePatternSize
+                                         creasePattern = cp |} ] ]
 
     let view (state: ReferenceFinderTabState) dispatch =
 
-
-        DockPanel.create
-        <| [ DockPanel.children [ View.withAttr (StackPanel.dock Dock.Top) (toolBar state dispatch)
-                                  View.withAttr (StackPanel.dock Dock.Right) foldSequences
-                                  creasePattern state.creasePattern ] ]
+        match state.solution with
+        | Some step ->
+            DockPanel.create
+            <| [ DockPanel.children
+                 <| [ View.withAttr (StackPanel.dock Dock.Top) (toolBar state dispatch)
+                      View.withAttr (StackPanel.dock Dock.Right) (foldSequences step.Steps)
+                      View.withAttr (StackPanel.dock Dock.Bottom) (previews [ step.Solution ])
+                      creasePattern step.Solution ] ]
+        | None ->
+            DockPanel.create
+            <| [ DockPanel.children
+                 <| [ View.withAttr (StackPanel.dock Dock.Top) (toolBar state dispatch)
+                      View.withAttr (StackPanel.dock Dock.Right) (foldSequences [])
+                      View.withAttr (StackPanel.dock Dock.Bottom) (previews [])
+                      creasePattern CreasePattern.empty ] ]

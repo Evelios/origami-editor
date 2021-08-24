@@ -1,6 +1,7 @@
 ﻿namespace CreasePattern
 
 open Geometry
+open Utilities.Collections
 
 type Label = int
 
@@ -224,6 +225,7 @@ module CreasePattern =
             |> setAuthor frame.Author
             |> setTitle frame.Title
             |> setDescription frame.Description
+
         creasePattern
 
     /// Add in the crease pattern values into the fold frame

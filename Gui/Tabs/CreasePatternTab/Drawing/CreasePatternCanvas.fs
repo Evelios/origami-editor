@@ -1,6 +1,7 @@
 namespace Gui.Tabs.CreasePatternTab.Drawing
 
 open Utilities
+open Utilities.Collections
 
 module CreasePatternCanvas =
 

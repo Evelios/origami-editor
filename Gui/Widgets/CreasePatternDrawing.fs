@@ -95,12 +95,15 @@ module CreasePatternDrawing =
              Ellipse.fill (vertexColor options.state) ]
         :> IView
 
-    let private draw creasePattern =
-        let size = 500.
-        let translation = Translation.create creasePattern size
+    let private draw
+        (options: {| size: float
+                     creasePattern: CreasePattern |})
+        =
+        let translation =
+            Translation.create options.creasePattern options.size
 
         let edges =
-            CreasePattern.edges creasePattern
+            CreasePattern.edges options.creasePattern
             |> Seq.map
                 (fun edge ->
                     drawEdge
@@ -109,7 +112,7 @@ module CreasePatternDrawing =
                            state = ComponentState.Default |})
 
         let vertices =
-            CreasePattern.vertices creasePattern
+            CreasePattern.vertices options.creasePattern
             |> Seq.map
                 (fun vertex ->
                     drawVertex
@@ -120,8 +123,8 @@ module CreasePatternDrawing =
 
         let components = Seq.append edges vertices
 
-        Canvas.create [ Canvas.height size
-                        Canvas.width size
+        Canvas.create [ Canvas.height options.size
+                        Canvas.width options.size
                         Canvas.background Theme.palette.canvasBackground
                         Canvas.children (List.ofSeq components)
                         // TODO: fix name
@@ -130,4 +133,8 @@ module CreasePatternDrawing =
 
     (* API *)
 
-    let create creasePattern = draw creasePattern
+    let create
+        (options: {| size: float
+                     creasePattern: CreasePattern |})
+        =
+        draw options

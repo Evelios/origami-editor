@@ -69,9 +69,11 @@ module Point2D =
 
     let ofPolar r a = xy (r * Angle.cos a) (r * Angle.sin a)
 
-    let scale x y (point: Point2D) : Point2D = { x = point.x * x; y = point.y * y }
+    let origin = xy 0. 0.
 
     (* Modifiers *)
+
+    let scale x y (point: Point2D) : Point2D = { x = point.x * x; y = point.y * y }
 
     let translate (v: Vector2D) (p: Point2D) = p + v
 
