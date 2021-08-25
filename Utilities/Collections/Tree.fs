@@ -31,6 +31,7 @@ module Tree =
 
         createNode initializer.BaseCase
 
+
     (* Modifiers *)
 
     let rec cata fLeaf fNode (tree: Tree<'INodeData>) : 'r =
@@ -52,3 +53,6 @@ module Tree =
             let finalAccum = subtrees |> Seq.fold recurse localAccum
             // ... and return it
             finalAccum
+
+    (* Accessors *)
+    let nodes tree = fold (fun sum _ -> sum + 1) 0 tree

@@ -28,15 +28,19 @@ module Axiom =
     /// Get all the axioms that can be performed between the two graph elements
     let betweenElements e1 e2 : AxiomAction list =
         match e1, e2 with
-        | VertexElement p1, VertexElement p2 -> [ AxiomAction.One(p1, p2); AxiomAction.Two(p1, p2) ]
+        | VertexElement p1, VertexElement p2 ->
+            [ AxiomAction.One(p1, p2)
+              AxiomAction.Two(p1, p2) ]
         | EdgeElement e1, EdgeElement e2 -> [ AxiomAction.Three(e1.line, e2.line) ]
         | _ -> []
 
     /// Get the list of axioms that can be performed on a list of graph elements
-    let fromElements elements : AxiomAction list =
-        List.pairs elements
+    let fromElements elements : AxiomAction seq =
+        (List.ofSeq elements)
+        |> List.pairs
         |> List.map (Tuple2.uncurry betweenElements)
         |> List.concat
+        |> Seq.ofList
 
 
     (* Actions *)
@@ -80,8 +84,8 @@ module Axiom =
                   acuteLine ]
 
     /// Get the result of performing an axiom action
-    let perform action : Line2D list =
+    let perform action : Set<Line2D> =
         match action with
-        | AxiomAction.One (p1, p2) -> [ first p1 p2 ]
-        | AxiomAction.Two (p1, p2) -> [ second p1 p2 ]
-        | AxiomAction.Three (e1, e2) -> third e1 e2
+        | AxiomAction.One (p1, p2) -> Set.ofList [ first p1 p2 ]
+        | AxiomAction.Two (p1, p2) -> Set.ofList [ second p1 p2 ]
+        | AxiomAction.Three (e1, e2) -> Set.ofList (third e1 e2)

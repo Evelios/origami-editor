@@ -19,6 +19,7 @@
         <Compile Include="Extensions\TupleExtensions.fs" />
         <Compile Include="Extensions\StringExtensions.fs" />
         <Compile Include="Extensions\MapExtensions.fs" />
+        <Compile Include="Extensions\SeqExtensions.fs" />
         <Compile Include="Collections\StringMap.fs" />
         <Compile Include="Collections\Tree.fs" />
         <Compile Include="Collections\UnorderedTuple2.fs" />

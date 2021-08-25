@@ -1,5 +1,6 @@
 namespace Geometry
 
+[<Struct>]
 type BoundingBox2D =
     private
         { minX: float
@@ -41,6 +42,10 @@ module BoundingBox2D =
           bbox.TopRight
           bbox.BottomRight
           bbox.BottomLeft ]
+
+    let width (bbox: BoundingBox2D) : float = bbox.MaxX - bbox.MinX
+
+    let height (bbox: BoundingBox2D) : float = bbox.MaxY - bbox.MinY
 
     (* Modifiers *)
 

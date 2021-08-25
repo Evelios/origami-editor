@@ -1,7 +1,6 @@
 ﻿namespace CreasePattern
 
 open Geometry
-open Utilities.Collections
 
 type Label = int
 
@@ -88,7 +87,8 @@ module CreasePattern =
         |> mapGraph (Graph.addVertices vertices)
 
     /// Add multiple edge creases to the crease pattern. If the edge does not lie within the current bounds of the
-    /// crease pattern, this function expands the bounding box.
+    /// crease pattern, this function expands the bounding box. If edges run through existing edges, the intersection
+    /// of those edges are also added to the crease pattern.
     let addEdges (edges: Edge seq) creasePattern : CreasePattern =
         creasePattern
         |> expandBoundingBox (Edge.seqVertices edges)
@@ -104,6 +104,7 @@ module CreasePattern =
     /// Run the axiom and add in the line segment(s) created by the axiom onto the crease pattern
     let performAxiom axiom creasePattern =
         Axiom.perform axiom
+        |> List.ofSeq
         |> List.filterMap (Boolean2D.boundingBoxAndLine creasePattern.Bounds)
         |> List.map (fun line -> Edge.atWithAssignment line EdgeAssignment.Unassigned)
         |> fun edges -> addEdges edges creasePattern
@@ -284,15 +285,13 @@ module CreasePattern =
         |> Fold.Frame.setEdges foldEdges
 
 
-    // Todo: Remove this declaration. This is temporarily done to avoid naming clashes
-    open Fold
 
     let toJson creasePattern =
-        Fold.empty
-        |> Fold.setKeyFrame (toFoldFrame creasePattern)
-        |> Fold.toJson
+        Fold.Fold.empty
+        |> Fold.Fold.setKeyFrame (toFoldFrame creasePattern)
+        |> Fold.Fold.toJson
 
     let fromJson json =
-        Fold.fromJson json
+        Fold.Fold.fromJson json
         |> (fun fold -> fold.KeyFrame)
         |> fromFoldFrame

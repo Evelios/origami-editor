@@ -66,10 +66,11 @@ module ReferenceFinderTab =
              StackPanel.background Theme.palette.panelBackground
              StackPanel.children (coordinates @ [ actionButton ]) ]
 
-    let private foldSequences axiomActions =
+    let private foldSequences solution =
         let title = Text.h1 "Fold Sequences" []
 
-        let pointString (p: Point2D) = $"({p.X}, {p.Y})"
+        let pointString (p: Point2D) =
+            $"({roundFloatTo 4 p.X}, {roundFloatTo 4 p.Y})"
 
         let lineString (l: Line2D) =
             $"[{pointString l.Start}; {pointString l.Finish}]"
@@ -87,15 +88,28 @@ module ReferenceFinderTab =
                 "Axiom Three: Line up the two creases and fold to create the angle bisector between "
                 + $"{lineString l1} & {lineString l2}"
 
+        let pointSolution =
+            Text.h2 $"Solution: {pointString solution.Point}" []
+
+        let distance =
+            Text.h2 $"Distance: {roundFloatTo 6 solution.Distance}" []
+
+        let error = Text.h2 $"Error: {solution.Error}" []
+
         let steps : IView =
-            axiomActions
-            |> List.map description
+            solution.Steps
+            |> Seq.map description
+            |> List.ofSeq
             |> Text.numberedList
 
         StackPanel.create
         <| [ StackPanel.orientation Orientation.Vertical
              StackPanel.background Theme.palette.panelBackground
-             StackPanel.children [ title; steps ]
+             StackPanel.children [ title
+                                   pointSolution
+                                   distance
+                                   error
+                                   steps ]
              StackPanel.width 200. ]
 
     let private previews creasePatterns =
@@ -145,13 +159,11 @@ module ReferenceFinderTab =
             DockPanel.create
             <| [ DockPanel.children
                  <| [ View.withAttr (StackPanel.dock Dock.Top) (toolBar state dispatch)
-                      View.withAttr (StackPanel.dock Dock.Right) (foldSequences step.Steps)
+                      View.withAttr (StackPanel.dock Dock.Right) (foldSequences step)
                       View.withAttr (StackPanel.dock Dock.Bottom) (previews [ step.Solution ])
                       creasePattern step.Solution ] ]
         | None ->
             DockPanel.create
             <| [ DockPanel.children
                  <| [ View.withAttr (StackPanel.dock Dock.Top) (toolBar state dispatch)
-                      View.withAttr (StackPanel.dock Dock.Right) (foldSequences [])
-                      View.withAttr (StackPanel.dock Dock.Bottom) (previews [])
                       creasePattern CreasePattern.empty ] ]

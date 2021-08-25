@@ -6,6 +6,7 @@ open FSharp.Json
 [<CustomEquality>]
 [<CustomComparison>]
 [<RequireQualifiedAccess>]
+[<Struct>]
 type Point2D =
     private
         { x: float
@@ -88,6 +89,8 @@ module Point2D =
 
     let midpoint (p1: Point2D) (p2: Point2D) : Point2D =
         xy ((p1.x + p2.x) / 2.) ((p1.y + p2.y) / 2.)
+
+    let round (p: Point2D) = xy (roundFloat p.x) (roundFloat p.y)
 
 
     /// Be careful with the vector arguments. This function is written with piping in mind. The first point is the

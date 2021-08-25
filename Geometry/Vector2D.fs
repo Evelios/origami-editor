@@ -6,6 +6,7 @@ open FSharp.Json
 [<CustomEquality>]
 [<CustomComparison>]
 [<RequireQualifiedAccess>]
+[<Struct>]
 type Vector2D =
     private
         { x: float
@@ -90,6 +91,8 @@ module Vector2D =
           y = Angle.sin a * v.x + Angle.cos a * v.y }
 
     let normalize v = v / (magnitude v)
+
+    let round (p: Vector2D) = xy (roundFloat p.x) (roundFloat p.y)
 
 
     (* Queries *)

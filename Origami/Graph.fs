@@ -95,11 +95,22 @@ module Graph =
 
 
     /// Add edges to the graph
-    let addEdges (edges: Edge seq) graph =
-        let newVertices = Edge.seqVertices edges |> Set.ofSeq
-
+    let addEdges (newEdges: Edge seq) graph =
         let newEdges =
-            Seq.filter (fun edge -> not <| edgeExists edge graph) edges
+            newEdges
+            |> Seq.filter (fun edge -> not <| edgeExists edge graph)
+            |> Seq.map Edge.round
+
+        let intersections =
+            Seq.cartesian (edges graph) newEdges
+            |> List.ofSeq
+            |> List.filterMap (fun (e1, e2) -> LineSegment2D.intersect e1.Crease e2.Crease)
+
+        let newVertices =
+            Edge.seqVertices newEdges
+            |> Seq.append intersections
+            |> Seq.map Point2D.round
+            |> Seq.distinct
 
         graph
         |> addVertices newVertices
@@ -108,6 +119,3 @@ module Graph =
 
     /// Add a single edge to the graph
     let addEdge (edge: Edge) graph = addEdges [ edge ] graph
-
-    let removeEdge edge graph = failwith "" // TODO: implement me
-    let removeEdges edges graph = failwith "" // TODO: implement me

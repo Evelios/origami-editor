@@ -5,6 +5,7 @@ open Geometry
 
 [<CustomEquality>]
 [<CustomComparison>]
+[<Struct>]
 type Line2D =
     private
         { start: Point2D
@@ -72,6 +73,13 @@ module Line2D =
 
     let length (line: Line2D) : float =
         Point2D.distanceTo line.start line.finish
+
+
+    (* Modifiers *)
+
+    let round (l: Line2D) =
+        through (Point2D.round l.Start) (Point2D.round l.Finish)
+
 
     (* Queries *)
 

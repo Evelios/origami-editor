@@ -27,6 +27,7 @@ module Theme =
         
     let font =
         {| h1 = 16.
+           h2 = 14.
            normal = 12.
           |}
 

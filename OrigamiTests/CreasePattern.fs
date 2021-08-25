@@ -49,6 +49,22 @@ let ``Get edges from crease pattern`` () =
 
     CollectionAssert.AreEqual(edges, creasePatternEdges)
 
+let pointDistanceTestCases =
+
+    [ ([], Point2D.xy 0.1 0.1, Point2D.xy 0. 0., sqrt (0.1 ** 2. + 0.1 ** 2.))
+      ([], Point2D.xy 0.7 0.9, Point2D.xy 1. 1., sqrt (0.1 ** 2. + 0.3 ** 2.))
+      ([ Point2D.xy 0.5 0.5 ], Point2D.xy 0.6 0.65, Point2D.xy 0.5 0.5, sqrt (0.1 ** 2. + 0.15 ** 2.)) ]
+    |> List.map
+        (fun (vertices, find, expected, distance) ->
+            TestCaseData(vertices, find)
+                .Returns(Some(expected, distance)))
+
+[<TestCaseSource(nameof pointDistanceTestCases)>]
+let ``Distance to Points in Crease Pattern`` vertices vertex =
+    CreasePattern.create
+    |> CreasePattern.addVertices vertices
+    |> CreasePattern.closestVertex vertex
+
 [<Literal>]
 let closeDistance = 0.1
 

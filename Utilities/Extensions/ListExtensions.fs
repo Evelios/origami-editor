@@ -37,6 +37,11 @@ module List =
             list
         |> List.rev
 
+    /// Get the cartesian product of the two lists
+    let cartesian xs ys =
+        xs
+        |> List.collect (fun x -> ys |> List.map (fun y -> x, y))
+
     /// Get all unique pairs of a list
     let rec pairs l =
         match l with

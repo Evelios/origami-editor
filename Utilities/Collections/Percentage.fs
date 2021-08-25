@@ -1,12 +1,20 @@
 namespace Utilities.Collections
 
+open System
+
 [<Measure>]
 type fraction
 
 [<Measure>]
 type ratio
 
-type Percentage = private Ratio of float<ratio>
+type Percentage =
+    private
+    | Ratio of float<ratio>
+    override this.ToString() =
+        match this with
+        | Ratio ratio -> Math.Round(ratio * 100.<_>, 2).ToString() + "%"
+
 
 module Percentage =
     let private fractionOfRatio = 100.<fraction/ratio>

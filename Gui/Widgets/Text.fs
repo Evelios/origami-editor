@@ -17,6 +17,14 @@ module Text =
            @ attrs
         :> IView
 
+    let h2 text attrs =
+        TextBlock.create
+        <| [ TextBlock.text text
+             TextBlock.margin Theme.spacing.medium
+             TextBlock.fontSize Theme.font.h2 ]
+           @ attrs
+        :> IView
+
     /// Create a widget of numbered items.
     /// Eg.
     ///     1. First

@@ -71,6 +71,10 @@ module Edge =
         edge.crease
         |> LineSegment2D.distanceToPoint vertex
 
+    let round edge =
+        { edge with
+              crease = LineSegment2D.round edge.crease }
+
 
     (* Accessors *)
 
