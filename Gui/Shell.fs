@@ -3,11 +3,11 @@ namespace Gui
 open Avalonia.FuncUI.Types
 
 module Shell =
-    open Elmish
     open Avalonia.Controls
     open Avalonia.FuncUI.Components.Hosts
     open Avalonia.FuncUI.Elmish
     open Avalonia.FuncUI.DSL
+    open Elmish
 
 
     open Gui.Tabs.CreasePatternTab
@@ -45,12 +45,12 @@ module Shell =
             Cmd.map CreasePatternTabMsg cmd
 
         | ReferenceFinderTabMsg referenceFinderTabMsg ->
-            let referenceFinderTabState =
+            let referenceFinderTabState, cmd =
                 ReferenceFinderTab.update referenceFinderTabMsg state.referenceFinder
 
             { state with
                   referenceFinder = referenceFinderTabState },
-            Cmd.none
+            Cmd.map ReferenceFinderTabMsg cmd
 
     let view (state: State) dispatch =
         let creasePattern =

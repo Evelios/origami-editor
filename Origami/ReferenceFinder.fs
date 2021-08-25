@@ -33,7 +33,7 @@ module ReferenceFinder =
     ///
     /// TODO: Create builders for different shapes of paper
     let init =
-        let maxDepth = 4
+        let maxDepth = 3
 
         let boundingBox =
             BoundingBox2D.from (Point2D.xy 0. 0.) (Point2D.xy 1. 1.)
@@ -98,3 +98,47 @@ module ReferenceFinder =
 
             baseCase
             referenceFinder
+
+    /// Get the first crease pattern that creates a point close to the desired point
+    let bestFoldSequencesTo count target referenceFinder : ReferenceFinderSolution list =
+        let distance step = step.Distance
+
+        fold
+            (fun bestSolutions step ->
+                let lastIndex =
+                    min (Array.length bestSolutions) (count - 1)
+
+                let largestDistance =
+                    if Array.isEmpty bestSolutions then
+                        infinity
+                    else
+                        bestSolutions.[lastIndex - 1].Distance
+
+                let keepSolutions =
+                    if Array.isEmpty bestSolutions then
+                        Array.empty
+                    else
+                        bestSolutions.[0..(lastIndex - 1)]
+
+                match CreasePattern.closestVertex target step.Final with
+                | Some (point, matchDistance) when matchDistance < largestDistance ->
+                    let newSolution =
+                        { Solution = step.Final
+                          CreasePatterns = step.CreasePatterns
+                          Steps = step.Steps
+                          Point = point
+                          Distance = matchDistance
+                          Error =
+                              matchDistance
+                              / (max (BoundingBox2D.width step.Final.Bounds) (BoundingBox2D.height step.Final.Bounds))
+                              |> Percentage.ofFloat }
+
+                    Array.append keepSolutions [| newSolution |]
+                    |> Array.sortBy distance
+
+                | _ -> bestSolutions)
+
+            Array.empty
+            referenceFinder
+
+        |> List.ofArray

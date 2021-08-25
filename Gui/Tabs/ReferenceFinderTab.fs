@@ -7,16 +7,21 @@ module ReferenceFinderTab =
     open Avalonia.FuncUI.DSL
     open Avalonia.FuncUI.Types
     open Avalonia.Layout
+    open Elmish
 
     open CreasePattern
     open Gui
     open Gui.Widgets
     open Utilities.Extensions
 
+    [<Literal>]
+    let MaxSolutions = 4
+
     type Msg =
         | ChangeXInput of string
         | ChangeYInput of string
         | RunReferenceFinder
+        | ReferenceFinderSolutions of ReferenceFinderSolution list
 
     let init : ReferenceFinderTabState =
         let x, y = 0.33, 0.33
@@ -26,23 +31,29 @@ module ReferenceFinderTab =
           xInput = x.ToString()
           yInput = y.ToString()
           referenceFinder = ReferenceFinder.init
-          solution = None }
+          solutions = [] }
 
-    let update (msg: Msg) (state: ReferenceFinderTabState) : ReferenceFinderTabState =
+    let update (msg: Msg) (state: ReferenceFinderTabState) : ReferenceFinderTabState * Cmd<Msg> =
         match msg with
         | ChangeXInput xString ->
             match String.parseFloat xString with
-            | Some newX -> { state with x = newX }
-            | None -> state
+            | Some newX -> { state with x = newX }, Cmd.none
+            | None -> state, Cmd.none
+
         | ChangeYInput yString ->
             match String.parseFloat yString with
-            | Some newY -> { state with y = newY }
-            | None -> state
+            | Some newY -> { state with y = newY }, Cmd.none
+            | None -> state, Cmd.none
+
         | RunReferenceFinder ->
-            { state with
-                  solution =
-                      ReferenceFinder.bestFoldSequenceTo (Point2D.xy state.x state.y) state.referenceFinder
-                      |> Some }
+            state,
+            Cmd.OfFunc.perform
+                (fun () ->
+                    ReferenceFinder.bestFoldSequencesTo MaxSolutions (Point2D.xy state.x state.y) state.referenceFinder)
+                ()
+                Msg.ReferenceFinderSolutions
+
+        | ReferenceFinderSolutions solutions -> { state with solutions = solutions }, Cmd.none
 
     let private toolBar (state: ReferenceFinderTabState) dispatch =
         let coordinates : IView list =
@@ -112,9 +123,12 @@ module ReferenceFinderTab =
                                    steps ]
              StackPanel.width 200. ]
 
-    let private previews creasePatterns =
+    let private previews referenceFinderSolutions =
         let panelHeight = 200.
         let creasePatternHeight = panelHeight * 0.6
+
+        let creasePatterns =
+            List.map (fun rf -> rf.Solution) referenceFinderSolutions
 
         let title =
             Text.h1 "All Solutions" [ TextBlock.horizontalAlignment HorizontalAlignment.Center ]
@@ -154,15 +168,15 @@ module ReferenceFinderTab =
 
     let view (state: ReferenceFinderTabState) dispatch =
 
-        match state.solution with
-        | Some step ->
+        match state.solutions with
+        | best :: _ ->
             DockPanel.create
             <| [ DockPanel.children
                  <| [ View.withAttr (StackPanel.dock Dock.Top) (toolBar state dispatch)
-                      View.withAttr (StackPanel.dock Dock.Right) (foldSequences step)
-                      View.withAttr (StackPanel.dock Dock.Bottom) (previews [ step.Solution ])
-                      creasePattern step.Solution ] ]
-        | None ->
+                      View.withAttr (StackPanel.dock Dock.Right) (foldSequences best)
+                      View.withAttr (StackPanel.dock Dock.Bottom) (previews state.solutions)
+                      creasePattern best.Solution ] ]
+        | _ ->
             DockPanel.create
             <| [ DockPanel.children
                  <| [ View.withAttr (StackPanel.dock Dock.Top) (toolBar state dispatch)
