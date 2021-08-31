@@ -127,16 +127,24 @@ module ReferenceFinderTab =
         let panelHeight = 200.
         let creasePatternHeight = panelHeight * 0.6
 
-        let creasePatterns =
-            List.map (fun rf -> rf.Solution) referenceFinderSolutions
-
         let title =
             Text.h1 "All Solutions" [ TextBlock.horizontalAlignment HorizontalAlignment.Center ]
 
-        let solutionPreview cp =
-            CreasePatternDrawing.create
-                {| size = creasePatternHeight
-                   creasePattern = cp |}
+        let solutionPreview referenceFinderSolution =
+            let creasePatternDrawing =
+                CreasePatternDrawing.create
+                    {| size = creasePatternHeight
+                       creasePattern = referenceFinderSolution.Solution |}
+
+            let error =
+                Text.paragraph
+                    $"e = {referenceFinderSolution.Error}"
+                    [ TextBlock.horizontalAlignment HorizontalAlignment.Center ]
+
+            StackPanel.create [ StackPanel.orientation Orientation.Vertical
+                                StackPanel.spacing Theme.spacing.small
+                                StackPanel.children [ creasePatternDrawing
+                                                      error ] ]
             :> IView
 
         let creasePatternViews =
@@ -145,7 +153,7 @@ module ReferenceFinderTab =
                  StackPanel.spacing Theme.spacing.medium
                  StackPanel.verticalAlignment VerticalAlignment.Center
                  StackPanel.horizontalAlignment HorizontalAlignment.Center
-                 StackPanel.children (List.map solutionPreview creasePatterns) ]
+                 StackPanel.children (List.map solutionPreview referenceFinderSolutions) ]
 
         StackPanel.create
         <| [ StackPanel.orientation Orientation.Vertical

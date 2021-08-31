@@ -114,27 +114,34 @@ module ReferenceFinder =
                     else
                         bestSolutions.[lastIndex - 1].Distance
 
-                let keepSolutions =
-                    if Array.isEmpty bestSolutions then
-                        Array.empty
-                    else
-                        bestSolutions.[0..(lastIndex - 1)]
 
                 match CreasePattern.closestVertex target step.Final with
                 | Some (point, matchDistance) when matchDistance < largestDistance ->
-                    let newSolution =
-                        { Solution = step.Final
-                          CreasePatterns = step.CreasePatterns
-                          Steps = step.Steps
-                          Point = point
-                          Distance = matchDistance
-                          Error =
-                              matchDistance
-                              / (max (BoundingBox2D.width step.Final.Bounds) (BoundingBox2D.height step.Final.Bounds))
-                              |> Percentage.ofFloat }
+                    if Array.exists (fun sol -> sol.Solution = step.Final) bestSolutions then
+                        bestSolutions
 
-                    Array.append keepSolutions [| newSolution |]
-                    |> Array.sortBy distance
+                    else
+                        let newSolution =
+                            { Solution = step.Final
+                              CreasePatterns = step.CreasePatterns
+                              Steps = step.Steps
+                              Point = point
+                              Distance = matchDistance
+                              Error =
+                                  matchDistance
+                                  / (max
+                                      (BoundingBox2D.width step.Final.Bounds)
+                                      (BoundingBox2D.height step.Final.Bounds))
+                                  |> Percentage.ofFloat }
+
+                        let keepSolutions =
+                            if Array.isEmpty bestSolutions then
+                                Array.empty
+                            else
+                                bestSolutions.[0..(lastIndex - 1)]
+
+                        Array.append keepSolutions [| newSolution |]
+                        |> Array.sortBy distance
 
                 | _ -> bestSolutions)
 

@@ -8,22 +8,37 @@ module Text =
 
     open Gui
 
-
-    let h1 text attrs =
+    /// Generic builder for text based elements
+    let private textBlock
+        (options: {| text: string
+                     margin: float
+                     fontSize: float |})
+        attrs
+        =
         TextBlock.create
-        <| [ TextBlock.text text
-             TextBlock.margin Theme.spacing.medium
-             TextBlock.fontSize Theme.font.h1 ]
+        <| [ TextBlock.text options.text
+             TextBlock.margin options.margin
+             TextBlock.fontSize options.fontSize ]
            @ attrs
         :> IView
 
-    let h2 text attrs =
-        TextBlock.create
-        <| [ TextBlock.text text
-             TextBlock.margin Theme.spacing.medium
-             TextBlock.fontSize Theme.font.h2 ]
-           @ attrs
-        :> IView
+    let paragraph text =
+        textBlock
+            {| text = text
+               margin = Theme.spacing.small
+               fontSize = Theme.font.normal |}
+
+    let h1 text =
+        textBlock
+            {| text = text
+               margin = Theme.spacing.medium
+               fontSize = Theme.font.h1 |}
+
+    let h2 text =
+        textBlock
+            {| text = text
+               margin = Theme.spacing.medium
+               fontSize = Theme.font.h2 |}
 
     /// Create a widget of numbered items.
     /// Eg.
