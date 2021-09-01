@@ -36,4 +36,6 @@ type ReferenceFinderTabState =
       xInput: string
       yInput: string
       referenceFinder: ReferenceFinder.LookupTable
-      solutions: ReferenceFinderSolution list }
+      solutions: ReferenceFinderSolution array
+      activeSolution: int
+      hoveredSolution: int option }

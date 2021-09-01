@@ -100,7 +100,7 @@ module ReferenceFinder =
             referenceFinder
 
     /// Get the first crease pattern that creates a point close to the desired point
-    let bestFoldSequencesTo count target referenceFinder : ReferenceFinderSolution list =
+    let bestFoldSequencesTo count target referenceFinder : ReferenceFinderSolution array =
         let distance step = step.Distance
 
         fold
@@ -147,5 +147,3 @@ module ReferenceFinder =
 
             Array.empty
             referenceFinder
-
-        |> List.ofArray

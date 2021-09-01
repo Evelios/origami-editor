@@ -30,6 +30,7 @@
         <Compile Include="Translation.fs" />
         <Compile Include="Types.fs" />
         <Compile Include="Theme.fs" />
+        <Compile Include="Color.fs" />
         <Compile Include="FileLoader.fs" />
         <Compile Include="Widgets\Icons.fs" />
         <Compile Include="Widgets\Form.fs" />
@@ -37,6 +38,7 @@
         <Compile Include="Widgets\DockPanel.fs" />
         <Compile Include="Widgets\CreasePatternDrawing.fs" />
         <Compile Include="Widgets\Text.fs" />
+        <Compile Include="Widgets\Accents.fs" />
         <Compile Include="Tabs\CreasePatternTab\IconBar.fs" />
         <Compile Include="Tabs\CreasePatternTab\InfoBar.fs" />
         <Compile Include="Tabs\CreasePatternTab\FileSettings.fs" />

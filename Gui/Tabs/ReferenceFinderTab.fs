@@ -21,7 +21,10 @@ module ReferenceFinderTab =
         | ChangeXInput of string
         | ChangeYInput of string
         | RunReferenceFinder
-        | ReferenceFinderSolutions of ReferenceFinderSolution list
+        | ReferenceFinderSolutions of ReferenceFinderSolution array
+        | HoverSolutionPreview of int
+        | LeaveSolutionPreview
+        | SelectSolutionPreview of int
 
     let init : ReferenceFinderTabState =
         let x, y = 0.33, 0.33
@@ -31,7 +34,9 @@ module ReferenceFinderTab =
           xInput = x.ToString()
           yInput = y.ToString()
           referenceFinder = ReferenceFinder.init
-          solutions = [] }
+          solutions = [||]
+          activeSolution = 0
+          hoveredSolution = None }
 
     let update (msg: Msg) (state: ReferenceFinderTabState) : ReferenceFinderTabState * Cmd<Msg> =
         match msg with
@@ -54,6 +59,15 @@ module ReferenceFinderTab =
                 Msg.ReferenceFinderSolutions
 
         | ReferenceFinderSolutions solutions -> { state with solutions = solutions }, Cmd.none
+
+        | HoverSolutionPreview index -> { state with hoveredSolution = Some index }, Cmd.none
+        
+        | LeaveSolutionPreview -> { state with hoveredSolution = None }, Cmd.none
+        
+        | SelectSolutionPreview index ->
+            { state with
+                  activeSolution = index },
+            Cmd.none
 
     let private toolBar (state: ReferenceFinderTabState) dispatch =
         let coordinates : IView list =
@@ -123,14 +137,14 @@ module ReferenceFinderTab =
                                    steps ]
              StackPanel.width 200. ]
 
-    let private previews referenceFinderSolutions =
+    let private previews selected referenceFinderSolutions dispatch =
         let panelHeight = 200.
-        let creasePatternHeight = panelHeight * 0.6
+        let creasePatternHeight = panelHeight * 0.5
 
         let title =
             Text.h1 "All Solutions" [ TextBlock.horizontalAlignment HorizontalAlignment.Center ]
 
-        let solutionPreview referenceFinderSolution =
+        let solutionPreview index referenceFinderSolution =
             let creasePatternDrawing =
                 CreasePatternDrawing.create
                     {| size = creasePatternHeight
@@ -143,17 +157,27 @@ module ReferenceFinderTab =
 
             StackPanel.create [ StackPanel.orientation Orientation.Vertical
                                 StackPanel.spacing Theme.spacing.small
+                                StackPanel.margin Theme.spacing.medium
                                 StackPanel.children [ creasePatternDrawing
                                                       error ] ]
+            |> Accents.selectable
+                (Option.contains index selected)
+                [ Border.onPointerEnter (fun _ -> (HoverSolutionPreview index |> dispatch))
+                  Border.onPointerLeave (fun _ -> (dispatch LeaveSolutionPreview))
+                  Border.onPointerReleased (fun _ -> (SelectSolutionPreview index |> dispatch)) ]
             :> IView
+
+        let solutionPreviews =
+            Array.mapi solutionPreview referenceFinderSolutions
+            |> List.ofArray
 
         let creasePatternViews =
             StackPanel.create
             <| [ StackPanel.orientation Orientation.Horizontal
-                 StackPanel.spacing Theme.spacing.medium
+                 StackPanel.spacing Theme.spacing.small
                  StackPanel.verticalAlignment VerticalAlignment.Center
                  StackPanel.horizontalAlignment HorizontalAlignment.Center
-                 StackPanel.children (List.map solutionPreview referenceFinderSolutions) ]
+                 StackPanel.children solutionPreviews ]
 
         StackPanel.create
         <| [ StackPanel.orientation Orientation.Vertical
@@ -175,16 +199,15 @@ module ReferenceFinderTab =
                                          creasePattern = cp |} ] ]
 
     let view (state: ReferenceFinderTabState) dispatch =
-
-        match state.solutions with
-        | best :: _ ->
+        match Array.tryItem state.activeSolution state.solutions with
+        | Some selected ->
             DockPanel.create
             <| [ DockPanel.children
-                 <| [ View.withAttr (StackPanel.dock Dock.Top) (toolBar state dispatch)
-                      View.withAttr (StackPanel.dock Dock.Right) (foldSequences best)
-                      View.withAttr (StackPanel.dock Dock.Bottom) (previews state.solutions)
-                      creasePattern best.Solution ] ]
-        | _ ->
+                 <| [ DockPanel.child Direction.Top (toolBar state dispatch)
+                      DockPanel.child Direction.Right (foldSequences selected)
+                      DockPanel.child Direction.Bottom (previews state.hoveredSolution state.solutions dispatch)
+                      creasePattern selected.Solution ] ]
+        | None ->
             DockPanel.create
             <| [ DockPanel.children
                  <| [ View.withAttr (StackPanel.dock Dock.Top) (toolBar state dispatch)
