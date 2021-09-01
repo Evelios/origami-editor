@@ -1,5 +1,7 @@
 namespace Gui.Widgets
 
+open Avalonia.Media
+
 module Text =
     open Avalonia.Controls
     open Avalonia.FuncUI.DSL
@@ -7,6 +9,7 @@ module Text =
     open Avalonia.Layout
 
     open Gui
+    open Utilities.Extensions
 
     /// Generic builder for text based elements
     let private textBlock
@@ -50,7 +53,7 @@ module Text =
             TextBlock.create
             <| [ TextBlock.text $"{index + 1}. {text}"
                  TextBlock.margin Theme.spacing.small
-                 TextBlock.textWrapping Avalonia.Media.TextWrapping.Wrap ]
+                 TextBlock.textWrapping TextWrapping.Wrap ]
             :> IView
 
         StackPanel.create

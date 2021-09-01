@@ -1,5 +1,6 @@
 namespace Gui.Tabs.ReferenceFinderTab
 
+open Avalonia.Media
 open Geometry
 
 module ReferenceFinderTab =
@@ -18,10 +19,16 @@ module ReferenceFinderTab =
     let MaxSolutions = 4
 
     type Msg =
+        // User Inputs
         | ChangeXInput of string
         | ChangeYInput of string
+        // User Execution
         | RunReferenceFinder
         | ReferenceFinderSolutions of ReferenceFinderSolution array
+        // Steps
+        | HoverStep of int
+        | LeaveStep
+        // Solution Previews
         | HoverSolutionPreview of int
         | LeaveSolutionPreview
         | SelectSolutionPreview of int
@@ -35,11 +42,14 @@ module ReferenceFinderTab =
           yInput = y.ToString()
           referenceFinder = ReferenceFinder.init
           solutions = [||]
+          hoveredStep = None
           activeSolution = 0
           hoveredSolution = None }
 
     let update (msg: Msg) (state: ReferenceFinderTabState) : ReferenceFinderTabState * Cmd<Msg> =
         match msg with
+        // User Input
+
         | ChangeXInput xString ->
             match String.parseFloat xString with
             | Some newX -> { state with x = newX }, Cmd.none
@@ -49,6 +59,8 @@ module ReferenceFinderTab =
             match String.parseFloat yString with
             | Some newY -> { state with y = newY }, Cmd.none
             | None -> state, Cmd.none
+
+        // User Execution
 
         | RunReferenceFinder ->
             state,
@@ -60,14 +72,21 @@ module ReferenceFinderTab =
 
         | ReferenceFinderSolutions solutions -> { state with solutions = solutions }, Cmd.none
 
-        | HoverSolutionPreview index -> { state with hoveredSolution = Some index }, Cmd.none
-        
-        | LeaveSolutionPreview -> { state with hoveredSolution = None }, Cmd.none
-        
-        | SelectSolutionPreview index ->
+        // Steps
+        | HoverStep index -> { state with hoveredStep = Some index }, Cmd.none
+
+        | LeaveStep -> { state with hoveredStep = None }, Cmd.none
+
+        // Solutions
+
+        | HoverSolutionPreview index ->
             { state with
-                  activeSolution = index },
+                  hoveredSolution = Some index },
             Cmd.none
+
+        | LeaveSolutionPreview -> { state with hoveredSolution = None }, Cmd.none
+
+        | SelectSolutionPreview index -> { state with activeSolution = index }, Cmd.none
 
     let private toolBar (state: ReferenceFinderTabState) dispatch =
         let coordinates : IView list =
@@ -91,7 +110,7 @@ module ReferenceFinderTab =
              StackPanel.background Theme.palette.panelBackground
              StackPanel.children (coordinates @ [ actionButton ]) ]
 
-    let private foldSequences solution =
+    let private foldSequences maybeHoverIndex solution dispatch =
         let title = Text.h1 "Fold Sequences" []
 
         let pointString (p: Point2D) =
@@ -100,7 +119,6 @@ module ReferenceFinderTab =
         let lineString (l: Line2D) =
             $"[{pointString l.Start}; {pointString l.Finish}]"
 
-        // TODO: Allow string wrapping for text boxes and fix the steps width
         let description axiomAction =
             match axiomAction with
             | AxiomAction.One (p1, p2) ->
@@ -121,11 +139,37 @@ module ReferenceFinderTab =
 
         let error = Text.h2 $"Error: {solution.Error}" []
 
+
+        /// Create a widget of numbered items. Items can be hovered over to change styling
+        /// Eg.
+        ///     1. First
+        ///     2. Second
+        ///     3. Third
+        let hoverableNumberedList maybeHoverIndex items =
+            let numberedItem index text =
+                TextBlock.create (
+                    [ TextBlock.text $"{index + 1}. {text}"
+                      TextBlock.margin Theme.spacing.small
+                      TextBlock.textWrapping TextWrapping.Wrap
+                      TextBlock.onPointerEnter (fun _ -> HoverStep index |> dispatch)
+                      TextBlock.onPointerLeave (fun _ -> dispatch LeaveStep) ]
+                    |> List.appendIf
+                        (Option.contains index maybeHoverIndex)
+                        [ TextBlock.foreground Theme.palette.primary ]
+                )
+                :> IView
+
+            StackPanel.create
+            <| [ StackPanel.orientation Orientation.Vertical
+                 StackPanel.children (List.mapi numberedItem items)
+                 StackPanel.margin Theme.spacing.medium ]
+            :> IView
+
         let steps : IView =
             solution.Steps
             |> Seq.map description
             |> List.ofSeq
-            |> Text.numberedList
+            |> hoverableNumberedList maybeHoverIndex
 
         StackPanel.create
         <| [ StackPanel.orientation Orientation.Vertical
@@ -204,7 +248,7 @@ module ReferenceFinderTab =
             DockPanel.create
             <| [ DockPanel.children
                  <| [ DockPanel.child Direction.Top (toolBar state dispatch)
-                      DockPanel.child Direction.Right (foldSequences selected)
+                      DockPanel.child Direction.Right (foldSequences state.hoveredStep selected dispatch)
                       DockPanel.child Direction.Bottom (previews state.hoveredSolution state.solutions dispatch)
                       creasePattern selected.Solution ] ]
         | None ->
