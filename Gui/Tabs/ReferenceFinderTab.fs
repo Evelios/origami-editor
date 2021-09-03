@@ -191,8 +191,8 @@ module ReferenceFinderTab =
         let solutionPreview index referenceFinderSolution =
             let creasePatternDrawing =
                 CreasePatternDrawing.create
-                    {| size = creasePatternHeight
-                       creasePattern = referenceFinderSolution.Solution |}
+                <| [ CreasePatternDrawing.size creasePatternHeight
+                     CreasePatternDrawing.creasePattern referenceFinderSolution.Solution ]
 
             let error =
                 Text.paragraph
@@ -233,26 +233,57 @@ module ReferenceFinderTab =
                                    creasePatternViews ] ]
 
 
-    let private creasePattern cp =
+    let private creasePattern cp hoveredStep =
         let creasePatternSize = 300.
+
+        let stepElements =
+            match hoveredStep with
+            | Some axiomAction ->
+                let results =
+                    List.map EdgeElement (CreasePattern.axiomResult axiomAction cp)
+                    |> List.map (fun e -> (e, ComponentState.Selected))
+
+                let references =
+                    match axiomAction with
+                    | AxiomAction.One (p1, p2) -> [ VertexElement p1; VertexElement p2 ]
+                    | AxiomAction.Two (p1, p2) -> [ VertexElement p1; VertexElement p2 ]
+                    | AxiomAction.Three (l1, l2) ->
+                        [ l1; l2 ]
+                        |> List.filterMap (fun e -> CreasePattern.boundedEdge e cp)
+                        |> List.map EdgeElement
+
+                    |> List.map (fun e -> (e, ComponentState.Pressed))
+
+                List.append results references
+
+            | None -> []
 
         DockPanel.create
         <| [ DockPanel.background Theme.palette.canvasBackdrop
-             DockPanel.children [ CreasePatternDrawing.create
-                                      {| size = creasePatternSize
-                                         creasePattern = cp |} ] ]
+             DockPanel.children
+             <| [ CreasePatternDrawing.create
+                  <| [ CreasePatternDrawing.creasePattern cp
+                       CreasePatternDrawing.size creasePatternSize
+                       CreasePatternDrawing.graphElements stepElements ] ] ]
 
     let view (state: ReferenceFinderTabState) dispatch =
         match Array.tryItem state.activeSolution state.solutions with
         | Some selected ->
+            let hoveredStep =
+                Option.bind (fun i -> Array.tryItem i (Array.ofSeq selected.Steps)) state.hoveredStep
+
+            let creasePatternStep =
+                Option.bind (fun i -> Array.tryItem i (Array.ofSeq selected.CreasePatterns)) state.hoveredStep
+                |> Option.defaultValue selected.Solution
+
             DockPanel.create
             <| [ DockPanel.children
                  <| [ DockPanel.child Direction.Top (toolBar state dispatch)
                       DockPanel.child Direction.Right (foldSequences state.hoveredStep selected dispatch)
                       DockPanel.child Direction.Bottom (previews state.hoveredSolution state.solutions dispatch)
-                      creasePattern selected.Solution ] ]
+                      creasePattern creasePatternStep hoveredStep ] ]
         | None ->
             DockPanel.create
             <| [ DockPanel.children
                  <| [ View.withAttr (StackPanel.dock Dock.Top) (toolBar state dispatch)
-                      creasePattern CreasePattern.empty ] ]
+                      creasePattern CreasePattern.empty None ] ]

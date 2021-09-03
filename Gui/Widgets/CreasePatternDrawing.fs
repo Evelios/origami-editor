@@ -1,29 +1,38 @@
 namespace Gui.Widgets
 
 open Avalonia.FuncUI.Types
+open CreasePattern
 open Geometry
+open Gui
+
+/// Possible states that a crease pattern component can be in
+type ComponentState =
+    | Default
+    | Hovered
+    | Selected
+    | Pressed
+
+type CreasePatternComponent = GraphElement * ComponentState
+
+type CreasePatternDrawingAttribute =
+    | GraphElements of CreasePatternComponent list
+    | Edges of ComponentState * Edge list
+    | Vertices of ComponentState * Point2D list
+    | CreasePattern of CreasePattern
+    | Size of float
+
+type CreasePatternDrawingState =
+    { size: float
+      creasePatternSize: Size
+      graphElements: Set<CreasePatternComponent> }
 
 module CreasePatternDrawing =
-    // Todo: Extracting drawing api
-
     open Avalonia
     open Avalonia.Controls
     open Avalonia.FuncUI.DSL
     open Avalonia.Controls.Shapes
     open Avalonia.Media
 
-    open Gui
-    open CreasePattern
-
-
-    (* Types *)
-
-    type private ComponentState =
-        | Default
-        | Selected
-        | Hovered
-
-    type private CanvasComponent = GraphElement * ComponentState
 
 
     (* Theming *)
@@ -36,15 +45,11 @@ module CreasePatternDrawing =
     let private stateColor state =
         match state with
         | Default -> Theme.colors.darkGray
-        | Hovered -> Theme.colors.blue
-        | Selected -> Theme.colors.yellow
+        | Selected -> Theme.colors.blue
+        | Hovered -> Theme.colors.lightYellow
+        | Pressed -> Theme.colors.yellow
 
-    let private vertexColor state =
-        match state with
-        | Default -> Theme.colors.darkGray
-        | Hovered -> Theme.colors.blue
-        | Selected -> Theme.colors.yellow
-
+    let private vertexColor = stateColor
 
     let private edgeColor state assignment =
         match state with
@@ -95,46 +100,92 @@ module CreasePatternDrawing =
              Ellipse.fill (vertexColor options.state) ]
         :> IView
 
-    let private draw
-        (options: {| size: float
-                     creasePattern: CreasePattern |})
-        =
+    let private draw (state: CreasePatternDrawingState) =
         let translation =
-            Translation.create options.creasePattern options.size
+            Translation.create state.creasePatternSize state.size
 
-        let edges =
-            CreasePattern.edges options.creasePattern
+        let components =
+            (Set.toSeq state.graphElements)
+            |> Seq.sortBy
+                (fun e ->
+                    match e with
+                    | EdgeElement _, Default -> 0
+                    | VertexElement _, Default -> 1
+                    | VertexElement _, Selected -> 2
+                    | EdgeElement _, Selected -> 3
+                    | EdgeElement _, Hovered -> 4
+                    | VertexElement _, Hovered -> 5
+                    | EdgeElement _, Pressed -> 6
+                    | VertexElement _, Pressed -> 7)
             |> Seq.map
-                (fun edge ->
-                    drawEdge
-                        {| translation = translation
-                           edge = edge
-                           state = ComponentState.Default |})
+                (fun e ->
+                    match e with
+                    | VertexElement vertex, vertexState ->
+                        drawVertex
+                            {| translation = translation
+                               vertex = vertex
+                               size = 4.
+                               state = vertexState |}
+                    | EdgeElement edge, edgeState ->
+                        drawEdge
+                            {| translation = translation
+                               edge = edge
+                               state = edgeState |})
 
-        let vertices =
-            CreasePattern.vertices options.creasePattern
-            |> Seq.map
-                (fun vertex ->
-                    drawVertex
-                        {| translation = translation
-                           vertex = vertex
-                           size = 4.
-                           state = ComponentState.Default |})
 
-        let components = Seq.append edges vertices
-
-        Canvas.create [ Canvas.height options.size
-                        Canvas.width options.size
+        Canvas.create [ Canvas.height state.size
+                        Canvas.width state.size
                         Canvas.background Theme.palette.canvasBackground
                         Canvas.children (List.ofSeq components)
                         // TODO: fix name
                         Canvas.name "TODO: Fix Me" ]
 
 
-    (* API *)
+    (**** API ****)
 
-    let create
-        (options: {| size: float
-                     creasePattern: CreasePattern |})
-        =
-        draw options
+    (* Builders *)
+
+    let private init =
+        { size = 0.
+          creasePatternSize = Size.empty
+          graphElements = Set.empty }
+
+    /// Create the crease pattern drawing object
+    let create attrs =
+        let addGraphElements elements state =
+            { state with
+                  graphElements = Set.union state.graphElements (Set.ofSeq elements) }
+
+        let addEdges componentState edges state =
+            addGraphElements (Seq.map (fun edge -> EdgeElement edge, componentState) edges) state
+
+        let addVertices componentState vertices state =
+            addGraphElements (Seq.map (fun vertex -> VertexElement vertex, componentState) vertices) state
+
+        let rec attrToState state attr =
+            match attr with
+            | GraphElements components -> addGraphElements components state
+            | Edges (componentState, edges) -> addEdges componentState edges state
+            | Vertices (componentState, vertices) -> addVertices componentState vertices state
+
+            | CreasePattern creasePattern ->
+                { state with
+                      creasePatternSize = CreasePattern.size creasePattern }
+                |> addEdges Default (CreasePattern.edges creasePattern)
+                |> addVertices Default (CreasePattern.vertices creasePattern)
+            | Size size -> { state with size = size }
+
+        draw (List.fold attrToState init attrs)
+
+
+    (* Attributes *)
+
+    let size = CreasePatternDrawingAttribute.Size
+
+    let graphElements = GraphElements
+
+    let creasePattern = CreasePattern
+
+    let edges state edges = Edges(state, edges)
+
+    let vertices state vertices = Vertices(state, vertices)

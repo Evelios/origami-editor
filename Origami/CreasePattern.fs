@@ -101,12 +101,21 @@ module CreasePattern =
         |> expandBoundingBox (Tuple2.toList (Edge.vertices edge))
         |> mapGraph (Graph.addEdges [ edge ])
 
-    /// Run the axiom and add in the line segment(s) created by the axiom onto the crease pattern
-    let performAxiom axiom creasePattern =
+    let boundedEdge line creasePattern =
+        let maybeSegment =
+            Boolean2D.boundingBoxAndLine creasePattern.Bounds line
+
+        Option.map (fun lineSegment -> Edge.atWithAssignment lineSegment EdgeAssignment.Unassigned) maybeSegment
+
+    let axiomResult axiom creasePattern =
         Axiom.perform axiom
         |> List.ofSeq
         |> List.filterMap (Boolean2D.boundingBoxAndLine creasePattern.Bounds)
         |> List.map (fun line -> Edge.atWithAssignment line EdgeAssignment.Unassigned)
+
+    /// Run the axiom and add in the line segment(s) created by the axiom onto the crease pattern
+    let performAxiom axiom creasePattern =
+        axiomResult axiom creasePattern
         |> fun edges -> addEdges edges creasePattern
 
     (* Queries *)

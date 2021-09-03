@@ -1,10 +1,6 @@
 namespace Gui.Tabs.CreasePatternTab.Drawing
 
-open Utilities
-open Utilities.Collections
-
 module CreasePatternCanvas =
-
     open Avalonia
     open Avalonia.Controls
     open Avalonia.FuncUI.DSL
@@ -74,7 +70,7 @@ module CreasePatternCanvas =
 
             let edgeWithin =
                 CreasePattern.edgeWithin convertedCloseDistance convertedVertex state.creasePattern
-                
+
             let hover =
                 match vertexWithin, edgeWithin with
                 | Some vertex, _ -> Some(VertexElement vertex)

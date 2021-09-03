@@ -9,6 +9,7 @@ type Size =
 
 module Size =
 
+    let empty = { width = 0.; height = 0. }
     let create width height = { width = width; height = height }
 
     let scale scale (size: Size) =

@@ -3,8 +3,8 @@ namespace CreasePattern
 open Geometry
 
 type GraphElement =
-    | VertexElement of Point2D
     | EdgeElement of Edge
+    | VertexElement of Point2D
 
 [<RequireQualifiedAccess>]
 type Axiom =
@@ -17,7 +17,6 @@ type AxiomAction =
     | One of Point2D * Point2D
     | Two of Point2D * Point2D
     | Three of Line2D * Line2D
-
 
 module Axiom =
 
