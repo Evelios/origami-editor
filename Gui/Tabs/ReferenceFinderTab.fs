@@ -265,7 +265,7 @@ module ReferenceFinderTab =
                   <| [ CreasePatternDrawing.creasePattern cp
                        CreasePatternDrawing.size creasePatternSize
                        CreasePatternDrawing.graphElements stepElements ] ] ]
-
+    
     let view (state: ReferenceFinderTabState) dispatch =
         match Array.tryItem state.activeSolution state.solutions with
         | Some selected ->

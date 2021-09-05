@@ -43,7 +43,6 @@
         <Compile Include="Tabs\CreasePatternTab\InfoBar.fs" />
         <Compile Include="Tabs\CreasePatternTab\FileSettings.fs" />
         <Compile Include="Tabs\CreasePatternTab\FileMenu.fs" />
-        <Compile Include="Tabs\CreasePatternTab\Drawing\CreasePatternComponents.fs" />
         <Compile Include="Tabs\CreasePatternTab\Drawing\CreasePatternCanvas.fs" />
         <Compile Include="Tabs\CreasePatternTab\CreasePatternTab.fs" />
         <Compile Include="Tabs\ReferenceFinderTab.fs" />

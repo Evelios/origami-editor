@@ -1,5 +1,8 @@
 namespace Gui.Tabs.CreasePatternTab.Drawing
 
+open Geometry
+open Gui.Widgets
+
 module CreasePatternCanvas =
     open Avalonia
     open Avalonia.Controls
@@ -18,7 +21,9 @@ module CreasePatternCanvas =
 
     let canvasName = "Crease Pattern Canvas"
 
-    let theme = {| pointerCloseDistance = 20. |}
+    let theme =
+        {| creasePatternSize = 500.
+           pointerCloseDistance = 20. |}
 
     let rec update (msg: Msg) (state: CreasePatternTabState) : CreasePatternTabState =
         match msg with
@@ -93,60 +98,35 @@ module CreasePatternCanvas =
 
 
     let canvas (state: CreasePatternTabState) =
-        let edgeLines =
-            Seq.map
-                (CreasePatternComponents.edgeLineDefault state.translation)
-                (CreasePattern.edges state.creasePattern)
-            |> Seq.rev
-
-        let vertexPoints =
-            Seq.map
-                (CreasePatternComponents.vertexDefault state.translation)
-                (CreasePattern.vertices state.creasePattern)
-
-        let creasePatternComponent vertexView edgeView ``component`` =
-            match ``component`` with
-            | VertexElement vertex -> vertexView state.translation vertex
-            | EdgeElement edge -> edgeView state.translation edge
-
-        let hoverElement =
-            Option.map
-                (creasePatternComponent CreasePatternComponents.vertexHovered CreasePatternComponents.edgeLineHovered)
-                state.hover
-
         let pressedElement =
-            Option.map
-                (creasePatternComponent CreasePatternComponents.vertexPressed CreasePatternComponents.edgeLinePressed)
-                state.pressed
+            Option.map (CreasePatternDrawing.graphElementOf ComponentState.Pressed) state.pressed
+
+        let hoveredElement =
+            Option.map (CreasePatternDrawing.graphElementOf ComponentState.Hovered) state.hover
 
         let dragLine =
             match state.pressed, state.hover, state.vertexPosition with
             | Some (VertexElement pressed), Some (VertexElement hover), _ ->
-                Some(CreasePatternComponents.dragLine state.translation pressed hover)
+                CreasePatternDrawing.dragLine (LineSegment2D.from pressed hover)
+                |> Some
             | Some (VertexElement pressed), _, Some vertexPosition ->
-                Some(CreasePatternComponents.dragLine state.translation pressed vertexPosition)
+                CreasePatternDrawing.dragLine (LineSegment2D.from pressed vertexPosition)
+                |> Some
             | _ -> None
 
-        let selectedElements =
-            List.map
-                (creasePatternComponent CreasePatternComponents.vertexSelected CreasePatternComponents.edgeLineSelected)
-                state.selectedReferences
+        let userElements =
+            [ pressedElement
+              hoveredElement
+              dragLine ]
+            |> List.filterNone
 
-        let canvasElements =
-            []
-            |> List.append (List.ofSeq edgeLines)
-            |> List.appendIf state.showVertices (List.ofSeq vertexPoints)
-            |> List.consWhenSome dragLine
-            |> List.consWhenSome hoverElement
-            |> List.consWhenSome pressedElement
-            |> List.append selectedElements
-            |> List.rev
-
-        Canvas.create [ Canvas.height state.pageSize.Height
-                        Canvas.width state.pageSize.Width
-                        Canvas.background Theme.palette.canvasBackground
-                        Canvas.children canvasElements
-                        Canvas.name canvasName ]
+        CreasePatternDrawing.create (
+            [ CreasePatternDrawing.creasePattern state.creasePattern
+              CreasePatternDrawing.size theme.creasePatternSize
+              CreasePatternDrawing.name canvasName
+              CreasePatternDrawing.graphElementsOf ComponentState.Selected state.selectedReferences ]
+            @ userElements
+        )
 
 
     let view (state: CreasePatternTabState) dispatch =

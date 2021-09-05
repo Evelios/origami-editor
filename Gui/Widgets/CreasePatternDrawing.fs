@@ -16,15 +16,19 @@ type CreasePatternComponent = GraphElement * ComponentState
 
 type CreasePatternDrawingAttribute =
     | GraphElements of CreasePatternComponent list
+    | DragLine of LineSegment2D
     | Edges of ComponentState * Edge list
     | Vertices of ComponentState * Point2D list
     | CreasePattern of CreasePattern
     | Size of float
+    | Name of string
 
 type CreasePatternDrawingState =
     { size: float
       creasePatternSize: Size
-      graphElements: Set<CreasePatternComponent> }
+      graphElements: Set<CreasePatternComponent>
+      dragLine: LineSegment2D option
+      name: string option }
 
 module CreasePatternDrawing =
     open Avalonia
@@ -33,14 +37,23 @@ module CreasePatternDrawing =
     open Avalonia.Controls.Shapes
     open Avalonia.Media
 
-
+    open Utilities.Extensions
 
     (* Theming *)
-
-    let private theme =
+    let theme =
         {| lineThickness = 2.
            vertexSize = 8.
-           vertexHoveredSize = 10. |}
+           vertexHoveredSize = 10.
+           vertexColor = Theme.colors.darkGray
+           hoveredColor = Theme.colors.lightYellow
+           pressedColor = Theme.colors.yellow
+           selectedColor = Theme.colors.blue
+           boundaryColor = Theme.colors.lighterGray
+           mountainColor = Theme.colors.green
+           valleyColor = Theme.colors.blue
+           unassignedColor = Theme.colors.lighterGray
+           flatColor = Theme.colors.lighterGray
+           dragColor = Theme.colors.lighterGray |}
 
     let private stateColor state =
         match state with
@@ -100,11 +113,24 @@ module CreasePatternDrawing =
              Ellipse.fill (vertexColor options.state) ]
         :> IView
 
+    let private drawDragLine (translation: Translation) (line: LineSegment2D) : IView =
+        let startScaled = line.Start * translation.xRatio
+        let finishScaled = line.Finish * translation.xRatio
+
+        Line.create
+        <| [ Line.startPoint (Point(startScaled.X, startScaled.Y))
+             Line.endPoint (Point(finishScaled.X, finishScaled.Y))
+             Line.stroke theme.dragColor
+             Line.strokeThickness theme.lineThickness
+             Line.strokeLineCap PenLineCap.Round
+             Line.strokeDashArray [ 5.; 2. ] ]
+        :> IView
+
     let private draw (state: CreasePatternDrawingState) =
         let translation =
             Translation.create state.creasePatternSize state.size
 
-        let components =
+        let graphElements =
             (Set.toSeq state.graphElements)
             |> Seq.sortBy
                 (fun e ->
@@ -132,13 +158,22 @@ module CreasePatternDrawing =
                                edge = edge
                                state = edgeState |})
 
+        let maybeDragLineView =
+            Option.map (drawDragLine translation) state.dragLine
 
-        Canvas.create [ Canvas.height state.size
-                        Canvas.width state.size
-                        Canvas.background Theme.palette.canvasBackground
-                        Canvas.children (List.ofSeq components)
-                        // TODO: fix name
-                        Canvas.name "TODO: Fix Me" ]
+        let canvasElements =
+            List.ofSeq graphElements
+            |> List.appendWhenSome maybeDragLineView
+
+        let nameOption = Option.map Canvas.name state.name
+
+        Canvas.create (
+            [ Canvas.height state.size
+              Canvas.width state.size
+              Canvas.background Theme.palette.canvasBackground
+              Canvas.children (List.ofSeq canvasElements) ]
+            |> List.appendWhenSome nameOption
+        )
 
 
     (**** API ****)
@@ -148,7 +183,9 @@ module CreasePatternDrawing =
     let private init =
         { size = 0.
           creasePatternSize = Size.empty
-          graphElements = Set.empty }
+          graphElements = Set.empty
+          dragLine = None
+          name = None }
 
     /// Create the crease pattern drawing object
     let create attrs =
@@ -164,27 +201,47 @@ module CreasePatternDrawing =
 
         let rec attrToState state attr =
             match attr with
+            (* Basic Attributes *)
+            | Size size -> { state with size = size }
+            | Name name -> { state with name = Some name }
+
             | GraphElements components -> addGraphElements components state
             | Edges (componentState, edges) -> addEdges componentState edges state
             | Vertices (componentState, vertices) -> addVertices componentState vertices state
+            | DragLine line -> { state with dragLine = Some line }
 
+            (* Crease Pattern Initialization *)
             | CreasePattern creasePattern ->
                 { state with
                       creasePatternSize = CreasePattern.size creasePattern }
                 |> addEdges Default (CreasePattern.edges creasePattern)
                 |> addVertices Default (CreasePattern.vertices creasePattern)
-            | Size size -> { state with size = size }
+
 
         draw (List.fold attrToState init attrs)
 
 
     (* Attributes *)
 
+    let name = Name
+
+    let dragLine = DragLine
+
     let size = CreasePatternDrawingAttribute.Size
+
+    /// Build the drawing from an initial crease pattern
+    let creasePattern = CreasePattern
 
     let graphElements = GraphElements
 
-    let creasePattern = CreasePattern
+    /// Add a list of components with a particular component state
+    let graphElementsOf state elements =
+        List.map (fun element -> (element, state)) elements
+        |> GraphElements
+
+    let graphElementOf state element =
+        graphElementsOf state (List.singleton element)
+
 
     let edges state edges = Edges(state, edges)
 

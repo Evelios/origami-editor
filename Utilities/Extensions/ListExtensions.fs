@@ -50,3 +50,5 @@ module List =
                 yield h, x
               yield! pairs t ]
         | _ -> []
+
+    let filterNone xs = List.choose id xs
