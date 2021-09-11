@@ -9,7 +9,9 @@ type rad
 [<Measure>]
 type deg
 
+[<Struct>]
 type Angle =
+    private
     | Radians of float<rad>
 
     (* Operators *)

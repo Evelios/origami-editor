@@ -5,17 +5,14 @@ open Geometry
 
 [<CustomEquality>]
 [<CustomComparison>]
+[<Struct>]
 type LineSegment2D =
-    | LineSegment2D of {| start: Point2D; finish: Point2D |}
+    private
+        { start: Point2D
+          finish: Point2D }
 
-    member this.start =
-        match this with
-        | LineSegment2D line -> line.start
-
-    member this.finish =
-        match this with
-        | LineSegment2D line -> line.finish
-
+    member this.Start = this.start
+    member this.Finish = this.finish
 
     interface IComparable<LineSegment2D> with
         member this.CompareTo(line) = this.Comparison(line)
@@ -31,7 +28,7 @@ type LineSegment2D =
         elif this.LessThan(other) then -1
         else 1
 
-    member this.LessThan(LineSegment2D other: LineSegment2D) =
+    member this.LessThan(other: LineSegment2D) =
         let firstLower = min this.start this.finish
 
         let firstGreater = max this.start this.finish
@@ -54,18 +51,16 @@ type LineSegment2D =
                 && this.finish = other.start)
         | _ -> false
 
-    static member (*)(LineSegment2D lhs: LineSegment2D, rhs: float) : LineSegment2D =
-        LineSegment2D
-            {| start = lhs.start * rhs
-               finish = lhs.finish * rhs |}
+    static member (*)(lhs: LineSegment2D, rhs: float) : LineSegment2D =
+        { start = lhs.start * rhs
+          finish = lhs.finish * rhs }
 
 
     static member (*)(lhs: float, rhs: LineSegment2D) : LineSegment2D = rhs * lhs
 
-    static member (/)(LineSegment2D lhs: LineSegment2D, rhs: float) : LineSegment2D =
-        LineSegment2D
-            {| start = lhs.start / rhs
-               finish = lhs.finish / rhs |}
+    static member (/)(lhs: LineSegment2D, rhs: float) : LineSegment2D =
+        { start = lhs.start / rhs
+          finish = lhs.finish / rhs }
 
 
     static member (/)(lhs: float, rhs: LineSegment2D) : LineSegment2D = rhs / lhs
@@ -76,8 +71,22 @@ type LineSegment2D =
 module LineSegment2D =
     (* Builders *)
 
-    let from (start: Point2D) (finish: Point2D) =
-        LineSegment2D {| start = start; finish = finish |}
+    /// Generate a line segment from two points. This doesn't perform any checks ensuring that the points are not equal.
+    /// If that is the behavior that you want you should use <see cref="safeFrom"/> function.
+    let from (start: Point2D) (finish: Point2D) = { start = start; finish = finish }
+
+    /// Safely create a line segment. This function returns `None` when the two points are almost equal.
+    /// This has to do with the <see cref="Geometry.Internal.Tolerance"/>.
+    let safeFrom (start: Point2D) (finish: Point2D) =
+        if start = finish then
+            None
+        else
+            Some(from start finish)
+
+    /// Create a line segment starting at point in a particular direction and length
+    let fromPointAndVector (start: Point2D) (direction: Vector2D) =
+        { start = start
+          finish = start + direction }
 
 
     (* Attributes *)
@@ -88,8 +97,19 @@ module LineSegment2D =
     let length (line: LineSegment2D) : float =
         Point2D.distanceTo line.start line.finish
 
+    
+    (* Modifiers *)
+    
+    let round (l: LineSegment2D) = from (Point2D.round l.Start) (Point2D.round l.Finish)
+    
 
     (* Queries *)
+
+    let areParallel (first: LineSegment2D) (second: LineSegment2D) : bool =
+        let d1 = direction first
+        let d2 = direction second
+
+        d1 = d2 || Vector2D.neg d1 = d2
 
     let pointClosestTo (point: Point2D) (line: LineSegment2D) =
         if point = line.start || point = line.finish then
@@ -114,3 +134,29 @@ module LineSegment2D =
 
     let distanceToPoint (point: Point2D) (line: LineSegment2D) : float =
         Point2D.distanceTo point (pointClosestTo point line)
+
+
+    /// Try to find the intersection between two lines. If the lines are parallel (even if they are overlapping) then no
+    /// intersection is returned
+    let intersect (lhs: LineSegment2D) (rhs: LineSegment2D) : Point2D option =
+        if areParallel lhs rhs then
+            None
+        else
+            // http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+            let p = lhs.start
+            let q = rhs.start
+            let r = lhs.finish - lhs.start
+            let s = rhs.finish - rhs.start
+
+            let t =
+                Vector2D.crossProduct (q - p) s
+                / Vector2D.crossProduct r s
+
+            let u =
+                Vector2D.crossProduct (p - q) r
+                / Vector2D.crossProduct s r
+
+            if (0.0 <= t && t <= 1.0) && (0.0 <= u && u <= 1.0) then
+                p + (t * r) |> Some
+            else
+                None

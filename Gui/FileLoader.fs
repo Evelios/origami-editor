@@ -1,11 +1,12 @@
 namespace Gui
 
-open System
 
 
 module FileLoader =
+    open System
     open System.IO
     open FSharp.Json
+
     open Fold
 
     type Error =
@@ -27,7 +28,4 @@ module FileLoader =
     /// TODO: catch json deserialization errors
     let loadFoldFile path : Result<Fold, Error> =
         readFile path
-        |> Result.map (
-            String.concat Environment.NewLine
-            >> FoldJson.fromJson
-        )
+        |> Result.map (String.concat Environment.NewLine >> Fold.fromJson)

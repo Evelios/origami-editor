@@ -21,8 +21,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CreasePattern\CreasePattern.fsproj" />
-        <ProjectReference Include="..\FoldFile\FoldFile.fsproj" />
+        <ProjectReference Include="..\Origami\Origami.fsproj" />
+        <ProjectReference Include="..\Fold\Fold.fsproj" />
         <ProjectReference Include="..\Utilities\Utilities.fsproj" />
     </ItemGroup>
 
@@ -30,17 +30,19 @@
         <Compile Include="Translation.fs" />
         <Compile Include="Types.fs" />
         <Compile Include="Theme.fs" />
+        <Compile Include="Color.fs" />
         <Compile Include="FileLoader.fs" />
         <Compile Include="Widgets\Icons.fs" />
         <Compile Include="Widgets\Form.fs" />
         <Compile Include="Widgets\Dialogs.fs" />
         <Compile Include="Widgets\DockPanel.fs" />
         <Compile Include="Widgets\CreasePatternDrawing.fs" />
+        <Compile Include="Widgets\Text.fs" />
+        <Compile Include="Widgets\Accents.fs" />
         <Compile Include="Tabs\CreasePatternTab\IconBar.fs" />
         <Compile Include="Tabs\CreasePatternTab\InfoBar.fs" />
         <Compile Include="Tabs\CreasePatternTab\FileSettings.fs" />
         <Compile Include="Tabs\CreasePatternTab\FileMenu.fs" />
-        <Compile Include="Tabs\CreasePatternTab\Drawing\CreasePatternComponents.fs" />
         <Compile Include="Tabs\CreasePatternTab\Drawing\CreasePatternCanvas.fs" />
         <Compile Include="Tabs\CreasePatternTab\CreasePatternTab.fs" />
         <Compile Include="Tabs\ReferenceFinderTab.fs" />

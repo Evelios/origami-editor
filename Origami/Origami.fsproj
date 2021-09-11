@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <RootNamespace>CreasePattern</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Types.fs" />
+        <Compile Include="Edge.fs" />
+        <Compile Include="Graph.fs" />
+        <Compile Include="AxiomAction.fs" />
+        <Compile Include="CreasePattern.fs" />
+        <Compile Include="ReferenceFinder.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Aether" Version="8.3.1" />
+      <PackageReference Include="FSharp.FGL" Version="0.0.1" />
+      <PackageReference Include="MathNet.Spatial" Version="0.6.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Fold\Fold.fsproj" />
+    </ItemGroup>
+
+</Project>

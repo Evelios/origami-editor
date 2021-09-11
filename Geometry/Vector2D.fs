@@ -5,9 +5,15 @@ open FSharp.Json
 
 [<CustomEquality>]
 [<CustomComparison>]
+[<RequireQualifiedAccess>]
+[<Struct>]
 type Vector2D =
-    { x: float
-      y: float }
+    private
+        { x: float
+          y: float }
+
+    member this.X = this.x
+    member this.Y = this.y
 
     (* Comparable interfaces *)
 
@@ -40,7 +46,13 @@ type Vector2D =
         almostEqual this.x other.x
         && almostEqual this.y other.y
 
-    override this.GetHashCode() = HashCode.Combine(this.x, this.x)
+    override this.GetHashCode() = HashCode.Combine(this.x, this.y)
+
+    static member (+)(lhs: Vector2D, rhs: Vector2D) : Vector2D =
+        { x = lhs.x + rhs.x; y = lhs.y + rhs.y }
+
+    static member (-)(lhs: Vector2D, rhs: Vector2D) : Vector2D =
+        { x = lhs.x + rhs.x; y = lhs.y + rhs.y }
 
     static member (*)(vector: Vector2D, scale: float) : Vector2D =
         { x = vector.x * scale
@@ -59,23 +71,28 @@ module Vector2D =
 
     let xy (x: float) (y: float) : Vector2D = { x = x; y = y }
 
-    let scale x y (vector: Vector2D) = { x = vector.x * x; y = vector.y * y }
+    let ofPolar r a = xy (r * Angle.cos a) (r * Angle.sin a)
 
-    
     (* Accessors *)
 
-    let magnitude v = sqrt (v.x ** 2. + v.y ** 2.)
+    let magnitude (v: Vector2D) = sqrt (v.x ** 2. + v.y ** 2.)
 
-    
+
     (* Modifiers *)
 
-    let neg v = { x = -v.x; y = -v.y }
+    let scale x y (vector: Vector2D) : Vector2D = { x = vector.x * x; y = vector.y * y }
 
-    let rotate a v =
+    let mul scale (v: Vector2D) = v * scale
+
+    let neg (v: Vector2D) : Vector2D = { x = -v.x; y = -v.y }
+
+    let rotate a (v: Vector2D) : Vector2D =
         { x = Angle.cos a * v.x - Angle.sin a * v.y
           y = Angle.sin a * v.x + Angle.cos a * v.y }
 
     let normalize v = v / (magnitude v)
+
+    let round (p: Vector2D) = xy (roundFloat p.x) (roundFloat p.y)
 
 
     (* Queries *)

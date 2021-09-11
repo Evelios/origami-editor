@@ -5,9 +5,14 @@ open Geometry
 
 [<CustomEquality>]
 [<CustomComparison>]
+[<Struct>]
 type Line2D =
-    { start: Point2D
-      finish: Point2D }
+    private
+        { start: Point2D
+          finish: Point2D }
+
+    member this.Start = this.start
+    member this.Finish = this.finish
 
     interface IComparable<Line2D> with
         member this.CompareTo(line) = this.Comparison(line)
@@ -51,7 +56,12 @@ type Line2D =
 
 module Line2D =
     (* Builders *)
-    let fromTo (start: Point2D) (finish: Point2D) = { start = start; finish = finish }
+    let through (start: Point2D) (finish: Point2D) = { start = start; finish = finish }
+
+    /// Create a line starting at point in a particular direction and length
+    let fromPointAndVector (start: Point2D) (direction: Vector2D) =
+        { start = start
+          finish = start + direction }
 
     let private toLineSegment (line: Line2D) : LineSegment2D =
         LineSegment2D.from line.start line.finish
@@ -63,6 +73,13 @@ module Line2D =
 
     let length (line: Line2D) : float =
         Point2D.distanceTo line.start line.finish
+
+
+    (* Modifiers *)
+
+    let round (l: Line2D) =
+        through (Point2D.round l.Start) (Point2D.round l.Finish)
+
 
     (* Queries *)
 
@@ -83,7 +100,7 @@ module Line2D =
         else
             Point2D.distanceTo point (pointClosestTo point line)
 
-    let atPointInDirection (point: Point2D) (direction: Vector2D) : Line2D = fromTo point (point + direction)
+    let atPointInDirection (point: Point2D) (direction: Vector2D) : Line2D = through point (point + direction)
 
     let perpThroughPoint (point: Point2D) (line: Line2D) : Line2D =
         atPointInDirection point (Vector2D.rotate (Angle.inDegrees 90.<deg>) (direction line))
@@ -107,7 +124,7 @@ module Line2D =
 
         d1 = d2 || Vector2D.neg d1 = d2
 
-    let intersection (first: Line2D) (second: Line2D) : Point2D option =
+    let intersect (first: Line2D) (second: Line2D) : Point2D option =
         if areParallel first second then
             None
         else

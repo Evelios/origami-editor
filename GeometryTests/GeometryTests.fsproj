@@ -8,17 +8,21 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="Gen.fs" />
+        <Compile Include="Angle.fs" />
+        <Compile Include="Vector2D.fs" />
         <Compile Include="Point2D.fs" />
         <Compile Include="LineSegment2D.fs" />
         <Compile Include="Line2D.fs" />
+        <Compile Include="Intersection.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FsCheck.NUnit" Version="2.15.3" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
-        <PackageReference Include="NUnit" Version="3.13.1" />
-        <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+        <PackageReference Include="FsCheck.NUnit" Version="2.16.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
+        <PackageReference Include="NUnit" Version="3.13.2" />
+        <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
         <PackageReference Include="coverlet.collector" Version="3.0.2" />
     </ItemGroup>
 

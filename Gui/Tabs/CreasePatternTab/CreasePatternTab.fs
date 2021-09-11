@@ -32,7 +32,7 @@ module CreasePatternTab =
         let creasePattern = CreasePattern.create
 
         let translation =
-            Translation.create creasePattern Theme.creasePattern.maxLength
+            Translation.create (CreasePattern.size creasePattern) Theme.creasePattern.maxLength
 
         { creasePattern = creasePattern
           filePath = None
@@ -41,10 +41,7 @@ module CreasePatternTab =
           selectedReferences = []
           mousePosition = None
           vertexPosition = None
-          axioms =
-              [ Axiom.First
-                Axiom.Second
-                Axiom.Third ]
+          axioms = [ Axiom.One; Axiom.Two; Axiom.Three ]
           showVertices = true
           translation = translation
           pageSize = translation.pageSize }

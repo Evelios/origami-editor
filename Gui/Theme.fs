@@ -14,20 +14,21 @@ module Theme =
            green = "#26D81D" |}
 
     let palette =
-        {| panelBackground = colors.darkGray
+        {| primary = colors.yellow
+           panelBackground = colors.darkGray
            panelAccent = colors.lightGray
            canvasBackdrop = colors.gray
            canvasBackground = colors.offWhite |}
-           
-    let window =
-        {| height = 600.
-           width = 800.
-        |}
 
-    let border = {| thickness = 1. |}
+    let window = {| height = 600.; width = 800. |}
+
+
+    let font = {| h1 = 16.; h2 = 14.; normal = 12. |}
+
+    let border = {| thickness = 1.; cornerRadius = 5. |}
 
     let creasePattern = {| maxLength = 500. |}
-    
+
     let spacing =
         {| small = 4.
            medium = 8.

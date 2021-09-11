@@ -29,7 +29,7 @@ let testCases =
             { CreasePatternTab.init with
                   mousePosition = Some(Point(500., 500.))
                   vertexPosition = Some(Point2D.xy 1. 1.)
-                  hover = Point2D.xy 1. 1. |> VertexComponent |> Some } }
+                  hover = Point2D.xy 1. 1. |> VertexElement |> Some } }
 
       { name = "Crease edge by dragging between points"
         messages =
@@ -39,7 +39,7 @@ let testCases =
             { CreasePatternTab.init with
                   mousePosition = Some(Point(0., 0.))
                   vertexPosition = Some(Point2D.xy 0. 0.)
-                  hover = Point2D.xy 0. 0. |> VertexComponent |> Some
+                  hover = Point2D.xy 0. 0. |> VertexElement |> Some
                   creasePattern =
                       CreasePattern.create
                       |> CreasePattern.addEdge (

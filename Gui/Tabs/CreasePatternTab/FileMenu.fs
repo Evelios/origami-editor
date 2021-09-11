@@ -1,6 +1,5 @@
 namespace Gui.Tabs.CreasePatternTab
 
-open System
 
 module FileMenu =
 
@@ -8,6 +7,7 @@ module FileMenu =
     open Avalonia.FuncUI.DSL
     open Avalonia.FuncUI.Types
     open Elmish
+    open System
     open System.IO
 
     open Fold
@@ -55,7 +55,7 @@ module FileMenu =
             match FileLoader.loadFoldFile path with
             | Ok foldContents ->
                 { state with
-                      creasePattern = CreasePattern.fromFoldFrame foldContents.keyFrame },
+                      creasePattern = CreasePattern.fromFoldFrame foldContents.KeyFrame },
                 Cmd.none,
                 FoldFileLoaded
 
@@ -72,8 +72,8 @@ module FileMenu =
         | SaveFoldFileToPath path ->
             let foldText =
                 Fold.empty
-                |> Fold.setKeyframe (CreasePattern.toFoldFrame state.creasePattern)
-                |> FoldJson.toJson
+                |> Fold.setKeyFrame (CreasePattern.toFoldFrame state.creasePattern)
+                |> Fold.toJson
 
             let writeToFile () =
                 async { File.WriteAllText(path, foldText) }

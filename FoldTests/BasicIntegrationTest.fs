@@ -2,6 +2,7 @@ module FoldTests.BasicIntegrationTest
 
 open System.IO
 open NUnit.Framework
+
 open Fold
 open Geometry
 
@@ -14,62 +15,62 @@ let json =
 
 let foldFile =
     Fold.create
-        { spec = 1
-          creator = "Thomas Waters"
-          author = "Thomas Waters"
-          title = "Fold Spec v0.0.1"
-          description = "Fold Integration Test"
-          classes = Set.ofList [ FileClass.Diagrams ]
-          keyFrame =
+        { Spec = 1
+          Creator = "Thomas Waters"
+          Author = "Thomas Waters"
+          Title = "Fold Spec v0.0.1"
+          Description = "Fold Integration Test"
+          Classes = Set.ofList [ FileClass.Diagrams ]
+          KeyFrame =
               (Frame.create
-                  { author = "Thomas Waters"
-                    title = "Key Frame"
-                    description = "The Mainframe"
-                    classes =
+                  { Author = "Thomas Waters"
+                    Title = "Key Frame"
+                    Description = "The Mainframe"
+                    Classes =
                         Set.ofList [ FrameClass.Graph
                                      FrameClass.Linkage ]
-                    attributes =
+                    Attributes =
                         Set.ofList [ FrameAttribute.Geo2D
                                      FrameAttribute.Manifold
                                      FrameAttribute.NonSelfIntersecting ]
-                    unit = LengthUnit.Unitless
-                    vertices =
+                    Unit = LengthUnit.Unitless
+                    Vertices =
 
                         (Vertices.create
-                            { vertices = [ 0; 1; 2; 3 ]
-                              faces = [ [ 0; 1 ]; [ 1; 2 ]; [ 2; 3 ] ]
-                              coords =
+                            { Vertices = [ 0; 1; 2; 3 ]
+                              Faces = [ [ 0; 1 ]; [ 1; 2 ]; [ 2; 3 ] ]
+                              Coordinates =
                                   [ Point2D.xy 0. 0.
                                     Point2D.xy 0. 1.
                                     Point2D.xy 1. 0.
                                     Point2D.xy 1. 1. ] })
-                    edges =
+                    Edges =
 
                         (Edges.create
-                            { vertices = [ (0, 1); (1, 2); (2, 3) ]
-                              faces = [ (1, Some 2); (2, None) ]
-                              assignment =
+                            { Vertices = [ (0, 1); (1, 2); (2, 3) ]
+                              Faces = [ (1, Some 2); (2, None) ]
+                              Assignment =
                                   [ EdgeAssignment.Boundary
                                     EdgeAssignment.Boundary
                                     EdgeAssignment.Mountain
                                     EdgeAssignment.Valley ]
-                              foldAngle = [ 90.; 90.; 90. ]
-                              length = [ 1.; 1.; 1. ]
-                              orders = [ (2, 1, -1) ] })
-                    faces =
+                              FoldAngle = [ 90.; 90.; 90. ]
+                              Length = [ 1.; 1.; 1. ]
+                              Orders = [ (2, 1, -1) ] })
+                    Faces =
 
                         (Faces.create
-                            { vertices = [ [ 0; 1; 2 ]; [ 1; 2; 3 ] ]
-                              edges = [ [ 0; 1; 2 ]; [ 1; 2; 3 ] ]
-                              orders = [ (1, 2, 0) ] }) })
-          frames = [] }
+                            { Vertices = [ [ 0; 1; 2 ]; [ 1; 2; 3 ] ]
+                              Edges = [ [ 0; 1; 2 ]; [ 1; 2; 3 ] ]
+                              Orders = [ (1, 2, 0) ] }) })
+          Frames = [] }
 
 [<Test>]
 let Deserialization () =
-    let actual = FoldJson.fromJson json
+    let actual = Fold.fromJson json
     Assert.AreEqual(foldFile, actual)
 
 [<Test>]
 let Serialization () =
-    let actual = FoldJson.toJson foldFile
+    let actual = Fold.toJson foldFile
     Assert.AreEqual(json, actual)

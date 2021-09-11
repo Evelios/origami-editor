@@ -1,12 +1,13 @@
 namespace Gui.Tabs.CreasePatternTab
 
-open Avalonia.FuncUI.Types
-open CreasePattern
-
 module FileSettings =
 
-    open Avalonia.FuncUI.DSL
     open Avalonia.Controls
+    open Avalonia.FuncUI.DSL
+    open Avalonia.FuncUI.Types
+    open Avalonia.Layout
+    
+    open CreasePattern
     open Gui.Widgets
     open Gui
 
@@ -33,22 +34,26 @@ module FileSettings =
 
               Form.dropdownSelection
                   {| name = "Units"
-                     selected = creasePattern.unit
+                     selected = creasePattern.Unit
                      onSelected = Msg.SelectUnit >> dispatch |}
 
               Form.textItem
                   {| name = "Author"
-                     value = creasePattern.author
-                     onSelected = Msg.ChangeAuthor >> dispatch |}
+                     value = creasePattern.Author
+                     onSelected = Msg.ChangeAuthor >> dispatch
+                     labelPlacement = Orientation.Vertical
+                     |}
 
               Form.textItem
                   {| name = "Title"
-                     value = creasePattern.title
-                     onSelected = Msg.ChangeTitle >> dispatch |}
+                     value = creasePattern.Title
+                     onSelected = Msg.ChangeTitle >> dispatch
+                     labelPlacement = Orientation.Vertical
+                     |}
 
               Form.multiline
                   {| name = "Description"
-                     value = creasePattern.description
+                     value = creasePattern.Description
                      onSelected = Msg.ChangeDescription >> dispatch |} ]
 
         let panel =

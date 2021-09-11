@@ -7,16 +7,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NUnit" Version="3.12.0" />
-        <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+        <PackageReference Include="FsCheck" Version="2.16.0" />
+        <PackageReference Include="FsCheck.NUnit" Version="2.16.0" />
+        <PackageReference Include="NUnit" Version="3.13.2" />
+        <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
         <PackageReference Include="System.Runtime" Version="4.3.1" />
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="Gen.fs" />
         <Compile Include="Util.fs" />
         <Compile Include="FrameTests.fs" />
-        <Compile Include="FileTests.fs" />
+        <Compile Include="FoldTests.fs" />
         <Content Include="basic-integration.fold" />
         <Compile Include="BasicIntegrationTest.fs" />
         <Compile Include="ExampleFileReading.fs" />
@@ -29,7 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\FoldFile\FoldFile.fsproj" />
+      <ProjectReference Include="..\Fold\Fold.fsproj" />
       <ProjectReference Include="..\Utilities\Utilities.fsproj" />
     </ItemGroup>
 

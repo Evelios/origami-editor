@@ -1,29 +1,44 @@
 module GeometryTests.Point2D
 
 open NUnit.Framework
+open FsCheck.NUnit
+open FsCheck
+
 open Geometry
+open Utilities
 
 [<SetUp>]
-let Setup () = ()
+let Setup () = Gen.ArbGeometry.Register()
 
 
-let vertexEqualityTestCases =
+let pointEqualityTestCases =
     [ (Point2D.xy 0. 0., Point2D.xy 0. 0.)
-      (Point2D.xy 1. 1., Point2D.xy 1. 1.)
+      (Point2D.xy -1. -1., Point2D.xy -1. -1.)
       (Point2D.xy 5. 5., Point2D.xy 5. 5.)
       (Point2D.xy 1. 1., Point2D.xy (1. + Internal.Epsilon / 2.) (1. + Internal.Epsilon / 2.)) ]
     |> List.map TestCaseData
 
-[<TestCaseSource(nameof vertexEqualityTestCases)>]
-let ``Vertices are equal`` (lhs: Point2D) (rhs: Point2D) =
+[<TestCaseSource(nameof pointEqualityTestCases)>]
+let ``Points are equal`` (lhs: Point2D) (rhs: Point2D) =
     Assert.AreEqual(lhs, rhs)
     Assert.That(lhs.Equals(rhs))
 
+[<Test>]
+let ``Point from polar`` () =
+    let expected = Point2D.xy 0. 1.
+    let actual = Point2D.ofPolar 1. (Angle.pi / 2.)
 
-let vertexLessThanTestCases =
+    Assert.AreEqual(expected, actual)
+
+
+let pointLessThanTestCases =
     [ (Point2D.xy 0. 0., Point2D.xy 1. 1.)
       (Point2D.xy 0. 0., Point2D.xy 0. 1.) ]
     |> List.map TestCaseData
 
-[<TestCaseSource(nameof vertexLessThanTestCases)>]
-let ``Vertex less than`` (lhs: Point2D) (rhs: Point2D) = Assert.Less(lhs, rhs)
+[<TestCaseSource(nameof pointLessThanTestCases)>]
+let ``Point less than`` (lhs: Point2D) (rhs: Point2D) = Assert.Less(lhs, rhs)
+
+[<Property>]
+let ``Equality and hash code comparison with random points`` (first: Point2D) (second: Point2D) =
+    (first = second) = (first.GetHashCode() = second.GetHashCode())

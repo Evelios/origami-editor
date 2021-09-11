@@ -6,9 +6,14 @@ open FSharp.Json
 [<CustomEquality>]
 [<CustomComparison>]
 [<RequireQualifiedAccess>]
+[<Struct>]
 type Point2D =
-    { x: float
-      y: float }
+    private
+        { x: float
+          y: float }
+
+    member this.X = this.x
+    member this.Y = this.y
 
     (* Comparable interfaces *)
 
@@ -41,7 +46,7 @@ type Point2D =
         almostEqual this.x other.x
         && almostEqual this.y other.y
 
-    override this.GetHashCode() = HashCode.Combine(this.x, this.x)
+    override this.GetHashCode() = HashCode.Combine(this.x, this.y)
 
     static member (-)(lhs: Point2D, rhs: Point2D) : Vector2D =
         Vector2D.xy (lhs.x - rhs.x) (lhs.y - rhs.y)
@@ -56,15 +61,22 @@ type Point2D =
     static member (/)(lhs: Point2D, rhs: float) : Point2D = { x = lhs.x / rhs; y = lhs.y / rhs }
 
     static member (/)(lhs: float, rhs: Point2D) : Point2D = rhs / lhs
-    
+
 
 module Point2D =
     (* Builders *)
 
     let xy (x: float) (y: float) : Point2D = { x = x; y = y }
 
+    let ofPolar r a = xy (r * Angle.cos a) (r * Angle.sin a)
 
-    let scale x y (point: Point2D) = { x = point.x * x; y = point.y * y }
+    let origin = xy 0. 0.
+
+    (* Modifiers *)
+
+    let scale x y (point: Point2D) : Point2D = { x = point.x * x; y = point.y * y }
+
+    let translate (v: Vector2D) (p: Point2D) = p + v
 
     (* Queries *)
 
@@ -77,6 +89,8 @@ module Point2D =
 
     let midpoint (p1: Point2D) (p2: Point2D) : Point2D =
         xy ((p1.x + p2.x) / 2.) ((p1.y + p2.y) / 2.)
+
+    let round (p: Point2D) = xy (roundFloat p.x) (roundFloat p.y)
 
 
     /// Be careful with the vector arguments. This function is written with piping in mind. The first point is the
