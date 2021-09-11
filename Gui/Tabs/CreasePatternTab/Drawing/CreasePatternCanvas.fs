@@ -18,6 +18,8 @@ module CreasePatternCanvas =
         | MouseReleased of Point * KeyModifiers
         | MouseMove of Point
         | CreaseEdge of Edge
+        | KeyPressed of Key
+        | RecalculateCreasePatternPreview
 
     let canvasName = "Crease Pattern Canvas"
 
@@ -28,6 +30,13 @@ module CreasePatternCanvas =
     let rec update (msg: Msg) (state: CreasePatternTabState) : CreasePatternTabState =
         match msg with
         (* User Actions *)
+        | KeyPressed key ->
+            match key with
+            | Key.Escape ->
+                { state with selectedReferences = [] }
+                |> update RecalculateCreasePatternPreview
+            | _ -> state
+
         | MouseReleased (mousePosition, keyModifiers) ->
             let updatedState = update (MouseMove mousePosition) state
 
@@ -38,7 +47,10 @@ module CreasePatternCanvas =
                     { updatedState with
                           pressed = None
                           selectedReferences = pressed :: updatedState.selectedReferences }
-                | None -> updatedState
+                    |> update RecalculateCreasePatternPreview
+                | None ->
+                    updatedState
+                    |> update RecalculateCreasePatternPreview
 
             else
                 match updatedState.pressed, updatedState.hover with
@@ -50,10 +62,15 @@ module CreasePatternCanvas =
                               CreasePattern.addEdge
                                   (Edge.betweenWithAssignment pressed hover Unassigned)
                                   updatedState.creasePattern }
+                    |> update RecalculateCreasePatternPreview
 
-                | Some _, _ -> { updatedState with pressed = None }
+                | Some _, _ ->
+                    { updatedState with pressed = None }
+                    |> update RecalculateCreasePatternPreview
 
-                | _ -> updatedState
+                | _ ->
+                    updatedState
+                    |> update RecalculateCreasePatternPreview
 
         | MousePressed mousePosition ->
             let updatedState = update (MouseMove mousePosition) state
@@ -71,10 +88,10 @@ module CreasePatternCanvas =
                  / (max state.translation.xRatio state.translation.yRatio))
 
             let vertexWithin =
-                CreasePattern.pointWithin convertedCloseDistance convertedVertex state.creasePattern
+                CreasePattern.pointWithin convertedCloseDistance convertedVertex state.creasePatternPreview
 
             let edgeWithin =
-                CreasePattern.edgeWithin convertedCloseDistance convertedVertex state.creasePattern
+                CreasePattern.edgeWithin convertedCloseDistance convertedVertex state.creasePatternPreview
 
             let hover =
                 match vertexWithin, edgeWithin with
@@ -89,7 +106,19 @@ module CreasePatternCanvas =
 
         | CreaseEdge edge ->
             { state with
-                  creasePattern = CreasePattern.addEdge edge state.creasePattern }
+                  creasePattern = CreasePattern.addEdge edge state.creasePattern
+                  selectedReferences = [] }
+            |> update RecalculateCreasePatternPreview
+
+        (* Internals *)
+        | RecalculateCreasePatternPreview ->
+            let axioms =
+                Axiom.ofAxiomsFromElements state.axioms state.selectedReferences
+
+            { state with
+                  creasePatternPreview = CreasePattern.performAxioms EdgeAssignment.Preview axioms state.creasePattern }
+
+
 
 
     (* Drawing *)
@@ -121,7 +150,7 @@ module CreasePatternCanvas =
             |> List.filterNone
 
         CreasePatternDrawing.create (
-            [ CreasePatternDrawing.creasePattern state.creasePattern
+            [ CreasePatternDrawing.creasePattern state.creasePatternPreview
               CreasePatternDrawing.size theme.creasePatternSize
               CreasePatternDrawing.name canvasName
               CreasePatternDrawing.graphElementsOf ComponentState.Selected state.selectedReferences ]
@@ -146,5 +175,7 @@ module CreasePatternCanvas =
                  (fun e ->
                      Msg.MouseReleased((Event.positionRelativeTo canvasName e), e.KeyModifiers)
                      |> dispatch)
+             DockPanel.focusable true
+             DockPanel.onKeyUp (Event.handleKeyPress (KeyPressed >> dispatch))
 
              DockPanel.children [ canvas state ] ]

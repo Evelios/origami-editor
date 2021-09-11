@@ -240,7 +240,7 @@ module ReferenceFinderTab =
             match hoveredStep with
             | Some axiomAction ->
                 let results =
-                    List.map EdgeElement (CreasePattern.axiomResult axiomAction cp)
+                    List.map EdgeElement (CreasePattern.axiomResult EdgeAssignment.Flat axiomAction cp)
                     |> List.map (fun e -> (e, ComponentState.Selected))
 
                 let references =

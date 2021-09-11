@@ -41,6 +41,15 @@ module Axiom =
         |> List.concat
         |> Seq.ofList
 
+    /// Get the list of axioms that can be performed on a list of graph elements from a set of axiom conditions
+    let ofAxiomsFromElements axioms elements : AxiomAction seq =
+        fromElements elements
+        |> Seq.filter
+            (fun axiomAction ->
+                match axiomAction with
+                | AxiomAction.One _ -> Seq.contains Axiom.One axioms
+                | AxiomAction.Two _ -> Seq.contains Axiom.Two axioms
+                | AxiomAction.Three _ -> Seq.contains Axiom.Three axioms)
 
     (* Actions *)
 

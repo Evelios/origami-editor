@@ -27,7 +27,6 @@ module CreasePatternTab =
 
     let title = "Origami Editor"
 
-    // TODO: preview next creases
     let init : CreasePatternTabState =
         let creasePattern = CreasePattern.create
 
@@ -35,6 +34,7 @@ module CreasePatternTab =
             Translation.create (CreasePattern.size creasePattern) Theme.creasePattern.maxLength
 
         { creasePattern = creasePattern
+          creasePatternPreview = creasePattern
           filePath = None
           pressed = None
           hover = None

@@ -5,6 +5,7 @@ type EdgeAssignment =
     | Mountain
     | Valley
     | Flat
+    | Preview
     | Unassigned
 
 type LengthUnit =

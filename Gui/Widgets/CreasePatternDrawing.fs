@@ -72,6 +72,7 @@ module CreasePatternDrawing =
             | Mountain -> Theme.colors.green
             | Valley -> Theme.colors.blue
             | Flat -> Theme.colors.lighterGray
+            | Preview -> Theme.colors.lightBlue
             | Unassigned -> Theme.colors.lighterGray
         | _ -> stateColor state
 
@@ -137,12 +138,12 @@ module CreasePatternDrawing =
                     match e with
                     | EdgeElement _, Default -> 0
                     | VertexElement _, Default -> 1
-                    | VertexElement _, Selected -> 2
-                    | EdgeElement _, Selected -> 3
-                    | EdgeElement _, Hovered -> 4
-                    | VertexElement _, Hovered -> 5
-                    | EdgeElement _, Pressed -> 6
-                    | VertexElement _, Pressed -> 7)
+                    | VertexElement _, Selected -> 4
+                    | EdgeElement _, Selected -> 5
+                    | EdgeElement _, Hovered -> 6
+                    | VertexElement _, Hovered -> 7
+                    | EdgeElement _, Pressed -> 8
+                    | VertexElement _, Pressed -> 9)
             |> Seq.map
                 (fun e ->
                     match e with

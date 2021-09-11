@@ -15,6 +15,7 @@ type Direction =
 
 type CreasePatternTabState =
     { creasePattern: CreasePattern.CreasePattern
+      creasePatternPreview: CreasePattern.CreasePattern
       filePath: string option
 
       (* User Interactivity *)

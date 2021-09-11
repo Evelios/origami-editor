@@ -41,7 +41,9 @@ module ReferenceFinder =
         let continuation (step: Step) =
             CreasePattern.elements step.Final
             |> Axiom.fromElements
-            |> Seq.map (fun axiomAction -> (CreasePattern.performAxiom axiomAction step.Final, axiomAction))
+            |> Seq.map
+                (fun axiomAction ->
+                    (CreasePattern.performAxiom EdgeAssignment.Unassigned axiomAction step.Final, axiomAction))
             |> Seq.distinctBy fst
             |> Seq.map
                 (fun (newCreasePattern, axiomAction) ->

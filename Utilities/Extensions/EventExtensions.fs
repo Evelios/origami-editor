@@ -13,6 +13,10 @@ module Event =
         event.Handled <- true
         msg
 
+    let handleKeyPress msg (event: KeyEventArgs) =
+        event.Handled <- true
+        msg event.Key
+
     /// Given a pointer event, get the position relative to a particular control name
     /// Useful for triggering off of mouse movement events
     let positionRelativeTo (name: String) (event: PointerEventArgs) =

@@ -11,6 +11,7 @@ module Theme =
            yellow = "#FFA123"
            lightYellow = "#E4AE67"
            blue = "#4F2DBE"
+           lightBlue = "#D3CAEF"
            green = "#26D81D" |}
 
     let palette =
