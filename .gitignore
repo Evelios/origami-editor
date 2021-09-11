@@ -1,12 +1,27 @@
 # Jetbrains & Dot Net Files
 
-bin/
-obj/
+[Bb]in/
+[Oo]bj/
 build/
-/packages/
+packages/
 riderModule.iml
 /_ReSharper.Caches/
 contentModel.xml
 **/*.user
 .idea/**/workspace.xml
 .idea/**/tasks.xml
+
+# Fable & JS Files
+
+.fable
+.fsdocs
+.config
+.fake
+bundle.json
+bundle.json.map
+main.js
+node_modules/
+project.lock.json
+public/bundle.js*
+publish/
+temp*/

@@ -1,0 +1,3 @@
+﻿module Program
+
+printfn "Hi!"
