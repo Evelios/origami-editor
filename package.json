@@ -6,17 +6,35 @@
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",
+    "@babel/preset-env": "^7.15.6",
+    "babel-loader": "^8.2.2",
+    "copy-webpack-plugin": "^9.0.1",
+    "core-js": "^3.17.3",
+    "css-loader": "^6.2.0",
     "fable-compiler": "^2.4.21",
     "fable-loader": "^2.1.9",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.3.2",
+    "mini-css-extract-plugin": "^2.3.0",
+    "node-sass": "^6.0.1",
+    "remotedev": "^0.2.9",
+    "sass-loader": "^12.1.0",
+    "source-map-loader": "^3.0.0",
+    "style-loader": "^3.2.1",
     "webpack": "^4.38.0",
     "webpack-cli": "^3.3.6",
-    "webpack-dev-server": "^3.7.2"
+    "webpack-dev-server": "^3.11.2"
   },
   "name": "fsharp-origami-editor",
   "description": "This tool is designed to assist in the origami diagram creation process. It provides a suite of tools to allow you to create beautiful looking origami diagrams and crease patterns.",
   "version": "0.0.1",
   "main": "webpack.config.js",
-  "dependencies": {},
+  "dependencies": {
+    "bulma": "^0.9.3",
+    "bulma-pageloader": "^0.3.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Evelios/fsharp-origami-editor.git"
