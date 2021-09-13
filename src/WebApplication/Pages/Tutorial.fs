@@ -1,6 +1,8 @@
 module WebApplication.Pages.Tutorial
 
-open Fulma
+open Feliz
+
+open WebApplication
 
 type Model = Model
 
@@ -12,6 +14,7 @@ let update (msg: Msg) (model: Model) : Model =
     match msg with
     | DoNothing -> model
 
-let view (model: Model) dispatch =
-    Hero.hero [ Hero.Color IsSuccess
-                Hero.IsFullHeight ] []
+let view model dispatch =
+    { title = "Tutorial Page"
+      subtitle = ""
+      body = Html.div [] }

@@ -7,11 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="Types.fs" />
         <Compile Include="Router.fs" />
         <Compile Include="Pages\Home.fs" />
         <Compile Include="Pages\Tutorial.fs" />
         <Compile Include="Pages\Examples.fs" />
         <Compile Include="Pages\Download.fs" />
+        <Compile Include="Pages\NotFound.fs" />
         <Compile Include="Shell.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>

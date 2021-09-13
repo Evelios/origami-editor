@@ -1,7 +1,10 @@
 module WebApplication.Shell
 
 open Elmish
+open Fulma
 open Router
+open Fable.React
+open Feliz
 
 open WebApplication.Pages
 
@@ -50,21 +53,59 @@ let setRoute result model =
 
 (* Application Body *)
 
-let init _ =
+let init route =
     { CurrentRoute = None
-      ActivePage = Page.Home <| Home.init () },
-    Cmd.none
+      ActivePage = Page.Home <| Home.init () }
+    |> setRoute route
 
 let update msg state =
     match msg with
     | HomeMsg homeMsg -> Home.update homeMsg state, Cmd.none
     | NoMsg -> state, Cmd.none
 
-let view state dispatch =
-    match state.ActivePage with
-    | Page.NotFound -> Home.view (Home.init ()) dispatch
-    | Page.Loading -> Home.view (Home.init ()) dispatch
-    | Page.Home model -> Home.view model dispatch
-    | Page.Tutorial model -> Tutorial.view model dispatch
-    | Page.Examples model -> Examples.view model dispatch
-    | Page.Download model -> Download.view model dispatch
+let view model dispatch =
+    let headerTabLinks =
+        [ ("Home", Route.Home)
+          ("Tutorial", Route.Tutorial)
+          ("Examples", Route.Examples)
+          ("Download", Route.Download) ]
+
+    let heroSize =
+        match model.ActivePage with
+        | Page.NotFound
+        | Page.Home _ -> Hero.IsFullHeight
+        | _ -> Hero.IsHalfHeight
+
+    let page =
+        match model.ActivePage with
+        | Page.NotFound -> Home.view (Home.init ()) dispatch
+        | Page.Loading -> Home.view (Home.init ()) dispatch
+        | Page.Home homeModel -> Home.view homeModel dispatch
+        | Page.Tutorial tutorialModel -> Tutorial.view tutorialModel dispatch
+        | Page.Examples examplesModel -> Examples.view examplesModel dispatch
+        | Page.Download downloadModel -> Download.view downloadModel dispatch
+
+
+    let linkTabs =
+        let linkTab (name: string, route) =
+            Tabs.tab [ Tabs.Tab.IsActive((Some route) = model.CurrentRoute) ] [
+                Html.a [ prop.text name
+                         prop.href (toHash route) ]
+            ]
+
+        List.map linkTab headerTabLinks
+
+    Hero.hero [ Hero.Color IsSuccess; heroSize ] [
+        Hero.head [] [
+            Tabs.tabs [ Tabs.IsBoxed; Tabs.IsCentered ] linkTabs
+        ]
+        Hero.body [] [
+            Container.container [ Container.IsFluid
+                                  Container.Modifiers [ Modifier.TextAlignment(Screen.All, TextAlignment.Centered) ] ] [
+                Heading.h1 [] [ str page.title ]
+                Heading.h2 [ Heading.IsSubtitle ] [
+                    str page.subtitle
+                ]
+            ]
+        ]
+    ]
