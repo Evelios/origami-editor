@@ -1,4 +1,4 @@
-namespace CreasePattern
+namespace Origami
 
 open Geometry
 open Utilities.Collections

@@ -1,14 +1,13 @@
 module WebApplication.Pages.Tutorial
 
-open Feliz
-
 open WebApplication
+open WebApplication.Demos
 
-type Model = Model
+type Model = Axioms.Model
 
 type Msg = DoNothing
 
-let init () = Model
+let init () = Axioms.init ()
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
@@ -17,4 +16,4 @@ let update (msg: Msg) (model: Model) : Model =
 let view model dispatch =
     { title = "Tutorial Page"
       subtitle = ""
-      body = Html.div [] }
+      body = Axioms.view model dispatch }

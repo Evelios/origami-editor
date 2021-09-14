@@ -1,4 +1,4 @@
-namespace CreasePattern
+namespace Origami
 
 open System
 open Geometry
@@ -20,9 +20,6 @@ type Edge =
     member this.Assignment = this.assignment
 
     (* Interfaces *)
-
-    interface IComparable<Edge> with
-        member this.CompareTo(edge) = this.Comparison(edge)
 
     interface IComparable with
         member this.CompareTo(obj) =
@@ -48,8 +45,7 @@ type Edge =
             && this.assignment = other.assignment
         | _ -> false
 
-    override this.GetHashCode() : int =
-        HashCode.Combine(this.crease, this.assignment)
+    override this.GetHashCode() : int = hash this
 
 module Edge =
 

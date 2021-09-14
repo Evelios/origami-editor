@@ -17,9 +17,6 @@ type Vector2D =
 
     (* Comparable interfaces *)
 
-    interface IComparable<Vector2D> with
-        member this.CompareTo(vector) = this.Comparison(vector)
-
     interface IComparable with
         member this.CompareTo(obj) =
             match obj with
@@ -46,7 +43,7 @@ type Vector2D =
         almostEqual this.x other.x
         && almostEqual this.y other.y
 
-    override this.GetHashCode() = HashCode.Combine(this.x, this.y)
+    override this.GetHashCode() = hash this
 
     static member (+)(lhs: Vector2D, rhs: Vector2D) : Vector2D =
         { x = lhs.x + rhs.x; y = lhs.y + rhs.y }

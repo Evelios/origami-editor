@@ -14,13 +14,10 @@ type Line2D =
     member this.Start = this.start
     member this.Finish = this.finish
 
-    interface IComparable<Line2D> with
-        member this.CompareTo(line) = this.Comparison(line)
-
     interface IComparable with
         member this.CompareTo(obj) =
             match obj with
-            | :? Line2D as vertex -> this.Comparison(vertex)
+            | :? Line2D as line -> this.Comparison(line)
             | _ -> failwith "incompatible comparison"
 
     member this.Comparison(other) =
@@ -51,8 +48,7 @@ type Line2D =
                 && this.finish = other.start)
         | _ -> false
 
-    override this.GetHashCode() : int =
-        HashCode.Combine(this.start, this.finish)
+    override this.GetHashCode() : int = hash this
 
 module Line2D =
     (* Builders *)

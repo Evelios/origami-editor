@@ -14,9 +14,6 @@ type LineSegment2D =
     member this.Start = this.start
     member this.Finish = this.finish
 
-    interface IComparable<LineSegment2D> with
-        member this.CompareTo(line) = this.Comparison(line)
-
     interface IComparable with
         member this.CompareTo(obj) =
             match obj with
@@ -65,8 +62,7 @@ type LineSegment2D =
 
     static member (/)(lhs: float, rhs: LineSegment2D) : LineSegment2D = rhs / lhs
 
-    override this.GetHashCode() : int =
-        HashCode.Combine(this.start, this.finish)
+    override this.GetHashCode() : int = hash this
 
 module LineSegment2D =
     (* Builders *)
@@ -97,11 +93,12 @@ module LineSegment2D =
     let length (line: LineSegment2D) : float =
         Point2D.distanceTo line.start line.finish
 
-    
+
     (* Modifiers *)
-    
-    let round (l: LineSegment2D) = from (Point2D.round l.Start) (Point2D.round l.Finish)
-    
+
+    let round (l: LineSegment2D) =
+        from (Point2D.round l.Start) (Point2D.round l.Finish)
+
 
     (* Queries *)
 

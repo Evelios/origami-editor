@@ -76,9 +76,15 @@ let view model dispatch =
         | Page.Home _ -> Hero.IsFullHeight
         | _ -> Hero.IsHalfHeight
 
+    let heroColor =
+        match model.ActivePage with
+        | Page.NotFound -> IsDanger
+        | Page.Home _ -> IsSuccess
+        | _ -> IsInfo
+
     let page =
         match model.ActivePage with
-        | Page.NotFound -> Home.view (Home.init ()) dispatch
+        | Page.NotFound -> NotFound.view ()
         | Page.Loading -> Home.view (Home.init ()) dispatch
         | Page.Home homeModel -> Home.view homeModel dispatch
         | Page.Tutorial tutorialModel -> Tutorial.view tutorialModel dispatch
@@ -95,7 +101,7 @@ let view model dispatch =
 
         List.map linkTab headerTabLinks
 
-    Hero.hero [ Hero.Color IsSuccess; heroSize ] [
+    Hero.hero [ Hero.Color heroColor; heroSize ] [
         Hero.head [] [
             Tabs.tabs [ Tabs.IsBoxed; Tabs.IsCentered ] linkTabs
         ]
