@@ -30,7 +30,6 @@
         <Compile Include="Debug.fs" />
         <Compile Include="Log.fs" />
         <Compile Include="Tests.fs" />
-        <Compile Include="HashCode.fs" />
     </ItemGroup>
 
     <ItemGroup>

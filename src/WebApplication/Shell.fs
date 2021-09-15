@@ -1,10 +1,9 @@
 module WebApplication.Shell
 
 open Elmish
-open Fulma
 open Router
-open Fable.React
 open Feliz
+open Feliz.Bulma
 
 open WebApplication.Pages
 
@@ -18,6 +17,7 @@ type Page =
 
 type Msg =
     | HomeMsg of Home.Msg
+    | TutorialMsg of Tutorial.Msg
     | NoMsg
 
 type Model =
@@ -58,12 +58,21 @@ let init route =
       ActivePage = Page.Home <| Home.init () }
     |> setRoute route
 
-let update msg state =
-    match msg with
-    | HomeMsg homeMsg -> Home.update homeMsg state, Cmd.none
-    | NoMsg -> state, Cmd.none
+let update (msg: Msg) (model: Model) =
+    match msg, model.ActivePage with
+    | HomeMsg homeMsg, Page.Home homeModel ->
+        { model with
+              ActivePage = Home.update homeMsg homeModel |> Page.Home },
+        Cmd.none
+    | TutorialMsg tutorialMsg, Page.Tutorial tutorialModel ->
+        { model with
+              ActivePage =
+                  Tutorial.update tutorialMsg tutorialModel
+                  |> Page.Tutorial },
+        Cmd.none
+    | _ -> model, Cmd.none
 
-let view model dispatch =
+let view (model: Model) (dispatch: Msg -> Unit) =
     let headerTabLinks =
         [ ("Home", Route.Home)
           ("Tutorial", Route.Tutorial)
@@ -73,45 +82,61 @@ let view model dispatch =
     let heroSize =
         match model.ActivePage with
         | Page.NotFound
-        | Page.Home _ -> Hero.IsFullHeight
-        | _ -> Hero.IsHalfHeight
+        | Page.Home _ -> hero.isFullHeight
+        | _ -> hero.isMedium
 
     let heroColor =
         match model.ActivePage with
-        | Page.NotFound -> IsDanger
-        | Page.Home _ -> IsSuccess
-        | _ -> IsInfo
+        | Page.NotFound -> color.isDanger
+        | Page.Home _ -> color.isSuccess
+        | _ -> color.isInfo
 
     let page =
         match model.ActivePage with
         | Page.NotFound -> NotFound.view ()
         | Page.Loading -> Home.view (Home.init ()) dispatch
         | Page.Home homeModel -> Home.view homeModel dispatch
-        | Page.Tutorial tutorialModel -> Tutorial.view tutorialModel dispatch
+        | Page.Tutorial tutorialModel -> Tutorial.view tutorialModel (TutorialMsg >> dispatch)
         | Page.Examples examplesModel -> Examples.view examplesModel dispatch
         | Page.Download downloadModel -> Download.view downloadModel dispatch
 
+    let navbar =
+        let icon =
+            Html.img [ prop.src "icons/fold.svg"
+                       prop.height 28
+                       prop.width 28 ]
 
-    let linkTabs =
-        let linkTab (name: string, route) =
-            Tabs.tab [ Tabs.Tab.IsActive((Some route) = model.CurrentRoute) ] [
-                Html.a [ prop.text name
-                         prop.href (toHash route) ]
-            ]
+        let brand =
+            [ Bulma.navbarItem.a [ prop.href (toHash Route.Home)
+                                   prop.children [ icon ] ] ]
 
-        List.map linkTab headerTabLinks
+        let links =
+            let link (name: string, route) =
+                Bulma.navbarItem.a [ if Some route = model.CurrentRoute then
+                                         navbarItem.isActive
+                                     prop.text name
+                                     prop.href (toHash route) ]
 
-    Hero.hero [ Hero.Color heroColor; heroSize ] [
-        Hero.head [] [
-            Tabs.tabs [ Tabs.IsBoxed; Tabs.IsCentered ] linkTabs
-        ]
-        Hero.body [] [
-            Container.container [ Container.IsFluid
-                                  Container.Modifiers [ Modifier.TextAlignment(Screen.All, TextAlignment.Centered) ] ] [
-                Heading.h1 [] [ str page.title ]
-                Heading.h2 [ Heading.IsSubtitle ] [
-                    str page.subtitle
-                ]
-            ]
-        ]
-    ]
+            List.map link headerTabLinks
+
+
+        Bulma.navbar [ heroColor
+                       navbar.isFixedTop
+                       prop.children [ Bulma.navbarBrand.div brand
+                                       Bulma.navbarMenu [ Bulma.navbarStart.div links ] ] ]
+
+    let hero =
+        let title = Bulma.title page.title
+        let subtitle = Bulma.subtitle page.subtitle
+
+        let heroBody =
+            Bulma.container [ container.isFluid
+                              text.hasTextCentered
+                              prop.children [ title; subtitle ] ]
+
+        Bulma.hero [ heroColor
+                     heroSize
+                     prop.children [ Bulma.heroHead navbar
+                                     Bulma.heroBody heroBody ] ]
+
+    Html.div [ hero; page.body ]

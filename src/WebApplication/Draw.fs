@@ -15,7 +15,7 @@ let point (p: Point2D) =
                  svg.radius theme.point.radius
                  svg.fill theme.point.color ]
 
-let line (l: Line2D) =
+let lineSegment (l: LineSegment2D) =
     Svg.line [ svg.x1 l.Start.X
                svg.y1 l.Start.Y
                svg.x2 l.Finish.X
