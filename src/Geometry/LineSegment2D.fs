@@ -62,7 +62,7 @@ type LineSegment2D =
 
     static member (/)(lhs: float, rhs: LineSegment2D) : LineSegment2D = rhs / lhs
 
-    override this.GetHashCode() : int = hash this
+    override this.GetHashCode() : int = hash (this.start, this.finish)
 
 module LineSegment2D =
     (* Builders *)

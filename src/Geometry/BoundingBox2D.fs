@@ -34,6 +34,8 @@ module BoundingBox2D =
           minY = min p1.y p2.y
           maxY = max p1.y p2.y }
 
+    let withDimensions p width height = from p (p + Vector2D.xy width height)
+
     (* Accessors *)
 
     /// Returned in clockwise order from top left rotating around clockwise

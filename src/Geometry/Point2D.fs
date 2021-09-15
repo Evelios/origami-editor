@@ -43,7 +43,7 @@ type Point2D =
         almostEqual this.x other.x
         && almostEqual this.y other.y
 
-    override this.GetHashCode() = hash this
+    override this.GetHashCode() = hash (this.x, this.y)
 
     static member (-)(lhs: Point2D, rhs: Point2D) : Vector2D =
         Vector2D.xy (lhs.x - rhs.x) (lhs.y - rhs.y)

@@ -48,7 +48,7 @@ type Line2D =
                 && this.finish = other.start)
         | _ -> false
 
-    override this.GetHashCode() : int = hash this
+    override this.GetHashCode() : int = hash (this.start, this.finish)
 
 module Line2D =
     (* Builders *)

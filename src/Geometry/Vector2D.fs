@@ -43,7 +43,7 @@ type Vector2D =
         almostEqual this.x other.x
         && almostEqual this.y other.y
 
-    override this.GetHashCode() = hash this
+    override this.GetHashCode() = hash (this.x, this.y)
 
     static member (+)(lhs: Vector2D, rhs: Vector2D) : Vector2D =
         { x = lhs.x + rhs.x; y = lhs.y + rhs.y }

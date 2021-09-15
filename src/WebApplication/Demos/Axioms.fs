@@ -5,26 +5,79 @@ open Feliz.Bulma
 
 open Origami
 open Geometry
+open Utilities.Extensions
+open WebApplication
 open WebApplication.Demos
 
-type Model = { axiom: Axiom }
+type Model =
+    { Axiom: Axiom
+      AxiomAction: AxiomAction }
 
 type Msg = ToggleAxiom of Axiom
 
-let init () = { axiom = Axiom.One }
+
+let initAxiom axiom =
+    match axiom with
+    | Axiom.One -> AxiomAction.One((Point2D.xy 50. 125.), (Point2D.xy 225. 75.))
+    | Axiom.Two -> AxiomAction.Two((Point2D.xy 125. 25.), (Point2D.xy 75. 250.))
+    | Axiom.Three ->
+        AxiomAction.Three(
+            (Line2D.through (Point2D.xy 50. 25.) (Point2D.xy 225. 225.)),
+            (Line2D.through (Point2D.xy 25. 150.) (Point2D.xy 300. 200.))
+        )
+
+let init () =
+    let axiom = Axiom.One
+
+    { Axiom = axiom
+      AxiomAction = initAxiom axiom }
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
-    | ToggleAxiom axiom -> { model with axiom = axiom }
+    | ToggleAxiom axiom ->
+        { model with
+              Axiom = axiom
+              AxiomAction = initAxiom axiom }
 
 let axiomDemo model dispatch =
-    let width = 200
-    let height = 200
+    let boundingBox =
+        BoundingBox2D.withDimensions Point2D.origin 400. 300.
 
-    Svg.svg [ svg.viewBox (0, 0, width, height)
-              svg.width width
-              svg.height height
-              svg.children [ Draw.lineSegment (LineSegment2D.from (Point2D.xy 0. 0.) (Point2D.xy 200. 200.)) ] ]
+    let axiomResults =
+        Axiom.perform model.AxiomAction
+        |> Seq.map (fun line -> Draw.line line boundingBox [ svg.stroke Theme.colors.Success ])
+        |> Seq.filterNone
+
+    let axiomActions =
+        match model.AxiomAction with
+        | AxiomAction.One (p1, p2) ->
+            [ Draw.point p1 [ svg.fill Theme.colors.Info ]
+              Draw.point p2 [ svg.fill Theme.colors.Info ] ]
+        | AxiomAction.Two (p1, p2) ->
+            [ Draw.point p1 [ svg.fill Theme.colors.Info ]
+              Draw.point p2 [ svg.fill Theme.colors.Info ] ]
+        | AxiomAction.Three (l1, l2) ->
+            [ yield!
+                Draw.line l1 boundingBox [ svg.stroke Theme.colors.Info ]
+                |> Option.toList
+              yield!
+                  Draw.line l2 boundingBox [ svg.stroke Theme.colors.Info ]
+                  |> Option.toList
+              Draw.point l1.Start [ svg.fill Theme.colors.Info ]
+              Draw.point l1.Finish [ svg.fill Theme.colors.Info ]
+              Draw.point l2.Start [ svg.fill Theme.colors.Info ]
+              Draw.point l2.Finish [ svg.fill Theme.colors.Info ] ]
+
+    Svg.svg [ svg.viewBox (
+                  int boundingBox.MinX - 5,
+                  int boundingBox.MinY - 5,
+                  int <| BoundingBox2D.width boundingBox + 5.,
+                  int <| BoundingBox2D.height boundingBox + 5.
+              )
+              svg.width (BoundingBox2D.width boundingBox)
+              svg.height (BoundingBox2D.height boundingBox)
+              svg.children [ yield! axiomResults
+                             yield! axiomActions ] ]
 
 let view (model: Model) dispatch =
     let axioms =
@@ -39,7 +92,7 @@ let view (model: Model) dispatch =
                   prop.children [ Html.img [ prop.src src
                                              prop.width 36
                                              prop.height 36 ] ]
-                  if axiom = model.axiom then
+                  if axiom = model.Axiom then
                       button.isActive
                       Bulma.color.isSuccess
                   else

@@ -45,7 +45,7 @@ type Edge =
             && this.assignment = other.assignment
         | _ -> false
 
-    override this.GetHashCode() : int = hash this
+    override this.GetHashCode() : int = hash (this.crease, this.assignment)
 
 module Edge =
 
