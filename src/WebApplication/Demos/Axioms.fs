@@ -2,6 +2,7 @@ module WebApplication.Demos.Axioms
 
 open Feliz
 open Feliz.Bulma
+open Browser
 
 open Origami
 open Geometry
@@ -11,10 +12,12 @@ open WebApplication.Demos
 
 type Model =
     { Axiom: Axiom
-      AxiomAction: AxiomAction }
+      AxiomAction: AxiomAction
+      Hover: GraphElement option }
 
-type Msg = ToggleAxiom of Axiom
-
+type Msg =
+    | ToggleAxiom of Axiom
+    | MouseMove of Point2D
 
 let initAxiom axiom =
     match axiom with
@@ -30,7 +33,8 @@ let init () =
     let axiom = Axiom.One
 
     { Axiom = axiom
-      AxiomAction = initAxiom axiom }
+      AxiomAction = initAxiom axiom
+      Hover = None }
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
@@ -38,6 +42,10 @@ let update (msg: Msg) (model: Model) : Model =
         { model with
               Axiom = axiom
               AxiomAction = initAxiom axiom }
+    | MouseMove position ->
+        console.log position
+
+        model
 
 let axiomDemo model dispatch =
     let boundingBox =
@@ -69,15 +77,16 @@ let axiomDemo model dispatch =
               Draw.point l2.Finish [ svg.fill Theme.colors.Info ] ]
 
     Svg.svg [ svg.viewBox (
-                  int boundingBox.MinX - 5,
-                  int boundingBox.MinY - 5,
-                  int <| BoundingBox2D.width boundingBox + 5.,
-                  int <| BoundingBox2D.height boundingBox + 5.
+                  int boundingBox.MinX,
+                  int boundingBox.MinY,
+                  int <| BoundingBox2D.width boundingBox,
+                  int <| BoundingBox2D.height boundingBox
               )
               svg.width (BoundingBox2D.width boundingBox)
               svg.height (BoundingBox2D.height boundingBox)
               svg.children [ yield! axiomResults
-                             yield! axiomActions ] ]
+                             yield! axiomActions ]
+              svg.onMouseMove (fun e -> MouseMove(Point2D.xy e.x e.y) |> dispatch) ]
 
 let view (model: Model) dispatch =
     let axioms =

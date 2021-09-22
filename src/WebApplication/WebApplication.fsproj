@@ -13,6 +13,7 @@
         <Compile Include="Widgets.fs" />
         <Compile Include="Router.fs" />
         <Compile Include="Demos\Axioms.fs" />
+        <Compile Include="Demos\TriangleMolecule.fs" />
         <Compile Include="Pages\Home.fs" />
         <Compile Include="Pages\Tutorial.fs" />
         <Compile Include="Pages\Examples.fs" />
@@ -30,7 +31,8 @@
       <PackageReference Include="Fable.Import.Browser" Version="1.4.0" />
       <PackageReference Include="Fable.React" Version="7.4.2" />
       <PackageReference Include="Feliz" Version="1.52.0" />
-      <PackageReference Include="Feliz.Bulma" Version="2.17.0" />
+      <PackageReference Include="Feliz.Bulma" Version="2.18.0" />
+      <PackageReference Include="Feliz.Bulma.Slider" Version="2.0.0" />
     </ItemGroup>
 
     <ItemGroup>

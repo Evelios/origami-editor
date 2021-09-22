@@ -49,6 +49,9 @@ module BoundingBox2D =
 
     let height (bbox: BoundingBox2D) : float = bbox.MaxY - bbox.MinY
 
+    let center (bbox: BoundingBox2D) : Point2D =
+        Point2D.xy ((bbox.MaxX - bbox.MinX) / 2.) ((bbox.MaxY - bbox.MinY) / 2.)
+
     (* Modifiers *)
 
     /// Get a bounding box that contains the new point. If the box does not contain the new point, the box will grow
@@ -71,3 +74,6 @@ module BoundingBox2D =
           LineSegment2D.from bbox.TopRight bbox.BottomRight
           LineSegment2D.from bbox.BottomRight bbox.BottomLeft
           LineSegment2D.from bbox.BottomLeft bbox.TopLeft ]
+
+    (* Builders *)
+    let surroundingPoints points = containingPoints points empty

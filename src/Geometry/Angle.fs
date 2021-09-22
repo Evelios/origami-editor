@@ -63,6 +63,13 @@ module Angle =
     let radians (Radians angle: Angle) : float<rad> = angle
 
     (* Trig *)
-    let sin (Radians r) = sin (float r)
+    let private trig fn (Radians r) = fn (float r)
 
-    let cos (Radians r) = cos (float r)
+    let sin = trig sin
+    let cos = trig cos
+    let tan = trig tan
+    let asin = trig asin
+    let acos = trig acos
+    let atan = trig atan
+
+    let atan2 a b = inRadians (FloatWithMeasure(atan2 a b))

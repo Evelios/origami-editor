@@ -30,6 +30,17 @@ let ``Point from polar`` () =
 
     Assert.AreEqual(expected, actual)
 
+[<Test>]
+let Lerp () =
+    let p1 = Point2D.origin
+    let p2 = Point2D.xy 10. 0.
+    let expected = Point2D.xy 3. 0.
+    let actual = Point2D.lerp 0.3 p1 p2
+
+    Assert.AreEqual(expected, actual)
+
+
+
 
 let pointLessThanTestCases =
     [ (Point2D.xy 0. 0., Point2D.xy 1. 1.)

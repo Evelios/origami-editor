@@ -94,16 +94,18 @@ module Vector2D =
 
     (* Queries *)
 
-    let distanceSquaredTo (p1: Vector2D) (p2: Vector2D) : float =
-        let dx = (p1.x - p2.x)
-        let dy = (p1.y - p2.y)
+    let distanceSquaredTo (v1: Vector2D) (v2: Vector2D) : float =
+        let dx = (v1.x - v2.x)
+        let dy = (v1.y - v2.y)
         dx * dx + dy * dy
 
-    let distanceTo p1 p2 : float = distanceSquaredTo p1 p2 |> sqrt
+    let distanceTo v1 v2 : float = distanceSquaredTo v1 v2 |> sqrt
 
-    let midVector (p1: Vector2D) (p2: Vector2D) : Vector2D =
-        xy ((p1.x + p2.x) / 2.) ((p1.y + p2.y) / 2.)
+    let midVector (v1: Vector2D) (v2: Vector2D) : Vector2D =
+        xy ((v1.x + v2.x) / 2.) ((v1.y + v2.y) / 2.)
 
+    let lerp (x: float) (v:Vector2D): Vector2D = v * x
+    
     let dotProduct (lhs: Vector2D) (rhs: Vector2D) : float = (lhs.x * rhs.x) + (lhs.y * rhs.y)
 
     let crossProduct (lhs: Vector2D) (rhs: Vector2D) : float = (lhs.x * rhs.y) - (lhs.y * rhs.x)

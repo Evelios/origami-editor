@@ -8,25 +8,14 @@ module Gen =
     open Utilities
     open Utilities.Extensions
 
+    (* Generic Generators *)
+
     let angle =
         Gen.map (fun angle -> Angle.inRadians (angle * 1.<rad>)) (Gen.floatBetween 0. (Math.PI / 2.))
 
     let vector2D = Gen.map2 Vector2D.xy Gen.float Gen.float
 
-    let vector2DWithinRadius radius =
-        Gen.map2 Vector2D.ofPolar (Gen.floatBetween 0. radius) angle
-
-    let twoCloseVector2D =
-        Gen.map2 (fun first offset -> (first, first + offset)) vector2D (vector2DWithinRadius Internal.Epsilon)
-
     let point2D = Gen.map2 Point2D.xy Gen.float Gen.float
-
-    let point2DWithinOffset radius (point: Point2D) =
-        Gen.map (fun offset -> point + offset) (vector2DWithinRadius radius)
-
-    /// Generate two points that are within Epsilon of each other
-    let twoClosePoint2D =
-        Gen.map2 (fun first offset -> (first, first + offset)) point2D (vector2DWithinRadius Internal.Epsilon)
 
     let line2D =
         Gen.map2 Tuple2.pair point2D point2D
@@ -38,8 +27,25 @@ module Gen =
         |> Gen.filter (fun (p1, p2) -> p1 <> p2)
         |> Gen.map (Tuple2.map LineSegment2D.from)
 
+    let circle2D = Gen.map2 Circle2D.from point2D Gen.float
+
     let boundingBox2D =
         Gen.map2 BoundingBox2D.from point2D point2D
+
+    (* Constrained Generators *)
+
+    let vector2DWithinRadius radius =
+        Gen.map2 Vector2D.ofPolar (Gen.floatBetween 0. radius) angle
+
+    let twoCloseVector2D =
+        Gen.map2 (fun first offset -> (first, first + offset)) vector2D (vector2DWithinRadius Internal.Epsilon)
+
+    let point2DWithinOffset radius (point: Point2D) =
+        Gen.map (fun offset -> point + offset) (vector2DWithinRadius radius)
+
+    /// Generate two points that are within Epsilon of each other
+    let twoClosePoint2D =
+        Gen.map2 (fun first offset -> (first, first + offset)) point2D (vector2DWithinRadius Internal.Epsilon)
 
     let point2DInBoundingBox2D (bbox: BoundingBox2D) =
         Gen.map2 Point2D.xy (Gen.floatBetween bbox.MinX bbox.MaxX) (Gen.floatBetween bbox.MinY bbox.MaxY)
@@ -54,6 +60,7 @@ module Gen =
         static member Point2D() = Arb.fromGen point2D
         static member Line2D() = Arb.fromGen line2D
         static member LineSegment2D() = Arb.fromGen line2D
+        static member Circle2D() = Arb.fromGen circle2D
         static member BoundingBox2D() = Arb.fromGen line2D
 
         static member Register() = Arb.register<ArbGeometry> () |> ignore

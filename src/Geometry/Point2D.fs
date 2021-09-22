@@ -48,6 +48,10 @@ type Point2D =
     static member (-)(lhs: Point2D, rhs: Point2D) : Vector2D =
         Vector2D.xy (lhs.x - rhs.x) (lhs.y - rhs.y)
 
+    static member (-)(lhs: Point2D, rhs: Vector2D) : Point2D =
+        { x = (lhs.x - rhs.x)
+          y = (lhs.y - rhs.y) }
+
     static member (+)(lhs: Point2D, rhs: Vector2D) : Point2D =
         { x = lhs.x + rhs.x; y = lhs.y + rhs.y }
 
@@ -75,6 +79,9 @@ module Point2D =
 
     let translate (v: Vector2D) (p: Point2D) = p + v
 
+    let plus p2 p1 = p1 + p2
+    let minus p2 p1 = p1 - p2
+
     (* Queries *)
 
     let distanceSquaredTo (p1: Point2D) (p2: Point2D) : float =
@@ -88,6 +95,8 @@ module Point2D =
         xy ((p1.x + p2.x) / 2.) ((p1.y + p2.y) / 2.)
 
     let round (p: Point2D) = xy (roundFloat p.x) (roundFloat p.y)
+
+    let lerp (amount: float) (start: Point2D) (finish: Point2D) : Point2D = start + (finish - start) * amount
 
 
     /// Be careful with the vector arguments. This function is written with piping in mind. The first point is the

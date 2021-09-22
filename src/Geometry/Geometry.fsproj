@@ -24,6 +24,8 @@
       <Compile Include="LineSegment2D.fs" />
       <Compile Include="Line2D.fs" />
       <Compile Include="BoundingBox2D.fs" />
+      <Compile Include="Circle2D.fs" />
+      <Compile Include="Triangle2D.fs" />
       <Compile Include="Size.fs" />
       <Compile Include="Intersection2D.fs" />
       <Compile Include="Boolean2D.fs" />
