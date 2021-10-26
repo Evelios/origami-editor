@@ -24,7 +24,7 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "OrigamiBenchmarks", "Origam
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Explorations", "Explorations", "{3F2618D4-FE03-43D5-B830-27EE1D981514}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EdmundSpiral", "EdmundSpiral\EdmundSpiral.fsproj", "{0E254E8E-78EC-48B0-948F-30DE33EDF2E7}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EdmarkSpiral", "EdmarkSpiral\EdmarkSpiral.fsproj", "{0E254E8E-78EC-48B0-948F-30DE33EDF2E7}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GeometrySvg", "GeometrySvg\GeometrySvg.fsproj", "{3544286D-368C-4F3B-9349-426AB9C8C9CE}"
 EndProject

@@ -69,3 +69,12 @@ module BoundingBox2D =
           LineSegment2D.from bbox.TopRight bbox.BottomRight
           LineSegment2D.from bbox.BottomRight bbox.BottomLeft
           LineSegment2D.from bbox.BottomLeft bbox.TopLeft ]
+
+    (* Actions *)
+    
+    /// Create a bounding box that contains both bounding boxes.
+    let union (first: BoundingBox2D) (second: BoundingBox2D) : BoundingBox2D =
+        { minX = min first.minX second.minX
+          maxX = max first.maxX second.maxX
+          minY = min first.minY second.minY
+          maxY = max first.maxY second.maxY }

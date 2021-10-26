@@ -1,4 +1,4 @@
-namespace Geometry
+namespace Geometry.Internal
 
 open System
 open LanguagePrimitives
@@ -11,7 +11,7 @@ type Float() =
         and set v = digitPrecision <- v
 
 [<AutoOpen>]
-module Internal =
+module Float =
 
     let Epsilon : float = 10. ** (float -Float.DigitPrecision)
     let internal almostEqual (a: float) (b: float) : bool = abs (a - b) < FloatWithMeasure Epsilon

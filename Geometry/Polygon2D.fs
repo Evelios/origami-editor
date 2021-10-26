@@ -56,3 +56,6 @@ module Polygon2D =
 
     let rotateAround (reference: Point2D) (angle: Angle) (polygon: Polygon2D) : Polygon2D =
         { Points = List.map (Point2D.rotateAround reference angle) polygon.Points }
+
+    let placeIn (frame: Frame2D) (polygon: Polygon2D) : Polygon2D =
+        { Points = List.map (Point2D.placeIn frame) polygon.Points }

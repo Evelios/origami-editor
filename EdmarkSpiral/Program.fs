@@ -4,7 +4,6 @@ open Geometry
 open GeometrySvg
 
 open SharpVG
-open Utilities
 
 module File =
     let getProgramPath =
@@ -16,7 +15,6 @@ module File =
 
     let saveToFile name lines = File.WriteAllLines(name, [ lines ])
 
-
 /// Create the spiral module adapted from John Edmund.
 /// * The given value is the base length, the line between D and C.
 /// * The control angle is theta D
@@ -25,6 +23,7 @@ module File =
 /// * thetaB = thetaC
 /// * Corner A is a right angle, thetaA = 90deg
 /// * thetaD' is the continued angle off of the line AD on the opposite side of angle D
+/// * The diagonal line between B and D is an angle bisector to both
 ///
 ///        side
 ///       B    C
@@ -35,7 +34,7 @@ module File =
 ///        side
 ///
 /// Returns the length of the next base length as well as the spiral polygon.
-let spiralModule (baseLength: float) (controlAngle: Angle) : Polygon2D * float =
+let spiralModule (baseLength: float) (controlAngle: Angle) : Polygon2D * float * Frame2D =
     let lengthCD = baseLength
     let thetaD = controlAngle
 
@@ -69,41 +68,63 @@ let spiralModule (baseLength: float) (controlAngle: Angle) : Polygon2D * float =
         |> Polygon2D.rotateAround pD -thetaD'
         |> Polygon2D.translate (Point2D.toVector -pD)
 
-    polygon, lengthAB
+    let childOrigin =
+        Point2D.rotateAround pD -thetaD' pA
+        |> Point2D.translate (Point2D.toVector -pD)
+
+    let thetaChild = thetaD - (Angle.inDegrees 90.<deg>)
+    let childFrame = Frame2D.withAngle thetaChild childOrigin
+
+    polygon, lengthAB, childFrame
 
 
 let spiral (baseLength: float) (controlAngle: Angle) (segments: int) : Polygon2D list =
-    let rec spiralHelper prevModules len segCount =
-        if segments <= 0 then
+    let rec spiralHelper prevModules len parentFrame segCount =
+        if segCount <= 0 then
             prevModules
         else
-            let polygon, nextLength = spiralModule len controlAngle
-            
-            
-            spiralHelper (polygon :: prevModules) nextLength (segCount - 1)
+            let localPolygon, childLength, localChildFrame = spiralModule len controlAngle
+            let childFrame = Frame2D.placeIn parentFrame localChildFrame
+            let globalPolygon = Polygon2D.placeIn parentFrame localPolygon
 
-    spiralHelper [] baseLength segments
+            spiralHelper (globalPolygon :: prevModules) childLength childFrame (segCount - 1)
+
+    spiralHelper [] baseLength Frame2D.atOrigin segments
 
 [<EntryPoint>]
 let main _ =
     let fileName =
-        File.getProgramPath + "Edmund-Spiral.svg"
+        "/users/tommy/Pictures/Edmark-Spiral.svg"
 
-    let baseLength = 63.
-    let controlAngle = Angle.inDegrees 78.<deg>
+    let style =
+        { Stroke = Some(Name Colors.Black)
+          StrokeWidth = Some(Length.ofInt 1)
+          Fill = Some(Name Colors.LightGray)
+          Opacity = None
+          FillOpacity = None
+          Name = Some("std") }
+
+    let baseLength = 30.
+    let controlAngle = Angle.inDegrees 82.<deg>
+    let numSegments = 13
 
 
     let fullSpiral =
-        spiral baseLength controlAngle
-        |> Debug.log "Spiral"
+        spiral baseLength controlAngle numSegments
 
-    let boundingBox = Polygon2D.boundingBox fullSpiral 2
+    let boundingBox =
+        List.fold
+            (fun bbox spiral -> BoundingBox2D.union (Polygon2D.boundingBox spiral) bbox)
+            BoundingBox2D.empty
+            fullSpiral
 
-    Draw.polygon fullSpiral
+    List.map (Draw.polygon >> Element.withStyle style) fullSpiral
+    |> Group.ofList
+    |> Svg.ofGroup
     |> Svg.withSize (Area.ofFloats (2. * BoundingBox2D.width boundingBox, 2. * BoundingBox2D.height boundingBox))
     |> Svg.withViewBox (ViewBox.create Point.origin Area.full)
     |> Svg.toString
     |> File.saveToFile fileName
-
+    
     printfn $"Created {fileName}"
     0

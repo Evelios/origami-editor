@@ -16,11 +16,9 @@ module Draw =
     let point (point: Point2D) =
         Circle.create (point2DToPoint point) (Length.ofFloat pointSize)
         |> Element.create
-        |> Svg.ofElement
 
     let polygon (polygon: Polygon2D) =
         Seq.map point2DToPoint polygon.Points
         |> List.ofSeq
         |> Polygon.ofList
         |> Element.create
-        |> Svg.ofElement

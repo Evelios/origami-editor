@@ -1,70 +1,9 @@
 ﻿namespace Geometry
 
-open System
 open FSharp.Json
+open Geometry.Internal
 
-[<CustomEquality>]
-[<CustomComparison>]
-[<RequireQualifiedAccess>]
-[<Struct>]
-type Point2D =
-    private
-        { x: float
-          y: float }
-
-    member this.X = this.x
-    member this.Y = this.y
-
-    (* Comparable interfaces *)
-
-    interface IComparable<Point2D> with
-        member this.CompareTo(point) = this.Comparison(point)
-
-    interface IComparable with
-        member this.CompareTo(obj) =
-            match obj with
-            | :? Point2D as point -> this.Comparison(point)
-            | _ -> failwith "incompatible comparison"
-
-    member this.Comparison(other) =
-        if this.Equals(other) then 0
-        elif this.LessThan(other) then -1
-        else 1
-
-    member this.LessThan(other: Point2D) =
-        if almostEqual (float this.x) (float other.x) then
-            float this.y < float other.y
-        else
-            float this.x < float other.x
-
-    override this.Equals(obj: obj) : bool =
-        match obj with
-        | :? Point2D as other -> this.Equals(other)
-        | _ -> false
-
-    member this.Equals(other: Point2D) : bool =
-        almostEqual this.x other.x
-        && almostEqual this.y other.y
-
-    override this.GetHashCode() = HashCode.Combine(this.x, this.y)
-
-    static member (-)(lhs: Point2D, rhs: Point2D) : Vector2D =
-        Vector2D.xy (lhs.x - rhs.x) (lhs.y - rhs.y)
-
-    static member (~-)(point: Point2D) : Point2D = { x = -point.X; y = -point.Y }
-
-    static member (+)(lhs: Point2D, rhs: Vector2D) : Point2D =
-        { x = lhs.x + rhs.x; y = lhs.y + rhs.y }
-
-    static member (*)(lhs: Point2D, rhs: float) : Point2D = { x = lhs.x * rhs; y = lhs.y * rhs }
-
-    static member (*)(lhs: float, rhs: Point2D) : Point2D = rhs * lhs
-
-    static member (/)(lhs: Point2D, rhs: float) : Point2D = { x = lhs.x / rhs; y = lhs.y / rhs }
-
-    static member (/)(lhs: float, rhs: Point2D) : Point2D = rhs / lhs
-
-
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Point2D =
     (* Builders *)
 
@@ -95,6 +34,12 @@ module Point2D =
         { x = reference.x + c * deltaX - s * deltaY
           y = reference.y + s * deltaX + c * deltaY }
 
+    let placeIn (frame: Frame2D) (point: Point2D) : Point2D =
+        let i = frame.XDirection
+        let j = frame.YDirection
+
+        { x = frame.Origin.x + point.X * i.X + point.Y * j.X
+          y = frame.Origin.y + point.X * i.Y + point.Y * j.Y }
 
     (* Queries *)
 
@@ -117,6 +62,7 @@ module Point2D =
 
 
     (* Json *)
+
     let fromList (list: float list) : Point2D option =
         match list with
         | [ x; y ] -> Some <| xy x y
