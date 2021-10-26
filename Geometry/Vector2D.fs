@@ -53,6 +53,8 @@ type Vector2D =
 
     static member (-)(lhs: Vector2D, rhs: Vector2D) : Vector2D =
         { x = lhs.x + rhs.x; y = lhs.y + rhs.y }
+        
+    static member (~-)(vector: Vector2D) : Vector2D = { x = vector.X; y = vector.Y }
 
     static member (*)(vector: Vector2D, scale: float) : Vector2D =
         { x = vector.x * scale
@@ -70,6 +72,10 @@ module Vector2D =
     (* Builders *)
 
     let xy (x: float) (y: float) : Vector2D = { x = x; y = y }
+
+    let rTheta (r: float) (theta: Angle) : Vector2D =
+        { x = r * Angle.cos theta
+          y = r * Angle.sin theta }
 
     let ofPolar r a = xy (r * Angle.cos a) (r * Angle.sin a)
 

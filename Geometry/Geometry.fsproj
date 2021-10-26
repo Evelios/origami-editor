@@ -21,12 +21,15 @@
       <Compile Include="Angle.fs" />
       <Compile Include="Vector2D.fs" />
       <Compile Include="Point2D.fs" />
+      <Compile Include="Direction.fs" />
+      <Compile Include="Frame.fs" />
       <Compile Include="LineSegment2D.fs" />
       <Compile Include="Line2D.fs" />
       <Compile Include="BoundingBox2D.fs" />
       <Compile Include="Size.fs" />
       <Compile Include="Intersection2D.fs" />
       <Compile Include="Boolean2D.fs" />
+      <Compile Include="Polygon2D.fs" />
     </ItemGroup>
 
     <ItemGroup>

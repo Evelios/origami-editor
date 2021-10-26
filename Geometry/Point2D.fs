@@ -51,6 +51,8 @@ type Point2D =
     static member (-)(lhs: Point2D, rhs: Point2D) : Vector2D =
         Vector2D.xy (lhs.x - rhs.x) (lhs.y - rhs.y)
 
+    static member (~-)(point: Point2D) : Point2D = { x = -point.X; y = -point.Y }
+
     static member (+)(lhs: Point2D, rhs: Vector2D) : Point2D =
         { x = lhs.x + rhs.x; y = lhs.y + rhs.y }
 
@@ -68,15 +70,31 @@ module Point2D =
 
     let xy (x: float) (y: float) : Point2D = { x = x; y = y }
 
+    let rTheta (r: float) (theta: Angle) : Point2D =
+        { x = r * Angle.cos theta
+          y = r * Angle.sin theta }
+
     let ofPolar r a = xy (r * Angle.cos a) (r * Angle.sin a)
 
     let origin = xy 0. 0.
 
     (* Modifiers *)
 
+    let toVector (point: Point2D) : Vector2D = Vector2D.xy point.x point.y
+
     let scale x y (point: Point2D) : Point2D = { x = point.x * x; y = point.y * y }
 
     let translate (v: Vector2D) (p: Point2D) = p + v
+
+    let rotateAround (reference: Point2D) (angle: Angle) (point: Point2D) : Point2D =
+        let c = Angle.cos angle
+        let s = Angle.sin angle
+        let deltaX = point.x - reference.x
+        let deltaY = point.y - reference.y
+
+        { x = reference.x + c * deltaX - s * deltaY
+          y = reference.y + s * deltaX + c * deltaY }
+
 
     (* Queries *)
 

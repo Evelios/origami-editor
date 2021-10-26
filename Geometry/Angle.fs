@@ -24,6 +24,8 @@ type Angle =
         match lhs, rhs with
         | Radians l, Radians r -> Radians(l - r)
 
+    static member (~-)(Radians angle: Angle) : Angle = Radians -angle
+
     static member (*)(lhs: Angle, rhs: float) : Angle =
         match lhs with
         | Radians l -> Radians(l * rhs)
@@ -42,9 +44,13 @@ module Angle =
 
     let pi = Radians(FloatWithMeasure Math.PI)
 
-    let radiansToDegrees : float<deg / rad> = FloatWithMeasure 180.0 / Math.PI
+    let twoPi = Radians(FloatWithMeasure(2. * Math.PI))
 
-    let degreesToRadians : float<rad / deg> = FloatWithMeasure Math.PI / 180.0
+    let piOverTwo = Radians(FloatWithMeasure(Math.PI / 2.))
+
+    let radiansToDegrees: float<deg / rad> = FloatWithMeasure 180.0 / Math.PI
+
+    let degreesToRadians: float<rad / deg> = FloatWithMeasure Math.PI / 180.0
 
 
     (* Builders *)
@@ -66,3 +72,5 @@ module Angle =
     let sin (Radians r) = sin (float r)
 
     let cos (Radians r) = cos (float r)
+
+    let tan (Radians r) = tan (float r)
