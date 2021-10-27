@@ -38,7 +38,6 @@ module Vector2D =
           y = Angle.sin a * v.x + Angle.cos a * v.y }
         
     /// Rotate a vector clockwise by a given angle.
-    let rotateClockwise
 
     let normalize v = v / (magnitude v)
 
