@@ -103,7 +103,7 @@ module Line2D =
     let atPointInDirection (point: Point2D) (direction: Vector2D) : Line2D = through point (point + direction)
 
     let perpThroughPoint (point: Point2D) (line: Line2D) : Line2D =
-        atPointInDirection point (Vector2D.rotate (Angle.inDegrees 90.<deg>) (direction line))
+        atPointInDirection point (Vector2D.rotateBy (Angle.inDegrees 90.<deg>) (direction line))
 
     let isPointOnLine (point: Point2D) (line: Line2D) =
         point = line.start
@@ -120,7 +120,7 @@ module Line2D =
         let d1 = (direction first)
 
         let d2 =
-            Vector2D.rotate (Angle.pi / 2.) (direction second)
+            Vector2D.rotateBy (Angle.pi / 2.) (direction second)
 
         d1 = d2 || Vector2D.neg d1 = d2
 

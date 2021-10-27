@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="Test.fs" />
         <Compile Include="Gen.fs" />
         <Compile Include="Angle.fs" />
         <Compile Include="Vector2D.fs" />

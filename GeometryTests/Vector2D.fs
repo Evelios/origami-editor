@@ -20,3 +20,11 @@ let ``Vector from polar`` () =
 [<Property>]
 let ``Equality and hash code comparison with random points`` (first: Vector2D) (second: Vector2D) =
     (first = second) = (first.GetHashCode() = second.GetHashCode())
+
+[<Property>]
+let ``Dot product of a vector with itself is the length squared`` (vector: Vector2D) =
+    Test.almostEqual ((Vector2D.magnitude vector) ** 2.) (Vector2D.dotProduct vector vector)
+
+[<Property>]
+let ``Normalized vector has a magnitude of one`` (vector: Vector2D) =
+    Test.almostEqual 1. (vector |> Vector2D.normalize |> Vector2D.magnitude)

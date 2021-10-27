@@ -17,7 +17,7 @@ module Gen =
         Gen.map2 Vector2D.ofPolar (Gen.floatBetween 0. radius) angle
 
     let twoCloseVector2D =
-        Gen.map2 (fun first offset -> (first, first + offset)) vector2D (vector2DWithinRadius Internal.Epsilon)
+        Gen.map2 (fun first offset -> (first, first + offset)) vector2D (vector2DWithinRadius Epsilon)
 
     let point2D = Gen.map2 Point2D.xy Gen.float Gen.float
 
@@ -26,7 +26,7 @@ module Gen =
 
     /// Generate two points that are within Epsilon of each other
     let twoClosePoint2D =
-        Gen.map2 (fun first offset -> (first, first + offset)) point2D (vector2DWithinRadius Internal.Epsilon)
+        Gen.map2 (fun first offset -> (first, first + offset)) point2D (vector2DWithinRadius Epsilon)
 
     let line2D =
         Gen.map2 Tuple2.pair point2D point2D

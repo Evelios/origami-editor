@@ -49,7 +49,7 @@ let pointOnLineTestCases =
     [ (Point2D.xy 0. 5.), line
       (Point2D.xy 5. 5.), line
       (Point2D.xy 2.5 5.), line
-      (Point2D.xy 2.5 (5. + Internal.Epsilon / 2.), line) ]
+      (Point2D.xy 2.5 (5. + Epsilon / 2.), line) ]
     |> List.map TestCaseData
 
 [<TestCaseSource(nameof pointOnLineTestCases)>]

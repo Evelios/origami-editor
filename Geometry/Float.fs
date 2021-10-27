@@ -1,14 +1,16 @@
-namespace Geometry.Internal
+namespace Geometry
 
 open System
 open LanguagePrimitives
 
 type Float() =
-    static let mutable digitPrecision = 12
+    static let mutable digitPrecision = 10
 
     static member DigitPrecision
         with get () = digitPrecision
         and set v = digitPrecision <- v
+        
+    static member Epsilon with get() =  10. ** (float -Float.DigitPrecision)
 
 [<AutoOpen>]
 module Float =

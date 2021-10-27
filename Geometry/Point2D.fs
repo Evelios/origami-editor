@@ -1,7 +1,6 @@
 ﻿namespace Geometry
 
 open FSharp.Json
-open Geometry.Internal
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Point2D =

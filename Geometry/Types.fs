@@ -1,7 +1,6 @@
 namespace Geometry
 
 open System
-open Geometry.Internal
 
 [<CustomEquality>]
 [<CustomComparison>]
@@ -114,6 +113,10 @@ type Point2D =
     override this.GetHashCode() = HashCode.Combine(this.x, this.y)
 
     static member (-)(lhs: Point2D, rhs: Point2D) : Vector2D =
+        { x = (lhs.x - rhs.x)
+          y = (lhs.y - rhs.y) }
+        
+    static member (-)(lhs: Point2D, rhs: Vector2D) : Vector2D =
         { x = (lhs.x - rhs.x)
           y = (lhs.y - rhs.y) }
 

@@ -2,37 +2,34 @@ namespace Geometry
 
 [<Struct>]
 type BoundingBox2D =
-    private
-        { minX: float
-          maxX: float
-          maxY: float
-          minY: float }
+    { MinX: float
+      MaxX: float
+      MaxY: float
+      MinY: float }
 
-    member this.MinX = this.minX
-    member this.MaxX = this.maxX
-    member this.MinY = this.minY
-    member this.MaxY = this.maxY
-    member this.TopLeft = Point2D.xy this.minX this.maxY
-    member this.TopRight = Point2D.xy this.maxX this.maxY
-    member this.BottomRight = Point2D.xy this.maxX this.minY
-    member this.BottomLeft = Point2D.xy this.minX this.minY
+    member this.TopLeft = Point2D.xy this.MinX this.MaxY
+    member this.TopRight = Point2D.xy this.MaxX this.MaxY
+    member this.BottomRight = Point2D.xy this.MaxX this.MinY
+    member this.BottomLeft = Point2D.xy this.MinX this.MinY
 
 module BoundingBox2D =
     (* Builders *)
 
     // Creates an infinitely small bounding box. This can be used when growing a bounding box around objects
     let empty =
-        { minX = infinity
-          maxX = -infinity
-          minY = infinity
-          maxY = -infinity }
+        { MinX = infinity
+          MaxX = -infinity
+          MinY = infinity
+          MaxY = -infinity }
 
     /// Create a bounding box that contains the two points
     let from (p1: Point2D) (p2: Point2D) =
-        { minX = min p1.x p2.x
-          maxX = max p1.x p2.x
-          minY = min p1.y p2.y
-          maxY = max p1.y p2.y }
+        { MinX = min p1.x p2.x
+          MaxX = max p1.x p2.x
+          MinY = min p1.y p2.y
+          MaxY = max p1.y p2.y }
+        
+    let fromExtrema b: BoundingBox2D = b
 
     (* Accessors *)
 
@@ -52,10 +49,10 @@ module BoundingBox2D =
     /// Get a bounding box that contains the new point. If the box does not contain the new point, the box will grow
     /// to fit the new point. If the point is within the box, the same bounding box is returned.
     let containingPoint (point: Point2D) box =
-        { minX = min box.minX point.x
-          maxX = max box.maxX point.x
-          minY = min box.minY point.y
-          maxY = max box.maxY point.y }
+        { MinX = min box.MinX point.x
+          MaxX = max box.MaxX point.x
+          MinY = min box.MinY point.y
+          MaxY = max box.MaxY point.y }
 
     let containingPoints points box =
         Seq.fold (fun box point -> containingPoint point box) box points
@@ -74,7 +71,7 @@ module BoundingBox2D =
     
     /// Create a bounding box that contains both bounding boxes.
     let union (first: BoundingBox2D) (second: BoundingBox2D) : BoundingBox2D =
-        { minX = min first.minX second.minX
-          maxX = max first.maxX second.maxX
-          minY = min first.minY second.minY
-          maxY = max first.maxY second.maxY }
+        { MinX = min first.MinX second.MinX
+          MaxX = max first.MaxX second.MaxX
+          MinY = min first.MinY second.MinY
+          MaxY = max first.MaxY second.MaxY }

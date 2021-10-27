@@ -1,7 +1,6 @@
 ﻿namespace Geometry
 
 open FSharp.Json
-open Geometry.Internal
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Vector2D =
@@ -22,15 +21,24 @@ module Vector2D =
 
     (* Modifiers *)
 
-    let scale x y (vector: Vector2D) : Vector2D = { x = vector.x * x; y = vector.y * y }
+    /// Scale a vector by a given amount. This scales both the x and y coordinates.
+    let scaleBy (n:float) (vector: Vector2D) : Vector2D = { x = vector.x * n; y = vector.y * n }
+
+    /// Scale a vector to a given length.
+    let scaleTo (length: float) (vector: Vector2D) : Vector2D =
+        scaleBy (length / magnitude vector) vector
 
     let mul scale (v: Vector2D) = v * scale
 
     let neg (v: Vector2D) : Vector2D = { x = -v.x; y = -v.y }
 
-    let rotate a (v: Vector2D) : Vector2D =
+    /// Rotate a vector counterclockwise by a given angle.
+    let rotateBy a (v: Vector2D) : Vector2D =
         { x = Angle.cos a * v.x - Angle.sin a * v.y
           y = Angle.sin a * v.x + Angle.cos a * v.y }
+        
+    /// Rotate a vector clockwise by a given angle.
+    let rotateClockwise
 
     let normalize v = v / (magnitude v)
 
@@ -52,6 +60,14 @@ module Vector2D =
     let dotProduct (lhs: Vector2D) (rhs: Vector2D) : float = (lhs.x * rhs.x) + (lhs.y * rhs.y)
 
     let crossProduct (lhs: Vector2D) (rhs: Vector2D) : float = (lhs.x * rhs.y) - (lhs.y * rhs.x)
+
+    /// Get the direction the a vector is facing.
+    let direction (vector: Vector2D) : Direction2D option =
+        if almostEqual (magnitude vector) 0. then
+            None
+        else
+            let normalized = normalize vector
+            Some(Direction2D.xy normalized.X normalized.Y)
 
 
     (* Json *)

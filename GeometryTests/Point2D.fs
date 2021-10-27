@@ -15,7 +15,7 @@ let pointEqualityTestCases =
     [ (Point2D.xy 0. 0., Point2D.xy 0. 0.)
       (Point2D.xy -1. -1., Point2D.xy -1. -1.)
       (Point2D.xy 5. 5., Point2D.xy 5. 5.)
-      (Point2D.xy 1. 1., Point2D.xy (1. + Internal.Epsilon / 2.) (1. + Internal.Epsilon / 2.)) ]
+      (Point2D.xy 1. 1., Point2D.xy (1. + Epsilon / 2.) (1. + Epsilon / 2.)) ]
     |> List.map TestCaseData
 
 [<TestCaseSource(nameof pointEqualityTestCases)>]

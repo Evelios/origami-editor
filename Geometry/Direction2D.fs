@@ -2,10 +2,10 @@ namespace Geometry
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Direction2D =
-    let private xy x y =
-        { Direction2D.X = x; Direction2D.Y = y }
-
     (* Constants *)
+
+    let xy x y =
+        { Direction2D.X = x; Direction2D.Y = y }
 
     let positiveX = xy 1. 0.
     let positiveY = xy 0. 1.

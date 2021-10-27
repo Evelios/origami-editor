@@ -17,7 +17,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Include="Internal\Float.fs" />
+      <Compile Include="Float.fs" />
       <Compile Include="Types.fs" />
       <Compile Include="Angle.fs" />
       <Compile Include="Direction2D.fs" />
@@ -28,9 +28,10 @@
       <Compile Include="Line2D.fs" />
       <Compile Include="BoundingBox2D.fs" />
       <Compile Include="Size.fs" />
+      <Compile Include="Circle2D.fs" />
+      <Compile Include="Polygon2D.fs" />
       <Compile Include="Intersection2D.fs" />
       <Compile Include="Boolean2D.fs" />
-      <Compile Include="Polygon2D.fs" />
     </ItemGroup>
 
     <ItemGroup>
