@@ -1,4 +1,4 @@
-module FoldTests.Util
+module OrigamiTests.Util
 
 open NUnit.Framework
 

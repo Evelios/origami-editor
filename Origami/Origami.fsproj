@@ -3,14 +3,25 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <RootNamespace>CreasePattern</RootNamespace>
+        <RootNamespace>Origami</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <Compile Include="Types.fs" />
         <Compile Include="Edge.fs" />
         <Compile Include="Graph.fs" />
-        <Compile Include="AxiomAction.fs" />
+        <Compile Include="Axiom.fs" />
+        <Compile Include="Fold\Types.fs" />
+        <Compile Include="Fold\Vertices.fs" />
+        <Compile Include="Fold\EdgeAssignment.fs" />
+        <Compile Include="Fold\Edges.fs" />
+        <Compile Include="Fold\Faces.fs" />
+        <Compile Include="Fold\LengthUnit.fs" />
+        <Compile Include="Fold\FrameClass.fs" />
+        <Compile Include="Fold\FrameAttribute.fs" />
+        <Compile Include="Fold\Frame.fs" />
+        <Compile Include="Fold\FileClass.fs" />
+        <Compile Include="Fold\Fold.fs" />
         <Compile Include="CreasePattern.fs" />
         <Compile Include="ReferenceFinder.fs" />
     </ItemGroup>
@@ -18,11 +29,12 @@
     <ItemGroup>
       <PackageReference Include="Aether" Version="8.3.1" />
       <PackageReference Include="FSharp.FGL" Version="0.0.1" />
-      <PackageReference Include="MathNet.Spatial" Version="0.6.0" />
+      <PackageReference Include="Math.Geometry" Version="0.1.130" />
+      <PackageReference Include="Thoth.Json" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Fold\Fold.fsproj" />
+      <ProjectReference Include="..\Utilities\Utilities.fsproj" />
     </ItemGroup>
 
 </Project>

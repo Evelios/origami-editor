@@ -4,12 +4,13 @@ open NUnit.Framework
 open FsCheck
 open FsCheck.NUnit
 
-open CreasePattern
-open Geometry
-open GeometryTests
+open Origami
+open Math.Units
+open Math.Geometry
+
 
 [<SetUp>]
-let SetUp () = Gen.ArbGeometry.Register()
+let SetUp () = Gen.ArbOrigami.Register()
 
 [<Property>]
 let ``Axiom one: points are on resulting line`` p1 p2 =

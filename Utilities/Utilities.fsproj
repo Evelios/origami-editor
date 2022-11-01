@@ -12,20 +12,21 @@
         <Compile Include="Conversions\StringConverter.fs" />
         <Compile Include="Conversions\NamingConventions.fs" />
         <Compile Include="Extensions\DiscriminatedUnion.fs" />
-        <Compile Include="Extensions\ListExtensions.fs" />
-        <Compile Include="Extensions\ViewExtensions.fs" />
-        <Compile Include="Extensions\EventExtensions.fs" />
-        <Compile Include="Extensions\ImageExtensions.fs" />
-        <Compile Include="Extensions\TupleExtensions.fs" />
-        <Compile Include="Extensions\StringExtensions.fs" />
-        <Compile Include="Extensions\MapExtensions.fs" />
-        <Compile Include="Extensions\SeqExtensions.fs" />
-        <Compile Include="Extensions\ArrayExtensions.fs" />
+        <Compile Include="Extensions\List.fs" />
+        <Compile Include="Extensions\View.fs" />
+        <Compile Include="Extensions\Event.fs" />
+        <Compile Include="Extensions\Image.fs" />
+        <Compile Include="Extensions\Tuple.fs" />
+        <Compile Include="Extensions\String.fs" />
+        <Compile Include="Extensions\Map.fs" />
+        <Compile Include="Extensions\Seq.fs" />
+        <Compile Include="Extensions\Array.fs" />
         <Compile Include="Extensions\Float.fs" />
+        <Compile Include="Extensions\Result.fs" />
         <Compile Include="Collections\StringMap.fs" />
         <Compile Include="Collections\Tree.fs" />
         <Compile Include="Collections\UnorderedTuple2.fs" />
-        <Compile Include="Collections\Percentage.fs" />
+        <Compile Include="Math\Geometry.fs" />
         <Compile Include="Gen.fs" />
         <Compile Include="Debug.fs" />
         <Compile Include="Log.fs" />
@@ -34,8 +35,14 @@
 
     <ItemGroup>
       <PackageReference Include="FsCheck" Version="2.16.0" />
-      <PackageReference Include="FSharp.Json" Version="0.4.0" />
       <PackageReference Include="JaggerJo.Avalonia.FuncUI.DSL" Version="0.4.0" />
+      <PackageReference Include="Math.Geometry" Version="0.1.130" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Thoth.Json">
+        <HintPath>..\..\..\.nuget\packages\thoth.json\7.0.0\lib\netstandard2.0\Thoth.Json.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

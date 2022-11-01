@@ -1,8 +1,9 @@
-module FoldTests.ExampleFileReading
+module OrigamiTests.ExampleFileReading
 
 open System.IO
 open NUnit.Framework
-open Fold
+open Origami
+open Origami.Fold
 
 [<SetUp>]
 let Setup () = ()
@@ -13,7 +14,4 @@ let exampleFoldFiles =
 
 [<TestCaseSource("exampleFoldFiles")>]
 let exampleFileParsing path =
-    Assert.DoesNotThrow(fun () ->
-        File.ReadAllText path
-        |> Fold.fromJson
-        |> ignore)
+    Assert.DoesNotThrow(fun () -> File.ReadAllText path |> Fold.fromJson |> ignore)

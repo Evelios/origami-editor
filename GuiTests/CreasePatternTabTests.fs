@@ -2,10 +2,11 @@ module CreasePatternTabTests
 
 open Avalonia
 open Avalonia.Input
-open Geometry
+open Math.Geometry
+open Math.Units
 open NUnit.Framework
 
-open CreasePattern
+open Origami
 open Gui.Tabs.CreasePatternTab
 open Gui.Tabs.CreasePatternTab.Drawing
 open Gui
@@ -28,8 +29,8 @@ let testCases =
         expected =
             { CreasePatternTab.init with
                   mousePosition = Some(Point(500., 500.))
-                  vertexPosition = Some(Point2D.xy 1. 1.)
-                  hover = Point2D.xy 1. 1. |> VertexElement |> Some } }
+                  vertexPosition = Some(Point2D.meters 1. 1.)
+                  hover = Point2D.meters 1. 1. |> VertexElement |> Some } }
 
       { name = "Crease edge by dragging between points"
         messages =
@@ -38,12 +39,12 @@ let testCases =
         expected =
             { CreasePatternTab.init with
                   mousePosition = Some(Point(0., 0.))
-                  vertexPosition = Some(Point2D.xy 0. 0.)
-                  hover = Point2D.xy 0. 0. |> VertexElement |> Some
+                  vertexPosition = Some(Point2D.meters 0. 0.)
+                  hover = Point2D.meters 0. 0. |> VertexElement |> Some
                   creasePattern =
                       CreasePattern.create
                       |> CreasePattern.addEdge (
-                          Edge.betweenWithAssignment (Point2D.xy 1. 1.) (Point2D.xy 0. 0.) Unassigned
+                          Edge.betweenWithAssignment (Point2D.meters 1. 1.) (Point2D.meters 0. 0.) Unassigned
                       ) } }
 
       { name = "Press near point & release off point"
@@ -53,7 +54,7 @@ let testCases =
         expected =
             { CreasePatternTab.init with
                   mousePosition = Some(Point(200., 200.))
-                  vertexPosition = Some(Point2D.xy 0.4 0.4) } } ]
+                  vertexPosition = Some(Point2D.meters 0.4 0.4) } } ]
 
     |> List.map
         (fun testCase ->

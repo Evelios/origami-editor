@@ -1,17 +1,20 @@
-module FoldTests.Gen
+module OrigamiTests.Gen
 
 open FsCheck
 
-open Fold
+open Math.Units.Test
+open Origami
+open Origami.Fold
 open Utilities
 
 let frameClasses = Gen.setOfType<FrameClass>
 
-let frameAttributes = Gen.setOfType<FrameAttribute>
+let frameAttributes =
+    Gen.setOfType<FrameAttribute>
 
 let lengthUnit = Gen.ofType<LengthUnit>
 
-let frame =
+let frame: Gen<Frame<TestSpace>> =
     Gen.map6
         (fun author title description classes attributes unit ->
             Frame.empty

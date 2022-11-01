@@ -1,90 +1,60 @@
-namespace CreasePattern
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module Origami.Edge
 
-open System
-open Geometry
+open Math.Geometry
+open Math.Units
 open Utilities.Extensions
 
-[<CustomEquality>]
-[<CustomComparison>]
-type Edge =
-    { crease: LineSegment2D
-      assignment: EdgeAssignment }
 
-    (* Accessors *)
+// ---- Builders -----------------------------------------------------------
 
-    member this.Crease = this.crease
+/// Create an edge from a line segment or crease location and it's edge assignment.
+let atWithAssignment (crease: LineSegment2D<Meters, 'Coordinates>) (assignment: EdgeAssignment) : Edge<'Coordinates> =
+    { Crease = crease
+      Assignment = assignment }
 
-    member this.line =
-        Line2D.through this.Crease.Start this.Crease.Finish
-
-    member this.Assignment = this.assignment
-
-    (* Interfaces *)
-
-    interface IComparable<Edge> with
-        member this.CompareTo(edge) = this.Comparison(edge)
-
-    interface IComparable with
-        member this.CompareTo(obj) =
-            match obj with
-            | :? Edge as edge -> this.Comparison(edge)
-            | _ -> failwith "incompatible comparison"
-
-    member this.Comparison(other: Edge) =
-        if this.Equals(other) then 0
-        elif this.LessThan(other) then -1
-        else 1
-
-    member this.LessThan(other) =
-        if this.crease = other.crease then
-            this.assignment < other.assignment
-        else
-            this.crease < other.crease
-
-    override this.Equals(obj: obj) : bool =
-        match obj with
-        | :? Edge as other ->
-            this.crease = other.crease
-            && this.assignment = other.assignment
-        | _ -> false
-
-    override this.GetHashCode() : int =
-        HashCode.Combine(this.crease, this.assignment)
-
-module Edge =
-
-    (* Builders *)
-
-    let atWithAssignment crease assignment =
-        { crease = crease
-          assignment = assignment }
-
-    let betweenWithAssignment start finish assignment =
-        atWithAssignment (LineSegment2D.from start finish) assignment
+/// Create an edge between two points and give it an edge assignment.
+let betweenWithAssignment
+    (start: Point2D<Meters, 'Coordinates>)
+    (finish: Point2D<Meters, 'Coordinates>)
+    (assignment: EdgeAssignment)
+    : Edge<'Coordinates> =
+    atWithAssignment (LineSegment2D.from start finish) assignment
 
 
-    (* Modifiers *)
+// ---- Modifiers ----------------------------------------------------------
 
-    let scale (x: float) edge = { edge with crease = edge.crease * x }
+/// Scale the edge by a scalar with the reference point at the origin.
+let scale (x: float) (edge: Edge<'Coordinates>) : Edge<'Coordinates> = { edge with Crease = edge.Crease * x }
 
-    let distanceToVertex vertex edge =
-        edge.crease
-        |> LineSegment2D.distanceToPoint vertex
+/// Get the distance between a point and an edge.
+let distanceToVertex (vertex: Point2D<Meters, 'Coordinates>) (edge: Edge<'Coordinates>) : Length =
+    edge.Crease
+    |> LineSegment2D.distanceToPoint vertex
 
-    let round edge =
-        { edge with
-              crease = LineSegment2D.round edge.crease }
+/// <summary>
+///   Round the floating point. The rounding works the same way as the
+///   <see cref="T:Math.Units.Quantity.round"/> function.
+/// </summary>
+///
+let round (edge: Edge<'Coordinates>) : Edge<'Coordinates> =
+    { edge with Crease = LineSegment2D.round edge.Crease }
 
 
-    (* Accessors *)
+// ---- Accessors ----------------------------------------------------------
 
-    let vertices (edge: Edge) = edge.Crease.Start, edge.Crease.Finish
+/// Get the vertices of the edge. This is the start and end point for the edge crease.
+let vertices (edge: Edge<'Coordinates>) : Point2D<Meters, 'Coordinates> * Point2D<Meters, 'Coordinates> =
+    edge.Crease.Start, edge.Crease.Finish
 
-    let seqVertices (edges: Edge seq) =
-        Seq.map vertices edges
-        |> Seq.map Tuple2.toList
-        |> Seq.concat
+/// Get all the endpoints points of of some edges.
+let seqVertices (edges: Edge<'Coordinates> seq) : Point2D<Meters, 'Coordinates> seq =
+    Seq.map vertices edges
+    |> Seq.map Tuple2.toList
+    |> Seq.concat
 
-    let line (e: Edge) : Line2D = e.line
+/// Get the edge crease as a line continuing infinitely before and after the edge crease.
+let line (e: Edge<'Coordinates>) : Line2D<Meters, 'Coordinates> = e.Line
 
-    let assignment (e: Edge) : EdgeAssignment = e.assignment
+/// Get the edge assignment.
+let assignment (e: Edge<'Coordinates>) : EdgeAssignment = e.Assignment

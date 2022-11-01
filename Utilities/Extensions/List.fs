@@ -25,7 +25,7 @@ module List =
         match maybeElement with
         | Some e -> e :: list
         | None -> list
-
+        
     /// Perform a mapping operation on a list and filter out all values that are None
     let filterMap f list : 'a list =
         List.fold
@@ -36,7 +36,7 @@ module List =
             []
             list
         |> List.rev
-
+        
     /// Get the cartesian product of the two lists
     let cartesian xs ys =
         xs

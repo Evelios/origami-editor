@@ -1,11 +1,11 @@
-module FoldFileTests.FoldTests
+module FoldFileTests.OrigamiTests
 
-open FoldTests
+open OrigamiTests
 open NUnit.Framework
 open FsCheck
 open FsCheck.NUnit
 
-open Fold
+open Origami
 
 [<SetUp>]
 let Setup () = Gen.ArbFold.Register()

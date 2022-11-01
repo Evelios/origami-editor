@@ -16,23 +16,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="Gen.fs" />
-        <Compile Include="Util.fs" />
-        <Compile Include="FrameTests.fs" />
-        <Compile Include="FoldTests.fs" />
-        <Content Include="basic-integration.fold" />
-        <Compile Include="BasicIntegrationTest.fs" />
-        <Compile Include="ExampleFileReading.fs" />
-        <Compile Include="Program.fs" />
-        <Content Include="Examples\squaretwist.fold" />
-        <Content Include="Examples\simple.fold" />
-        <Content Include="Examples\diagonal-folded.fold" />
-        <Content Include="Examples\diagonal-cp.fold" />
-        <Content Include="Examples\box.fold" />
+        <Folder Include="Examples" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Fold\Fold.fsproj" />
       <ProjectReference Include="..\Utilities\Utilities.fsproj" />
     </ItemGroup>
 

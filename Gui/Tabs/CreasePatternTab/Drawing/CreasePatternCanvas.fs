@@ -1,6 +1,7 @@
 namespace Gui.Tabs.CreasePatternTab.Drawing
 
-open Geometry
+open Math.Units
+open Math.Geometry
 open Gui.Widgets
 
 module CreasePatternCanvas =
@@ -10,14 +11,14 @@ module CreasePatternCanvas =
     open Avalonia.Input
 
     open Gui
-    open CreasePattern
+    open Origami
     open Utilities.Extensions
 
     type Msg =
         | MousePressed of Point
         | MouseReleased of Point * KeyModifiers
         | MouseMove of Point
-        | CreaseEdge of Edge
+        | CreaseEdge of Edge<UserSpace>
         | KeyPressed of Key
         | RecalculateCreasePatternPreview
 
@@ -38,15 +39,18 @@ module CreasePatternCanvas =
             | _ -> state
 
         | MouseReleased (mousePosition, keyModifiers) ->
-            let updatedState = update (MouseMove mousePosition) state
+            let updatedState =
+                update (MouseMove mousePosition) state
 
-            if keyModifiers.HasFlag(KeyModifiers.Shift)
-               && updatedState.pressed = updatedState.hover then
+            if
+                keyModifiers.HasFlag(KeyModifiers.Shift)
+                && updatedState.pressed = updatedState.hover
+            then
                 match updatedState.pressed with
                 | Some pressed ->
                     { updatedState with
-                          pressed = None
-                          selectedReferences = pressed :: updatedState.selectedReferences }
+                        pressed = None
+                        selectedReferences = pressed :: updatedState.selectedReferences }
                     |> update RecalculateCreasePatternPreview
                 | None ->
                     updatedState
@@ -57,11 +61,11 @@ module CreasePatternCanvas =
                 | Some (VertexElement pressed), Some (VertexElement hover) when pressed <> hover ->
 
                     { updatedState with
-                          pressed = None
-                          creasePattern =
-                              CreasePattern.addEdge
-                                  (Edge.betweenWithAssignment pressed hover Unassigned)
-                                  updatedState.creasePattern }
+                        pressed = None
+                        creasePattern =
+                            CreasePattern.addEdge
+                                (Edge.betweenWithAssignment pressed hover Unassigned)
+                                updatedState.creasePattern }
                     |> update RecalculateCreasePatternPreview
 
                 | Some _, _ ->
@@ -73,10 +77,10 @@ module CreasePatternCanvas =
                     |> update RecalculateCreasePatternPreview
 
         | MousePressed mousePosition ->
-            let updatedState = update (MouseMove mousePosition) state
+            let updatedState =
+                update (MouseMove mousePosition) state
 
-            { updatedState with
-                  pressed = updatedState.hover }
+            { updatedState with pressed = updatedState.hover }
 
         | MouseMove mousePosition ->
             // The mouse position converted into crease pattern coordinates
@@ -86,6 +90,7 @@ module CreasePatternCanvas =
             let convertedCloseDistance =
                 (theme.pointerCloseDistance
                  / (max state.translation.xRatio state.translation.yRatio))
+                |> Length.cssPixels
 
             let vertexWithin =
                 CreasePattern.pointWithin convertedCloseDistance convertedVertex state.creasePatternPreview
@@ -100,14 +105,14 @@ module CreasePatternCanvas =
                 | None, None -> None
 
             { state with
-                  mousePosition = Some mousePosition
-                  vertexPosition = Some convertedVertex
-                  hover = hover }
+                mousePosition = Some mousePosition
+                vertexPosition = Some convertedVertex
+                hover = hover }
 
         | CreaseEdge edge ->
             { state with
-                  creasePattern = CreasePattern.addEdge edge state.creasePattern
-                  selectedReferences = [] }
+                creasePattern = CreasePattern.addEdge edge state.creasePattern
+                selectedReferences = [] }
             |> update RecalculateCreasePatternPreview
 
         (* Internals *)
@@ -116,7 +121,7 @@ module CreasePatternCanvas =
                 Axiom.ofAxiomsFromElements state.axioms state.selectedReferences
 
             { state with
-                  creasePatternPreview = CreasePattern.performAxioms EdgeAssignment.Preview axioms state.creasePattern }
+                creasePatternPreview = CreasePattern.performAxioms EdgeAssignment.Preview axioms state.creasePattern }
 
 
 
@@ -171,10 +176,9 @@ module CreasePatternCanvas =
                  >> Msg.MousePressed
                  >> dispatch
              )
-             DockPanel.onPointerReleased
-                 (fun e ->
-                     Msg.MouseReleased((Event.positionRelativeTo canvasName e), e.KeyModifiers)
-                     |> dispatch)
+             DockPanel.onPointerReleased (fun e ->
+                 Msg.MouseReleased((Event.positionRelativeTo canvasName e), e.KeyModifiers)
+                 |> dispatch)
              DockPanel.focusable true
              DockPanel.onKeyUp (Event.handleKeyPress (KeyPressed >> dispatch))
 

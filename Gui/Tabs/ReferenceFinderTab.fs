@@ -1,7 +1,8 @@
 namespace Gui.Tabs.ReferenceFinderTab
 
 open Avalonia.Media
-open Geometry
+open Math.Units
+open Math.Geometry
 
 module ReferenceFinderTab =
     open Avalonia.Controls
@@ -10,7 +11,7 @@ module ReferenceFinderTab =
     open Avalonia.Layout
     open Elmish
 
-    open CreasePattern
+    open Origami
     open Gui
     open Gui.Widgets
     open Utilities.Extensions
@@ -24,7 +25,7 @@ module ReferenceFinderTab =
         | ChangeYInput of string
         // User Execution
         | RunReferenceFinder
-        | ReferenceFinderSolutions of ReferenceFinderSolution array
+        | ReferenceFinderSolutions of ReferenceFinderSolution<UserSpace> array
         // Steps
         | HoverStep of int
         | LeaveStep
@@ -33,8 +34,9 @@ module ReferenceFinderTab =
         | LeaveSolutionPreview
         | SelectSolutionPreview of int
 
-    let init : ReferenceFinderTabState =
-        let x, y = 0.33, 0.33
+    let init: ReferenceFinderTabState =
+        let x, y =
+            Length.meters 0.33, Length.meters 0.33
 
         { x = x
           y = y
@@ -52,12 +54,12 @@ module ReferenceFinderTab =
 
         | ChangeXInput xString ->
             match String.parseFloat xString with
-            | Some newX -> { state with x = newX }, Cmd.none
+            | Some newX -> { state with x = Length.meters newX }, Cmd.none
             | None -> state, Cmd.none
 
         | ChangeYInput yString ->
             match String.parseFloat yString with
-            | Some newY -> { state with y = newY }, Cmd.none
+            | Some newY -> { state with y = Length.meters newY }, Cmd.none
             | None -> state, Cmd.none
 
         // User Execution
@@ -79,22 +81,19 @@ module ReferenceFinderTab =
 
         // Solutions
 
-        | HoverSolutionPreview index ->
-            { state with
-                  hoveredSolution = Some index },
-            Cmd.none
+        | HoverSolutionPreview index -> { state with hoveredSolution = Some index }, Cmd.none
 
         | LeaveSolutionPreview -> { state with hoveredSolution = None }, Cmd.none
 
         | SelectSolutionPreview index -> { state with activeSolution = index }, Cmd.none
 
     let private toolBar (state: ReferenceFinderTabState) dispatch =
-        let coordinates : IView list =
+        let coordinates: IView list =
             [ Form.textItem
-                {| name = "X"
-                   value = state.xInput
-                   onSelected = ChangeXInput >> dispatch
-                   labelPlacement = Orientation.Horizontal |}
+                  {| name = "X"
+                     value = state.xInput
+                     onSelected = ChangeXInput >> dispatch
+                     labelPlacement = Orientation.Horizontal |}
               Form.textItem
                   {| name = "Y"
                      value = state.yInput
@@ -102,8 +101,10 @@ module ReferenceFinderTab =
                      labelPlacement = Orientation.Horizontal |} ]
 
         let actionButton =
-            Button.create [ Button.onClick (fun _ -> dispatch RunReferenceFinder)
-                            Button.content "Find fold sequences" ]
+            Button.create [
+                Button.onClick (fun _ -> dispatch RunReferenceFinder)
+                Button.content "Find fold sequences"
+            ]
 
         StackPanel.create
         <| [ StackPanel.orientation Orientation.Horizontal
@@ -113,10 +114,16 @@ module ReferenceFinderTab =
     let private foldSequences maybeHoverIndex solution dispatch =
         let title = Text.h1 "Fold Sequences" []
 
-        let pointString (p: Point2D) =
-            $"({roundFloatTo 4 p.X}, {roundFloatTo 4 p.Y})"
+        let pointString (p: Point2D<Meters, UserSpace>) =
+            let x =
+                p.X |> Length.inMeters |> Float.roundFloatTo 4
 
-        let lineString (l: Line2D) =
+            let y =
+                p.Y |> Length.inMeters |> Float.roundFloatTo 4
+
+            $"({x}, {y})"
+
+        let lineString (l: Line2D<Meters, UserSpace>) =
             $"[{pointString l.Start}; {pointString l.Finish}]"
 
         let description axiomAction =
@@ -135,9 +142,15 @@ module ReferenceFinderTab =
             Text.h2 $"Solution: {pointString solution.Point}" []
 
         let distance =
-            Text.h2 $"Distance: {roundFloatTo 6 solution.Distance}" []
+            let distance =
+                solution.Distance
+                |> Length.inMeters
+                |> Float.roundFloatTo 6
 
-        let error = Text.h2 $"Error: {solution.Error}" []
+            Text.h2 $"Distance: {distance}" []
+
+        let error =
+            Text.h2 $"Error: {solution.Error}" []
 
 
         /// Create a widget of numbered items. Items can be hovered over to change styling
@@ -165,7 +178,7 @@ module ReferenceFinderTab =
                  StackPanel.margin Theme.spacing.medium ]
             :> IView
 
-        let steps : IView =
+        let steps: IView =
             solution.Steps
             |> Seq.map description
             |> List.ofSeq
@@ -174,11 +187,13 @@ module ReferenceFinderTab =
         StackPanel.create
         <| [ StackPanel.orientation Orientation.Vertical
              StackPanel.background Theme.palette.panelBackground
-             StackPanel.children [ title
-                                   pointSolution
-                                   distance
-                                   error
-                                   steps ]
+             StackPanel.children [
+                 title
+                 pointSolution
+                 distance
+                 error
+                 steps
+             ]
              StackPanel.width 200. ]
 
     let private previews selected referenceFinderSolutions dispatch =
@@ -199,11 +214,15 @@ module ReferenceFinderTab =
                     $"e = {referenceFinderSolution.Error}"
                     [ TextBlock.horizontalAlignment HorizontalAlignment.Center ]
 
-            StackPanel.create [ StackPanel.orientation Orientation.Vertical
-                                StackPanel.spacing Theme.spacing.small
-                                StackPanel.margin Theme.spacing.medium
-                                StackPanel.children [ creasePatternDrawing
-                                                      error ] ]
+            StackPanel.create [
+                StackPanel.orientation Orientation.Vertical
+                StackPanel.spacing Theme.spacing.small
+                StackPanel.margin Theme.spacing.medium
+                StackPanel.children [
+                    creasePatternDrawing
+                    error
+                ]
+            ]
             |> Accents.selectable
                 (Option.contains index selected)
                 [ Border.onPointerEnter (fun _ -> (HoverSolutionPreview index |> dispatch))
@@ -229,8 +248,10 @@ module ReferenceFinderTab =
              StackPanel.spacing Theme.spacing.medium
              StackPanel.height panelHeight
              StackPanel.verticalAlignment VerticalAlignment.Center
-             StackPanel.children [ title
-                                   creasePatternViews ] ]
+             StackPanel.children [
+                 title
+                 creasePatternViews
+             ] ]
 
 
     let private creasePattern cp hoveredStep =
@@ -240,8 +261,9 @@ module ReferenceFinderTab =
             match hoveredStep with
             | Some axiomAction ->
                 let results =
-                    List.map EdgeElement (CreasePattern.axiomResult EdgeAssignment.Flat axiomAction cp)
-                    |> List.map (fun e -> (e, ComponentState.Selected))
+                    CreasePattern.axiomResult EdgeAssignment.Flat axiomAction cp
+                    |> Seq.map (fun e -> (EdgeElement e, ComponentState.Selected))
+                    |> List.ofSeq
 
                 let references =
                     match axiomAction with
@@ -265,7 +287,7 @@ module ReferenceFinderTab =
                   <| [ CreasePatternDrawing.creasePattern cp
                        CreasePatternDrawing.size creasePatternSize
                        CreasePatternDrawing.graphElements stepElements ] ] ]
-    
+
     let view (state: ReferenceFinderTabState) dispatch =
         match Array.tryItem state.activeSolution state.solutions with
         | Some selected ->

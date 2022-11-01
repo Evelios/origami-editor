@@ -17,14 +17,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Vertices.fs" />
-        <Compile Include="Edges.fs" />
-        <Compile Include="Faces.fs" />
-        <Compile Include="Frame.fs" />
-        <Compile Include="Fold.fs" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="FSharp.Json" Version="0.4.0" />
       <PackageReference Include="MathNet.Spatial" Version="0.6.0" />
       <PackageReference Include="System.Runtime" Version="4.3.1" />

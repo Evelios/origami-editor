@@ -9,7 +9,6 @@
 
     <ItemGroup>
         <PackageReference Include="FsCheck.NUnit" Version="2.16.0" />
-        <PackageReference Include="MathNet.Spatial" Version="0.6.0" />
         <PackageReference Include="NUnit" Version="3.13.2" />
         <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
@@ -21,12 +20,23 @@
         <Compile Include="CreasePattern.fs" />
         <Compile Include="Axioms.fs" />
         <Compile Include="JsonConversion.fs" />
+        <Compile Include="Fold\Gen.fs" />
+        <Compile Include="Fold\Util.fs" />
+        <Compile Include="Fold\FrameTests.fs" />
+        <Content Include="Fold\basic-integration.fold" />
+        <Compile Include="Fold\BasicIntegrationTest.fs" />
+        <Compile Include="Fold\ExampleFileReading.fs" />
+        <Content Include="Fold\Examples\squaretwist.fold" />
+        <Content Include="Fold\Examples\simple.fold" />
+        <Content Include="Fold\Examples\diagonal-folded.fold" />
+        <Content Include="Fold\Examples\diagonal-cp.fold" />
+        <Content Include="Fold\Examples\box.fold" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Origami\Origami.fsproj" />
-      <ProjectReference Include="..\GeometryTests\GeometryTests.fsproj" />
+      <ProjectReference Include="..\Utilities\Utilities.fsproj" />
     </ItemGroup>
 
 </Project>

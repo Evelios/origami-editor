@@ -3,13 +3,13 @@ module CreasePatternTests.Graph
 open NUnit.Framework
 open FsCheck.NUnit
 
-open CreasePattern
-open GeometryTests
+open Origami
+
 open Utilities
 open Utilities.Test
 
 [<SetUp>]
-let SetUp () = Gen.ArbGeometry.Register()
+let SetUp () = Gen.ArbOrigami.Register()
 
 
 [<Property>]
@@ -29,7 +29,7 @@ let ``Edge insert order independent`` creases =
 let ``Edge start point and end point order independent`` edges =
     let reversedEdges =
         List.map
-            (fun (edge: Edge) -> Edge.betweenWithAssignment edge.Crease.Finish edge.Crease.Start edge.Assignment)
+            (fun (edge: Edge<'Coordinates>) -> Edge.betweenWithAssignment edge.Crease.Finish edge.Crease.Start edge.Assignment)
             edges
 
     Graph.addEdges edges Graph.empty
