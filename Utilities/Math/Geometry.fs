@@ -2,7 +2,7 @@ namespace Math.Geometry
 
 open Math.Units
 
-open Thoth.Json
+open Thoth.Json.Net
 
 module Line2D =
 

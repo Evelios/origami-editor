@@ -1,6 +1,5 @@
 module OrigamiTests.FrameTests
 
-open Math.Units
 open Math.Geometry
 open Math.Units.Test
 open NUnit.Framework
@@ -37,14 +36,14 @@ let testCases: (string * Frame<TestSpace>) list =
                   FrameAttribute.Geo2D
                   FrameAttribute.Orientable
               ] }
-      """{"frame_unit":"unit","vertices_coords":[[-1,-1],[1,1]]}""",
+      """{"frame_unit":"unit","vertices_coords":[[-1.0,-1.0],[1.0,1.0]]}""",
       { Frame.empty with
           Vertices =
               { Vertices.empty with
                   Coordinates =
                       [ Point2D.meters -1. -1.
                         Point2D.meters 1. 1. ] } }
-      """{"frame_unit":"unit","vertices_coords":[[0.5,1],[2.5,2.5]]}""",
+      """{"frame_unit":"unit","vertices_coords":[[0.5,1.0],[2.5,2.5]]}""",
       { Frame.empty with
           Vertices =
               { Vertices.empty with
@@ -70,7 +69,7 @@ let testCases: (string * Frame<TestSpace>) list =
                         EdgeAssignment.Unassigned ] } }
       """{"frame_unit":"unit","edges_foldAngle":[0.7,0.1]}""",
       { Frame.empty with Edges = { Edges.empty with FoldAngle = [ 0.7; 0.1 ] } }
-      """{"frame_unit":"unit","edges_length":[10,20]}""",
+      """{"frame_unit":"unit","edges_length":[10.0,20.0]}""",
       { Frame.empty with Edges = { Edges.empty with Length = [ 10.; 20. ] } }
       """{"frame_unit":"unit","faces_vertices":[[1,2,3],[3,4,1]]}""",
       { Frame.empty with Faces = { Faces.empty with Vertices = [ [ 1; 2; 3 ]; [ 3; 4; 1 ] ] } }
@@ -84,7 +83,7 @@ let deserializationTestCases =
     Util.toTest testCases
 
 [<TestCaseSource("deserializationTestCases")>]
-let Deserialization source = Frame.fromJson source
+let Deserialization source = Frame.fromJson<TestSpace> source
 
 
 let serializationTestCases =
@@ -95,7 +94,7 @@ let Serialization source = Frame.toJson source
 
 
 [<Property>]
-let ``Serialize and Deserialize`` frame =
+let ``Serialize and Deserialize`` (frame: Frame<TestSpace>) : bool =
     frame
     |> Frame.toJson
     |> Frame.fromJson

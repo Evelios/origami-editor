@@ -1,7 +1,7 @@
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Origami.Fold.Frame
 
-open Thoth.Json
+open Thoth.Json.Net
 
 open Utilities.Extensions
 
@@ -57,48 +57,65 @@ let setFaces faces frame : Frame<'Coordinates> = { frame with Faces = faces }
 
 // ---- Serialization & Deserialization ----------------------------------------
 
+let decode (get: Decode.IGetters) : Frame<'Coordinates> =
+    let maybeStr name =
+        get.Optional.Field name Decode.string
+        |> Option.defaultValue ""
+
+    let maybeSet name f =
+        get.Optional.Field name (Decode.list Decode.string)
+        |> Option.defaultValue []
+        |> List.map f
+        |> List.filterNone
+        |> Set.ofList
+
+    let unit name =
+        get.Optional.Field name Decode.string
+        |> Option.bind LengthUnit.fromString
+        |> Option.defaultValue LengthUnit.Unitless
+
+    { Author = maybeStr "frame_author"
+      Title = maybeStr "frame_title"
+      Description = maybeStr "frame_description"
+      Classes = maybeSet "frame_classes" FrameClass.fromString
+      Attributes = maybeSet "frame_attributes" FrameAttribute.fromString
+      Unit = unit "frame_unit"
+      Vertices = Vertices.decoder get
+      Edges = Edges.decoder get
+      Faces = Faces.decoder get }
 
 let decoder<'Coordinates> : Decoder<Frame<'Coordinates>> =
-    Decode.object (fun get ->
-        let maybeStr name =
-            get.Optional.Field name Decode.string
-            |> Option.defaultValue ""
-
-        let maybeSet name f =
-            get.Optional.Field name (Decode.list Decode.string)
-            |> Option.defaultValue []
-            |> List.map f
-            |> List.filterNone
-            |> Set.ofList
-
-        let unit name =
-            get.Optional.Field name Decode.string
-            |> Option.bind LengthUnit.fromString
-            |> Option.defaultValue LengthUnit.Unitless
-
-        { Author = maybeStr "frame_author"
-          Title = maybeStr "frame_title"
-          Description = maybeStr "frame_description"
-          Classes = maybeSet "frame_class" FrameClass.fromString
-          Attributes = maybeSet "frame_attributes" FrameAttribute.fromString
-          Unit = unit "frame_unit"
-          Vertices = Vertices.empty
-          Edges = Edges.empty
-          Faces = Faces.empty })
+    Decode.object decode
 
 let encode (frame: Frame<'Coordinates>) : JsonValue =
     let encodeList f list =
         Seq.map (f >> Encode.string) list |> Encode.seq
 
-    Encode.object [
-        "frame_author", Encode.string frame.Author
-        "frame_title", Encode.string frame.Title
-        "frame_description", Encode.string frame.Description
-        "frame_class", encodeList FrameClass.toString frame.Classes
-        "frame_attributes", encodeList FrameAttribute.toString frame.Attributes
-        "frame_unit", Encode.string (LengthUnit.toString LengthUnit.Unitless)
-    ]
+    let frameValues =
+        [ if frame.Author <> "" then
+              "frame_author", Encode.string frame.Author
+
+          if frame.Title <> "" then
+              "frame_title", Encode.string frame.Title
+
+          if frame.Description <> "" then
+              "frame_description", Encode.string frame.Description
+
+          if frame.Classes <> Set.empty then
+              "frame_classes", encodeList FrameClass.toString frame.Classes
+
+          if frame.Attributes <> Set.empty then
+              "frame_attributes", encodeList FrameAttribute.toString frame.Attributes
+
+          "frame_unit", Encode.string (LengthUnit.toString LengthUnit.Unitless) ]
+
+    Encode.object (
+        frameValues
+        @ Vertices.encode frame.Vertices
+          @ Edges.encode frame.Edges
+            @ Faces.encode frame.Faces
+    )
 
 let toJson (frame: Frame<'Coordinates>) : string = Encode.toString 0 (encode frame)
 
-let fromJson (json: string) : Result<Frame<'Coordinates>, string> = Decode.fromString decoder json
+let fromJson<'Coordinates> (json: string) : Result<Frame<'Coordinates>, string> = Decode.fromString decoder json

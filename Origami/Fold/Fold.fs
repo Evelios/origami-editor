@@ -1,7 +1,7 @@
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Origami.Fold.Fold
 
-open Thoth.Json
+open Thoth.Json.Net
 
 open Origami.Fold
 open Utilities.Extensions
@@ -91,10 +91,19 @@ let decoder<'Coordinates> : Decoder<Fold<'Coordinates>> =
             get.Optional.Field "file_frames" (Decode.list Frame.decoder)
             |> Option.defaultValue []
 
+
+        let baseFrame = Frame.decode get
+
+        // Figure out which frame is the key frame
         let keyFrame, otherFrames =
-            match frames with
-            | [] -> Frame.empty, []
-            | keyFrame :: otherFrames -> keyFrame, otherFrames
+            if baseFrame <> Frame.empty then
+                baseFrame, frames
+
+            else
+                match frames with
+                | [] -> Frame.empty, []
+                | keyFrame :: otherFrames -> keyFrame, otherFrames
+
 
         let classes =
             get.Optional.Field "file_classes" (Decode.list Decode.string)
@@ -125,14 +134,24 @@ let encode (fold: Fold<'Coordinates>) : JsonValue =
         |> Encode.seq
 
     Encode.object [
-        "file_creator", Encode.string fold.Creator
-        "file_author", Encode.string fold.Author
-        "file_title", Encode.string fold.Title
-        "file_title", Encode.string fold.Description
-        "file_classes", fileClasses
+        if fold.Creator <> "" then
+            "file_creator", Encode.string fold.Creator
+
+        if fold.Author <> "" then
+            "file_author", Encode.string fold.Author
+
+        if fold.Title <> "" then
+            "file_title", Encode.string fold.Title
+
+        if fold.Description <> "" then
+            "file_description", Encode.string fold.Description
+
+        if fold.Classes <> Set.empty then
+            "file_classes", fileClasses
+
         "file_frames", frames
     ]
 
 let toJson (fold: Fold<'Coordinates>) : string = Encode.toString 0 (encode fold)
 
-let fromJson (json: string) : Result<Fold<'Coordinates>, string> = Decode.fromString decoder json
+let fromJson<'Coordinates> (json: string) : Result<Fold<'Coordinates>, string> = Decode.fromString decoder json
