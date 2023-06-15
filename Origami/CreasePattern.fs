@@ -302,6 +302,7 @@ module CreasePattern =
             | Valley -> Fold.Valley
             | Flat -> Fold.Flat
             | Unassigned -> Fold.Unassigned
+            | Preview -> Fold.Unassigned
 
         let foldEdges =
             Fold.Edges.create
