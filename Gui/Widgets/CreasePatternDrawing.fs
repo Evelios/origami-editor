@@ -92,7 +92,7 @@ module CreasePatternDrawing =
              <| Point(scaledEdge.Crease.Start.X, scaledEdge.Crease.Start.Y)
              Line.endPoint
              <| Point(scaledEdge.Crease.Finish.X, scaledEdge.Crease.Finish.Y)
-             Line.stroke (edgeColor options.state options.edge.assignment)
+             Line.stroke (edgeColor options.state options.edge.Assignment)
              Line.strokeThickness theme.lineThickness
              Line.strokeLineCap PenLineCap.Round ]
         :> IView

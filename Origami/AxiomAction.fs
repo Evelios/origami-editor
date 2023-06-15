@@ -22,7 +22,7 @@ module Axiom =
 
     open Utilities.Extensions
 
-    (* Builders *)
+    // ---- Builders -----------------------------------------------------------
 
     /// Get all the axioms that can be performed between the two graph elements
     let betweenElements e1 e2 : AxiomAction list =
@@ -51,7 +51,7 @@ module Axiom =
                 | AxiomAction.Two _ -> Seq.contains Axiom.Two axioms
                 | AxiomAction.Three _ -> Seq.contains Axiom.Three axioms)
 
-    (* Actions *)
+    // ---- Actions ------------------------------------------------------------
 
     let first v1 v2 : Line2D = Line2D.through v1 v2
 
@@ -59,13 +59,12 @@ module Axiom =
         Line2D.through v1 v2
         |> Line2D.perpThroughPoint (Point2D.midpoint v1 v2)
 
-    (* Try to fold two lines through the angle bisectors. This has three possible cases.
-       1. The lines are the same -> No new folds
-       2. The lines are parallel -> One fold between the two folds
-       3. The lines are intersecting -> Two possible folds, the acute angle bisector and the obtuse angle bisector
-    *)
+    /// Try to fold two lines through the angle bisectors. This has three possible cases.
+    ///   1. The lines are the same -> No new folds
+    ///   2. The lines are parallel -> One fold between the two folds
+    ///   3. The lines are intersecting -> Two possible folds, the acute angle bisector and the obtuse angle bisector
     let third e1 e2 : Line2D list =
-        (* 1. Lines are equal *)
+        // 1. Lines are equal
         if e1 = e2 then
             []
 
@@ -74,10 +73,10 @@ module Axiom =
                 (Point2D.midpoint p (Line2D.pointClosestTo p e2))
 
             match Line2D.intersect e1 e2 with
-            (* 2. Lines are parallel*)
+            // 2. Lines are parallel
             | None -> [ Line2D.through (midpoint e1.Start) (midpoint e1.Finish) ]
 
-            (* 3. Lines are intersecting *)
+            // 3. Lines are intersecting *)
             | Some intersection ->
                 let linePoint =
                     if e1.Start = intersection then

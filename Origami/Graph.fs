@@ -7,16 +7,15 @@ open Utilities.Extensions
 type PointId = int
 
 type Graph =
-    private
-        { vertices: Map<PointId, Point2D>
-          edges: Map<UnorderedTuple2<PointId>, EdgeAssignment> }
+    { Vertices: Map<PointId, Point2D>
+      Edges: Map<UnorderedTuple2<PointId>, EdgeAssignment> }
 
 module Graph =
 
     (* Builder *)
     let empty =
-        { vertices = Map.empty
-          edges = Map.empty }
+        { Vertices = Map.empty
+          Edges = Map.empty }
 
     (* Accessors *)
 
@@ -26,12 +25,12 @@ module Graph =
     ///     Raised when the point is not in the graph. This shouldn't happen
     ///     unless the graph was put into an invalid state.
     /// </exception>
-    let private getVertex pointId graph = Map.find pointId graph.vertices
+    let private getVertex pointId graph = Map.find pointId graph.Vertices
 
     // TODO: this check may be problematic. Ensure that the id isn't sensitive to tolerances
     /// Determine if the point is in the graph. This point checks for both equality and id existence
     let private vertexExists (vertex: Point2D) graph =
-        Map.exists (fun id point -> vertex.GetHashCode() = id && vertex = point) graph.vertices
+        Map.exists (fun id point -> vertex.GetHashCode() = id && vertex = point) graph.Vertices
 
     /// Check to see if the edge exists in the graph. The edge is checked for assignment and endpoint location. The
     /// endpoints can ve in any order since the graph is undirected.
@@ -41,13 +40,13 @@ module Graph =
 
         Map.exists
             (fun existingIds assignment ->
-                edge.assignment = assignment
+                edge.Assignment = assignment
                 && endpointIds = existingIds)
-            graph.edges
+            graph.Edges
 
     /// Get all the edges within the graph
     let edges graph =
-        graph.edges
+        graph.Edges
         |> Map.toSeq
         |> Seq.map
             (fun (endpointIds, assignment) ->
@@ -58,7 +57,7 @@ module Graph =
         |> Seq.sort
 
     /// Get all the vertices within the graph
-    let vertices graph = Map.values graph.vertices |> Seq.sort
+    let vertices graph = Map.values graph.Vertices |> Seq.sort
 
 
     (* Modifiers *)
@@ -72,10 +71,10 @@ module Graph =
         let newVerticesMap =
             Seq.fold
                 (fun accGraph vertex -> Map.add (vertex.GetHashCode()) vertex accGraph)
-                graph.vertices
+                graph.Vertices
                 verticesToAdd
 
-        { graph with vertices = newVerticesMap }
+        { graph with Vertices = newVerticesMap }
 
     /// Adds any vertex to the graph. Any vertices that already exist will not be added
     let addVertex vertex graph = addVertices [ vertex ] graph
@@ -86,12 +85,12 @@ module Graph =
                 (fun accGraph (edge: Edge) ->
                     Map.add
                         (UnorderedTuple2.ofTuple (edge.Crease.Start.GetHashCode(), edge.Crease.Finish.GetHashCode()))
-                        edge.assignment
+                        edge.Assignment
                         accGraph)
-                graph.edges
+                graph.Edges
                 edges
 
-        { graph with edges = newEdgeMap }
+        { graph with Edges = newEdgeMap }
 
 
     /// Add edges to the graph

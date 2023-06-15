@@ -205,7 +205,7 @@ module CreasePattern =
                     match closestEdge with
                     | closestDistance, _ as closestEdge ->
                         let nextDistance =
-                            nextEdge.crease
+                            nextEdge.Crease
                             |> LineSegment2D.distanceToPoint vertex
 
                         if nextDistance < closestDistance then

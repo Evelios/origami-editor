@@ -13,7 +13,7 @@ type ReferenceFinderSolution =
 
 module ReferenceFinder =
 
-    (* Types *)
+    // ---- Types --------------------------------------------------------------
 
     type Step =
         private
@@ -26,11 +26,12 @@ module ReferenceFinder =
     type LookupTable = private LookupTable of Tree<Step>
 
 
-    (* Builders *)
+    // ---- Builders -----------------------------------------------------------
 
-    /// Initialize the reference finder lookup table. This table can be queried to get a series of creases that would
-    /// give the desired point on a sheet of paper.
-    ///
+    /// Initialize the reference finder lookup table. This table can be queried
+    /// to get a series of creases that would give the desired point on a sheet
+    /// of paper.
+    /// 
     /// TODO: Create builders for different shapes of paper
     let init =
         let maxDepth = 3
@@ -62,17 +63,19 @@ module ReferenceFinder =
               Termination = (fun step -> step.Depth = maxDepth) }
         |> LookupTable
 
-    (* Accessors *)
+    
+    // ---- Accessors ----------------------------------------------------------
+    
     let nodes (LookupTable ref) = Tree.nodes ref
 
 
-    (* Modifiers *)
-
+    // ---- Modifiers ----------------------------------------------------------
+    
     let private fold folder state (LookupTable referenceFinder) = Tree.fold folder state referenceFinder
 
 
-    (* Queries *)
-
+    // ---- Queries ------------------------------------------------------------
+    
     /// Get the first crease pattern that creates a point close to the desired point
     let bestFoldSequenceTo target referenceFinder : ReferenceFinderSolution =
         let baseCase =

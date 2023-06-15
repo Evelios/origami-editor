@@ -7,17 +7,14 @@ open Utilities.Extensions
 [<CustomEquality>]
 [<CustomComparison>]
 type Edge =
-    { crease: LineSegment2D
-      assignment: EdgeAssignment }
+    { Crease: LineSegment2D
+      Assignment: EdgeAssignment }
 
     (* Accessors *)
-
-    member this.Crease = this.crease
 
     member this.line =
         Line2D.through this.Crease.Start this.Crease.Finish
 
-    member this.Assignment = this.assignment
 
     (* Interfaces *)
 
@@ -36,55 +33,70 @@ type Edge =
         else 1
 
     member this.LessThan(other) =
-        if this.crease = other.crease then
-            this.assignment < other.assignment
+        if this.Crease = other.Crease then
+            this.Assignment < other.Assignment
         else
-            this.crease < other.crease
+            this.Crease < other.Crease
 
     override this.Equals(obj: obj) : bool =
         match obj with
         | :? Edge as other ->
-            this.crease = other.crease
-            && this.assignment = other.assignment
+            this.Crease = other.Crease
+            && this.Assignment = other.Assignment
         | _ -> false
 
     override this.GetHashCode() : int =
-        HashCode.Combine(this.crease, this.assignment)
+        HashCode.Combine(this.Crease, this.Assignment)
 
 module Edge =
 
-    (* Builders *)
+    // ---- Builders -----------------------------------------------------------
+    
 
+    /// Create an edge at a particular line segment location and give it an
+    /// edge assignment.
     let atWithAssignment crease assignment =
-        { crease = crease
-          assignment = assignment }
+        { Crease = crease
+          Assignment = assignment }
 
+    /// Create an edge between two points and give it and edge assignment.
     let betweenWithAssignment start finish assignment =
         atWithAssignment (LineSegment2D.from start finish) assignment
 
 
-    (* Modifiers *)
+    // ---- Modifiers ----------------------------------------------------------
+    
 
-    let scale (x: float) edge = { edge with crease = edge.crease * x }
+    /// Scale up the creases edge in both the X and Y axis
+    let scale (x: float) edge = { edge with Crease = edge.Crease * x }
 
+    /// Get the minimum distance between a point and the edge.
+    /// This is either the perpendicular distance to the line or the distance
+    /// to one of the endpoints.
     let distanceToVertex vertex edge =
-        edge.crease
+        edge.Crease
         |> LineSegment2D.distanceToPoint vertex
 
     let round edge =
         { edge with
-              crease = LineSegment2D.round edge.crease }
+              Crease = LineSegment2D.round edge.Crease }
 
 
-    (* Accessors *)
+    // ---- Accessors ---------------------------------------------------------
+    
 
+    /// Get the two vertices that make up the edge.
     let vertices (edge: Edge) = edge.Crease.Start, edge.Crease.Finish
 
+    /// Get the two vertices that make up the edge but as a sequence of two
+    /// elements.
     let seqVertices (edges: Edge seq) =
         Seq.map vertices edges
         |> Seq.map Tuple2.toList
         |> Seq.concat
 
+    /// Get the line segment that makes up the edge
     let line (e: Edge) : Line2D = e.line
 
-    let assignment (e: Edge) : EdgeAssignment = e.assignment
+    /// Get the edge assignment of the edge
+    let assignment (e: Edge) : EdgeAssignment = e.Assignment
