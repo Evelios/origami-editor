@@ -33,9 +33,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="FsCheck" Version="2.16.0" />
-      <PackageReference Include="FSharp.Json" Version="0.4.0" />
-      <PackageReference Include="JaggerJo.Avalonia.FuncUI.DSL" Version="0.4.0" />
+      <PackageReference Include="FsCheck" Version="2.16.5" />
+      <PackageReference Include="FSharp.Json" Version="0.4.1" />
+      <PackageReference Include="JaggerJo.Avalonia.FuncUI.DSL" Version="0.5.3" />
     </ItemGroup>
 
 </Project>

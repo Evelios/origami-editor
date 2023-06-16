@@ -6,18 +6,24 @@ module View =
     open Avalonia.FuncUI.Types
     open Avalonia.LogicalTree
     open System
-    
+
 
     /// Add an attribute to an existing view
     let withAttr (attr: IAttr<'view>) (view: IView<'view>) =
-        { viewType = view.ViewType
-          attrs = attr :: view.Attrs }
+        { ViewType = view.ViewType
+          ViewKey = view.ViewKey
+          Attrs = attr :: view.Attrs
+          ConstructorArgs = view.ConstructorArgs
+          Outlet = view.Outlet }
         :> IView<'view>
 
     /// Add several attributes to an existing view
     let withAttrs (attrs: IAttr<'view> list) (view: IView<'view>) =
-        { viewType = view.ViewType
-          attrs = view.Attrs |> List.append attrs }
+        { ViewType = view.ViewType
+          ViewKey = view.ViewKey
+          Attrs = view.Attrs |> List.append attrs
+          ConstructorArgs = view.ConstructorArgs
+          Outlet = view.Outlet }
         :> IView<'view>
 
     /// Try to find a child control of a given name using breadth first search

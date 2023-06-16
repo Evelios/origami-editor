@@ -4,7 +4,7 @@ open Avalonia.FuncUI.Types
 
 module Shell =
     open Avalonia.Controls
-    open Avalonia.FuncUI.Components.Hosts
+    open Avalonia.FuncUI.Hosts
     open Avalonia.FuncUI.Elmish
     open Avalonia.FuncUI.DSL
     open Elmish
@@ -79,6 +79,7 @@ module Shell =
             base.Width <- Theme.window.width
             base.MinHeight <- Theme.window.height
             base.MinWidth <- Theme.window.width
+            // TODO Update depreciation
             this.HasSystemDecorations <- true
 
             let updateWithServices (msg: Msg) (state: State) = update msg state this
