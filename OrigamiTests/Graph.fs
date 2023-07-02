@@ -3,8 +3,8 @@ module CreasePatternTests.Graph
 open NUnit.Framework
 open FsCheck.NUnit
 
-open CreasePattern
-open GeometryTests
+open Origami
+open Math.GeometryTests
 open Utilities
 open Utilities.Test
 

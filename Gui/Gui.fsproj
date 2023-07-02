@@ -14,6 +14,7 @@
         <PackageReference Include="JaggerJo.Avalonia.FuncUI" Version="0.5.3" />
         <PackageReference Include="JaggerJo.Avalonia.FuncUI.DSL" Version="0.5.3" />
         <PackageReference Include="JaggerJo.Avalonia.FuncUI.Elmish" Version="0.5.3" />
+        <PackageReference Include="Math.Geometry" Version="0.1.132" />
     </ItemGroup>
 
     <ItemGroup>
@@ -27,6 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Math\Geometry\" />
         <Compile Include="Translation.fs" />
         <Compile Include="Types.fs" />
         <Compile Include="Theme.fs" />

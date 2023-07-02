@@ -1,5 +1,7 @@
 namespace Gui
 
+open Origami
+
 
 
 module FileLoader =
@@ -23,9 +25,9 @@ module FileLoader =
                     yield reader.ReadLine()
             }
             |> Ok
-        with error -> Error <| OsError error
+        with error ->
+            Error <| OsError error
 
     /// TODO: catch json deserialization errors
-    let loadFoldFile path : Result<Fold, Error> =
-        readFile path
-        |> Result.map (String.concat Environment.NewLine >> Fold.fromJson)
+    let loadFoldFile path : Result<Fold<OrigamiCoordinates>, Error> =
+        readFile path |> Result.map (String.concat Environment.NewLine >> Fold.fromJson)

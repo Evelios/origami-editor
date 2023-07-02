@@ -8,7 +8,7 @@ module CreasePatternTab =
     open Avalonia.Controls
     open Avalonia.FuncUI.DSL
 
-    open CreasePattern
+    open Origami
     open Gui
     open Gui.Widgets
     open Gui.Tabs.CreasePatternTab

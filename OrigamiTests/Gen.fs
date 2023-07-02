@@ -6,8 +6,11 @@ module Gen =
 
 
     open Utilities
-    open CreasePattern
-    open GeometryTests
+    open Origami
+    open Math.Geometry
+    open Math.Geometry.Test
+    open Math.Units
+    open Math.Units.Test
 
 
     let edgeAssignment = Gen.ofType<EdgeAssignment>
@@ -29,6 +32,6 @@ module Gen =
             (Gen.listOf creaseInBoundingBox)
 
     type ArbOrigami =
-        static member CreasePattern() = Arb.fromGen creasePattern
+        static member CreasePattern(): Arbitrary<CreasePattern> = Arb.fromGen creasePattern
 
         static member Register() = Arb.register<ArbOrigami> () |> ignore

@@ -1,11 +1,12 @@
-﻿namespace CreasePattern
+﻿namespace Origami
 
-open Geometry
+open Math.Geometry
+open Math.Units
 
 type Label = int
 
 type CreasePattern =
-    { Bounds: BoundingBox2D
+    { Bounds: BoundingBox2D<Meters, OrigamiCoordinates>
       Graph: Graph
       Unit: LengthUnit
       Author: string
@@ -21,10 +22,10 @@ module CreasePattern =
      * the square sheet of paper using cartesian coordinates. The bottom left corner is the origin (0, 0) and the paper
      * has a width and height of 1.
      *)
-    let empty : CreasePattern =
+    let empty: CreasePattern =
         { Bounds = BoundingBox2D.empty
           Graph = Graph.empty
-          Unit = Unitless
+          Unit = LengthUnit.Unitless
           Author = ""
           Title = ""
           Description = "" }
@@ -37,17 +38,16 @@ module CreasePattern =
     /// Get the size (width and height) of the crease pattern. This size is invariant of any translations on the
     /// crease pattern.
     let size creasePattern =
-        Size.create
-            (creasePattern.Bounds.MaxX
-             - creasePattern.Bounds.MinX)
-            (creasePattern.Bounds.MaxY
-             - creasePattern.Bounds.MinY)
+        Size2D.create
+            (creasePattern.Bounds.MaxX - creasePattern.Bounds.MinX)
+            (creasePattern.Bounds.MaxY - creasePattern.Bounds.MinY)
 
     /// Get all the edges that are in the crease pattern. This includes all the boundary edges from the paper.
     let edges creasePattern : Edge seq = Graph.edges creasePattern.Graph
 
     /// Get all the vertices that are a part of the crease pattern
-    let vertices creasePattern : Point2D seq = Graph.vertices creasePattern.Graph
+    let vertices (creasePattern: CreasePattern) : Point2D<Meters, OrigamiCoordinates> seq =
+        Graph.vertices creasePattern.Graph
 
     /// Get all the vertices and edges that are a part of the crease pattern
     let elements creasePattern : GraphElement seq =
@@ -60,7 +60,7 @@ module CreasePattern =
     /// Set the bounding box of the current crease pattern.
     let private setBoundingBox boundingBox creasePattern =
         { creasePattern with
-              Bounds = boundingBox }
+            Bounds = boundingBox }
 
     /// Expand the bounding box of the crease pattern to
     let private expandBoundingBox vertices creasePattern =
@@ -80,12 +80,12 @@ module CreasePattern =
     let setDescription description creasePattern =
 
         { creasePattern with
-              Description = description }
+            Description = description }
 
     /// Perform an action on the underlying vertex and edge graph object
     let private mapGraph f creasePattern =
         { creasePattern with
-              Graph = f creasePattern.Graph }
+            Graph = f creasePattern.Graph }
 
     /// Add a vertex to the crease pattern.If any of the vertices lie outside the bounding box of the current crease
     /// pattern, then then bounds are expanded to encompass the bounding box.
@@ -106,7 +106,7 @@ module CreasePattern =
     /// of those edges are also added to the crease pattern.
     let addEdges (edges: Edge seq) creasePattern : CreasePattern =
         creasePattern
-        |> expandBoundingBox (Edge.seqVertices edges)
+        |> expandBoundingBox (Edge.seqVertices edges |> List.ofSeq)
         |> mapGraph (Graph.addEdges edges)
 
 
@@ -119,8 +119,7 @@ module CreasePattern =
     /// Create a crease along a line. This line will be bounded within the workable region of the crease pattern. This
     /// function helps convert infinite lines into ones that are limited by the workable region of the paper.
     let boundedEdge line creasePattern =
-        let maybeSegment =
-            Boolean2D.boundingBoxAndLine creasePattern.Bounds line
+        let maybeSegment = Boolean2D.boundingBoxAndLine creasePattern.Bounds line
 
         Option.map (fun lineSegment -> Edge.atWithAssignment lineSegment EdgeAssignment.Unassigned) maybeSegment
 
@@ -133,15 +132,11 @@ module CreasePattern =
 
     /// Get all the edges created within the crease pattern by performing multiple axiom actions on it.
     let axiomPreviews assignment axiom creasePattern =
-        let edges =
-            axiomResult assignment axiom creasePattern
+        let edges = axiomResult assignment axiom creasePattern
 
         let cpVertices = Set.ofSeq (vertices creasePattern)
 
-        let vertices =
-            Edge.seqVertices edges
-            |> Set.ofSeq
-            |> Set.difference cpVertices
+        let vertices = Edge.seqVertices edges |> Set.ofSeq |> Set.difference cpVertices
 
         Seq.append (Seq.map EdgeElement edges) (Seq.map VertexElement vertices)
 
@@ -157,7 +152,7 @@ module CreasePattern =
     (* Queries *)
 
     /// Get the vertex in the crease pattern that is the closest to a given vertex
-    let closestVertex vertex creasePattern : (Point2D * float) option =
+    let closestVertex vertex creasePattern : (Point2D<Meters, OrigamiCoordinates> * Length) option =
         let distSquaredToVertex = Point2D.distanceSquaredTo vertex
 
         let closestDistanceSquared, closestVertex =
@@ -171,31 +166,27 @@ module CreasePattern =
 
                     else
                         (distanceSquared, closestVertex))
-                (infinity, Point2D.xy infinity infinity)
+                (Quantity.infinity, Point2D.xy Quantity.infinity Quantity.infinity)
 
-        if closestDistanceSquared < infinity then
-            Some(closestVertex, sqrt closestDistanceSquared)
+        if closestDistanceSquared < Quantity.infinity then
+            Some(closestVertex, Quantity.sqrt closestDistanceSquared)
         else
             None
 
     // This function is currently linear but can be sped up with quad-trees
     /// Get the closest vertex that is withing a particular distance
-    let pointWithin maxDist vertex creasePattern : Point2D option =
+    let pointWithin maxDist vertex creasePattern : Point2D<Meters, OrigamiCoordinates> option =
         match closestVertex vertex creasePattern with
-        | Some (vertex, distance) ->
-            if distance < maxDist then
-                Some vertex
-            else
-                None
+        | Some(vertex, distance) -> if distance < maxDist then Some vertex else None
         | None -> None
 
     /// Get the closest edge that is withing a particular distance from the input point.
-    let edgeWithin (distance: float) (vertex: Point2D) (creasePattern: CreasePattern) : Edge option =
+    let edgeWithin (distance: Length) (vertex: Point2D<Meters, OrigamiCoordinates>) (creasePattern: CreasePattern) : Edge option =
         let defaultCase =
-            (infinity,
+            (Quantity.infinity,
              Edge.betweenWithAssignment
-                 (Point2D.xy infinity infinity)
-                 (Point2D.xy -infinity -infinity)
+                 (Point2D.xy Quantity.infinity Quantity.infinity)
+                 (Point2D.xy Quantity.negativeInfinity Quantity.negativeInfinity)
                  EdgeAssignment.Unassigned)
 
         let closestDistance, closestEdge =
@@ -204,9 +195,7 @@ module CreasePattern =
                 (fun closestEdge nextEdge ->
                     match closestEdge with
                     | closestDistance, _ as closestEdge ->
-                        let nextDistance =
-                            nextEdge.Crease
-                            |> LineSegment2D.distanceToPoint vertex
+                        let nextDistance = nextEdge.Crease |> LineSegment2D.distanceToPoint vertex
 
                         if nextDistance < closestDistance then
                             (nextDistance, nextEdge)
@@ -227,40 +216,37 @@ module CreasePattern =
             BoundingBox2D.lineSegments boundingBox
             |> List.map (fun crease -> Edge.atWithAssignment crease EdgeAssignment.Boundary)
 
-        empty
-        |> setBoundingBox boundingBox
-        |> addEdges boundaries
+        empty |> setBoundingBox boundingBox |> addEdges boundaries
 
     ///  Create a basic crease pattern within a 0 -> 1 grid system with edge boundaries.
-    let create : CreasePattern =
-        BoundingBox2D.from (Point2D.xy 1. 1.) (Point2D.xy 0. 0.)
-        |> withBoundingBox
+    let create: CreasePattern =
+        BoundingBox2D.from (Point2D.meters 1. 1.) Point2D.origin |> withBoundingBox
 
 
     (* Serialization & Deserialization *)
 
     /// Convert the frame values in the fold file to a crease pattern
-    let fromFoldFrame (frame: Fold.Frame) : CreasePattern =
+    let fromFoldFrame (frame: Fold.Frame<OrigamiCoordinates>) : CreasePattern =
         let coordinates = Array.ofList frame.Vertices.Coordinates
 
         let mapEdgeAssignment assignment =
             match assignment with
-            | Fold.Boundary -> Boundary
-            | Fold.Mountain -> Mountain
-            | Fold.Valley -> Valley
-            | Fold.Unassigned -> Unassigned
-            | Fold.Flat -> Flat
+            | Fold.Boundary -> EdgeAssignment.Boundary
+            | Fold.Mountain -> EdgeAssignment.Mountain
+            | Fold.Valley -> EdgeAssignment.Valley
+            | Fold.Unassigned -> EdgeAssignment.Unassigned
+            | Fold.Flat -> EdgeAssignment.Flat
 
         let mapUnit unit =
             match unit with
-            | Fold.Meters -> Meters
-            | Fold.Points -> Pixels
-            | Fold.Unitless -> Unitless
-            | _ -> Unitless
+            | Fold.Meters -> LengthUnit.Meters
+            | Fold.Points -> LengthUnit.Pixels
+            | Fold.Unitless -> LengthUnit.Unitless
+            | _ -> LengthUnit.Unitless
 
         let graphEdges =
             List.map2
-                (fun (first, second) -> Edge.betweenWithAssignment coordinates.[first] coordinates.[second])
+                (fun (first, second) -> Edge.betweenWithAssignment coordinates[first] coordinates[second])
                 frame.Edges.Vertices
                 (List.map mapEdgeAssignment frame.Edges.Assignment)
 
@@ -275,8 +261,8 @@ module CreasePattern =
         creasePattern
 
     /// Add in the crease pattern values into the fold frame
-    let toFoldFrame (creasePattern: CreasePattern) : Fold.Frame =
-        let vertexLookup : Map<Point2D, int> =
+    let toFoldFrame (creasePattern: CreasePattern) : Fold.Frame<OrigamiCoordinates> =
+        let vertexLookup: Map<Point2D<Meters, OrigamiCoordinates>, int> =
             vertices creasePattern
             |> Seq.indexed
             |> Seq.fold (fun map (id, vert) -> Map.add vert id map) Map.empty
@@ -287,39 +273,37 @@ module CreasePattern =
                   Vertices = []
                   Faces = [] }
 
-        let edgeVertices : (Point2D * Point2D) list =
-            edges creasePattern
-            |> Seq.map Edge.vertices
-            |> List.ofSeq
+        let edgeVertices: (Point2D<Meters, OrigamiCoordinates> * Point2D<Meters, OrigamiCoordinates>) list =
+            edges creasePattern |> Seq.map Edge.vertices |> List.ofSeq
 
         let edgeVerticesIndexed =
             List.map (fun (v1, v2) -> (Map.find v1 vertexLookup, Map.find v2 vertexLookup)) edgeVertices
 
         let mapEdgeAssignment assignment =
             match assignment with
-            | Boundary -> Fold.Boundary
-            | Mountain -> Fold.Mountain
-            | Valley -> Fold.Valley
-            | Flat -> Fold.Flat
-            | Unassigned -> Fold.Unassigned
-            | Preview -> Fold.Unassigned
+            | EdgeAssignment.Boundary -> Fold.Boundary
+            | EdgeAssignment.Mountain -> Fold.Mountain
+            | EdgeAssignment.Valley -> Fold.Valley
+            | EdgeAssignment.Flat -> Fold.Flat
+            | EdgeAssignment.Unassigned -> Fold.Unassigned
+            | EdgeAssignment.Preview -> Fold.Unassigned
 
         let foldEdges =
             Fold.Edges.create
                 { Vertices = edgeVerticesIndexed
                   Faces = []
                   Assignment =
-                      Seq.map (Edge.assignment >> mapEdgeAssignment) (edges creasePattern)
-                      |> List.ofSeq
+                    Seq.map (Edge.assignment >> mapEdgeAssignment) (edges creasePattern)
+                    |> List.ofSeq
                   FoldAngle = []
                   Length = []
                   Orders = [] }
 
         let mapUnit unit =
             match unit with
-            | Meters -> Fold.Meters
-            | Pixels -> Fold.Points
-            | Unitless -> Fold.Unitless
+            | LengthUnit.Meters -> Fold.Meters
+            | LengthUnit.Pixels -> Fold.Points
+            | LengthUnit.Unitless -> Fold.Unitless
 
 
         Fold.Frame.empty
@@ -338,6 +322,4 @@ module CreasePattern =
         |> Fold.Fold.toJson
 
     let fromJson json =
-        Fold.Fold.fromJson json
-        |> (fun fold -> fold.KeyFrame)
-        |> fromFoldFrame
+        Fold.Fold.fromJson json |> (fun fold -> fold.KeyFrame) |> fromFoldFrame

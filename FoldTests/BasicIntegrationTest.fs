@@ -4,7 +4,7 @@ open System.IO
 open NUnit.Framework
 
 open Fold
-open Geometry
+open Math.Geometry
 
 [<SetUp>]
 let Setup () = ()
@@ -40,10 +40,10 @@ let foldFile =
                             { Vertices = [ 0; 1; 2; 3 ]
                               Faces = [ [ 0; 1 ]; [ 1; 2 ]; [ 2; 3 ] ]
                               Coordinates =
-                                  [ Point2D.xy 0. 0.
-                                    Point2D.xy 0. 1.
-                                    Point2D.xy 1. 0.
-                                    Point2D.xy 1. 1. ] })
+                                  [ Point2D.meters 0. 0.
+                                    Point2D.meters 0. 1.
+                                    Point2D.meters 1. 0.
+                                    Point2D.meters 1. 1. ] })
                     Edges =
 
                         (Edges.create

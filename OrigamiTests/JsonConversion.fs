@@ -6,8 +6,8 @@ open FsCheck
 open FsCheck.NUnit
 
 open Fold
-open CreasePattern
-open Geometry
+open Origami
+open Math.Geometry
 open Utilities
 open Utilities.Test
 
@@ -18,10 +18,10 @@ let SetUp () = Gen.ArbOrigami.Register()
 let ``Basic Serialization`` () =
     // Given
     let v =
-        {| bl = Point2D.xy 0. 0.
-           br = Point2D.xy 0. 1.
-           tr = Point2D.xy 1. 1.
-           tl = Point2D.xy 1. 0. |}
+        {| bl = Point2D.meters 0. 0.
+           br = Point2D.meters 0. 1.
+           tr = Point2D.meters 1. 1.
+           tl = Point2D.meters 1. 0. |}
 
     let creasePattern =
         CreasePattern.empty
@@ -34,10 +34,10 @@ let ``Basic Serialization`` () =
     let vertices =
         Vertices.create
             { Coordinates =
-                  [ Point2D.xy 0. 0.
-                    Point2D.xy 0. 1.
-                    Point2D.xy 1. 0.
-                    Point2D.xy 1. 1. ]
+                  [ Point2D.meters 0. 0.
+                    Point2D.meters 0. 1.
+                    Point2D.meters 1. 0.
+                    Point2D.meters 1. 1. ]
               Vertices = []
               Faces = [] }
 
@@ -89,10 +89,10 @@ let ``Deserialize edges`` () =
     let vertices =
         Vertices.create
             { Coordinates =
-                  [ Point2D.xy 0. 0.
-                    Point2D.xy 0. 1.
-                    Point2D.xy 1. 1.
-                    Point2D.xy 1. 0. ]
+                  [ Point2D.meters 0. 0.
+                    Point2D.meters 0. 1.
+                    Point2D.meters 1. 1.
+                    Point2D.meters 1. 0. ]
               Vertices = []
               Faces = [] }
 
@@ -125,10 +125,10 @@ let ``Deserialize edges`` () =
     /// Expect
 
     let v =
-        {| bl = Point2D.xy 0. 0.
-           br = Point2D.xy 0. 1.
-           tr = Point2D.xy 1. 1.
-           tl = Point2D.xy 1. 0. |}
+        {| bl = Point2D.meters 0. 0.
+           br = Point2D.meters 0. 1.
+           tr = Point2D.meters 1. 1.
+           tl = Point2D.meters 1. 0. |}
 
     let expected =
         CreasePattern.empty

@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
+      <PackageReference Include="Math.Geometry" Version="0.1.132" />
     </ItemGroup>
 
     <ItemGroup>

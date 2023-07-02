@@ -79,8 +79,7 @@ module Shell =
             base.Width <- Theme.window.width
             base.MinHeight <- Theme.window.height
             base.MinWidth <- Theme.window.width
-            // TODO Update depreciation
-            this.HasSystemDecorations <- true
+            base.SystemDecorations <- SystemDecorations.Full
 
             let updateWithServices (msg: Msg) (state: State) = update msg state this
 

@@ -1,7 +1,8 @@
 namespace Fold
 
 open FSharp.Json
-open Geometry
+open Math.Geometry
+open Math.Units
 
 type FileClass =
     | [<JsonUnionCase("singleModel")>] SingleModel
@@ -9,14 +10,14 @@ type FileClass =
     | [<JsonUnionCase("animation")>] Animation
     | [<JsonUnionCase("diagrams")>] Diagrams
 
-type FoldFileJson =
+type FoldFileJson<'Coordinates> =
     { FileSpec: int option
       FileCreator: string option
       FileAuthor: string option
       FileTitle: string option
       FileDescription: string option
       FileClasses: FileClass list option
-      FileFrames: FrameJson list option
+      FileFrames: FrameJson<'Coordinates> list option
       FrameAuthor: string option
       FrameTitle: string option
       FrameDescription: string option
@@ -24,7 +25,7 @@ type FoldFileJson =
       FrameAttributes: FrameAttribute list option
       FrameUnit: LengthUnit option
       [<JsonField(Transform = typeof<Point2D.ListTransform>)>]
-      VerticesCoords: Point2D list option
+      VerticesCoords: Point2D<Meters, 'Coordinates> list option
       VerticesVertices: int list option
       VerticesFaces: int list list option
       EdgesVertices: (int * int) list option
@@ -32,26 +33,26 @@ type FoldFileJson =
       EdgesAssignment: EdgeAssignment list option
       EdgesFoldAngle: float list option
       EdgesLength: float list option
-      EdgeOrders: (int (*edge id*)  * int (*edge id*)  * int (*order*) ) list option
+      EdgeOrders: (int (*edge id*) * int (*edge id*) * int (*order*) ) list option
       FacesVertices: int list list option
       FacesEdges: int list list option
-      FaceOrders: (int (*face id*)  * int (*face id*)  * int (*order*) ) list option }
+      FaceOrders: (int (*face id*) * int (*face id*) * int (*order*) ) list option }
 
-type Fold =
+type Fold<'Coordinates> =
     { Spec: int
       Creator: string
       Author: string
       Title: string
       Description: string
       Classes: FileClass Set
-      KeyFrame: Frame
-      Frames: Frame list }
+      KeyFrame: Frame<'Coordinates>
+      Frames: Frame<'Coordinates> list }
 
 module Fold =
 
-    let create a : Fold = a
+    let create a : Fold<'Coordinates> = a
 
-    let empty =
+    let empty<'Coordinates> : Fold<'Coordinates> =
         create
             { Spec = 1
               Creator = ""
@@ -73,25 +74,25 @@ module Fold =
 
     (* Modifiers *)
 
-    let setSpec spec file : Fold = { file with Spec = spec }
+    let setSpec spec file : Fold<'Coordinates> = { file with Spec = spec }
 
-    let setCreator creator file : Fold = { file with Creator = creator }
-    let setAuthor author file : Fold = { file with Author = author }
-    let setTitle title file : Fold = { file with Title = title }
-    let setDescription description file : Fold = { file with Description = description }
-    let setClasses classes file : Fold = { file with Classes = classes }
+    let setCreator creator file : Fold<'Coordinates> = { file with Creator = creator }
+    let setAuthor author file : Fold<'Coordinates> = { file with Author = author }
+    let setTitle title file : Fold<'Coordinates> = { file with Title = title }
+    let setDescription description file : Fold<'Coordinates> = { file with Description = description }
+    let setClasses classes file : Fold<'Coordinates> = { file with Classes = classes }
 
-    let addClass theClass file : Fold =
+    let addClass theClass file : Fold<'Coordinates> =
         { file with
-              Classes = Set.add theClass file.Classes }
+            Classes = Set.add theClass file.Classes }
 
-    let removeClass theClass file : Fold =
+    let removeClass theClass file : Fold<'Coordinates> =
         { file with
-              Classes = Set.remove theClass file.Classes }
+            Classes = Set.remove theClass file.Classes }
 
-    let withoutClasses file : Fold = { file with Classes = Set.empty }
-    let setKeyFrame keyFrame file : Fold = { file with KeyFrame = keyFrame }
-    let setFrames frames file : Fold = { file with Frames = frames }
+    let withoutClasses file : Fold<'Coordinates> = { file with Classes = Set.empty }
+    let setKeyFrame keyFrame file : Fold<'Coordinates> = { file with KeyFrame = keyFrame }
+    let setFrames frames file : Fold<'Coordinates> = { file with Frames = frames }
 
 
     (**
@@ -99,23 +100,21 @@ module Fold =
     This functions existence probably indicates that a dictionary structure is a better representation
     of the fold fold frames.
     *)
-    let updateFrame (frameIndex: int) (update: Frame -> Frame) (fold: Fold) : Fold =
+    let updateFrame
+        (frameIndex: int)
+        (update: Frame<'Coordinates> -> Frame<'Coordinates>)
+        (fold: Fold<'Coordinates>)
+        : Fold<'Coordinates> =
         if frameIndex = 0 then
             { fold with
-                  KeyFrame = update fold.KeyFrame }
+                KeyFrame = update fold.KeyFrame }
 
         elif frameIndex - 1 >= fold.Frames.Length then
             fold
 
         else
             let frames =
-                (List.mapi
-                    (fun i frame ->
-                        if i = (frameIndex - 1) then
-                            update frame
-                        else
-                            frame))
-                    fold.Frames
+                (List.mapi (fun i frame -> if i = (frameIndex - 1) then update frame else frame)) fold.Frames
 
             setFrames frames fold
 
@@ -123,7 +122,7 @@ module Fold =
     (* Json Serialization & Deserialization *)
 
     // Convert the fold file to a json serializable type
-    let toJsonType (fold: Fold) : FoldFileJson =
+    let toJsonType (fold: Fold<'Coordinates>) : FoldFileJson<'Coordinates> =
         let orNone =
             function
             | "" -> None
@@ -154,9 +153,7 @@ module Fold =
           FrameClasses = fold.KeyFrame.Classes |> setWithDefault
           FrameAttributes = fold.KeyFrame.Attributes |> setWithDefault
           FrameUnit = Some fold.KeyFrame.Unit
-          VerticesCoords =
-              fold.KeyFrame.Vertices.Coordinates
-              |> listWithDefault
+          VerticesCoords = fold.KeyFrame.Vertices.Coordinates |> listWithDefault
           VerticesVertices = fold.KeyFrame.Vertices.Vertices |> listWithDefault
           VerticesFaces = fold.KeyFrame.Vertices.Faces |> listWithDefault
           EdgesVertices = fold.KeyFrame.Edges.Vertices |> listWithDefault
@@ -170,7 +167,7 @@ module Fold =
           FaceOrders = fold.KeyFrame.Faces.Orders |> listWithDefault }
 
     /// Convert the json serializable type to the foldFile type
-    let fromJsonType (foldJson: FoldFileJson) : Fold =
+    let fromJsonType (foldJson: FoldFileJson<'Coordinates>) : Fold<'Coordinates> =
         let orEmptyString = Option.defaultValue ""
 
         let toSet =
@@ -185,29 +182,26 @@ module Fold =
           Description = foldJson.FileDescription |> orEmptyString
           Classes = foldJson.FileClasses |> toSet
           KeyFrame =
-              Frame.fromJsonType
-                  { FrameAuthor = foldJson.FrameAuthor
-                    FrameTitle = foldJson.FrameTitle
-                    FrameDescription = foldJson.FrameDescription
-                    FrameClasses = foldJson.FrameClasses
-                    FrameAttributes = foldJson.FrameAttributes
-                    FrameUnit = foldJson.FrameUnit
-                    VerticesCoords = foldJson.VerticesCoords
-                    VerticesVertices = foldJson.VerticesVertices
-                    VerticesFaces = foldJson.VerticesFaces
-                    EdgesVertices = foldJson.EdgesVertices
-                    EdgesFaces = foldJson.EdgesFaces
-                    EdgesAssignment = foldJson.EdgesAssignment
-                    EdgesFoldAngle = foldJson.EdgesFoldAngle
-                    EdgesLength = foldJson.EdgesLength
-                    EdgeOrders = foldJson.EdgeOrders
-                    FacesVertices = foldJson.FacesVertices
-                    FacesEdges = foldJson.FacesEdges
-                    FaceOrders = foldJson.FaceOrders }
-          Frames =
-              foldJson.FileFrames
-              |> Option.defaultValue []
-              |> List.map Frame.fromJsonType }
+            Frame.fromJsonType
+                { FrameAuthor = foldJson.FrameAuthor
+                  FrameTitle = foldJson.FrameTitle
+                  FrameDescription = foldJson.FrameDescription
+                  FrameClasses = foldJson.FrameClasses
+                  FrameAttributes = foldJson.FrameAttributes
+                  FrameUnit = foldJson.FrameUnit
+                  VerticesCoords = foldJson.VerticesCoords
+                  VerticesVertices = foldJson.VerticesVertices
+                  VerticesFaces = foldJson.VerticesFaces
+                  EdgesVertices = foldJson.EdgesVertices
+                  EdgesFaces = foldJson.EdgesFaces
+                  EdgesAssignment = foldJson.EdgesAssignment
+                  EdgesFoldAngle = foldJson.EdgesFoldAngle
+                  EdgesLength = foldJson.EdgesLength
+                  EdgeOrders = foldJson.EdgeOrders
+                  FacesVertices = foldJson.FacesVertices
+                  FacesEdges = foldJson.FacesEdges
+                  FaceOrders = foldJson.FaceOrders }
+          Frames = foldJson.FileFrames |> Option.defaultValue [] |> List.map Frame.fromJsonType }
 
     let private jsonConfig =
         JsonConfig.create (jsonFieldNaming = Frame.nameConversion, serializeNone = SerializeNone.Omit)
@@ -219,12 +213,11 @@ module Fold =
             unformatted = true
         )
 
-    let toJson (fold: Fold) : string =
+    let toJson (fold: Fold<'Coordinates>) : string =
         Json.serializeEx jsonConfig (toJsonType fold)
 
-    let toJsonUnformatted (fold: Fold) : string =
+    let toJsonUnformatted (fold: Fold<'Coordinates>) : string =
         Json.serializeEx jsonConfigUnformatted (toJsonType fold)
 
-    let fromJson json : Fold =
-        Json.deserializeEx<FoldFileJson> jsonConfig json
-        |> fromJsonType
+    let fromJson json : Fold<'Coordinates> =
+        Json.deserializeEx<FoldFileJson<'Coordinates>> jsonConfig json |> fromJsonType

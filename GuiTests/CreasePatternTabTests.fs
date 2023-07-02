@@ -2,10 +2,10 @@ module CreasePatternTabTests
 
 open Avalonia
 open Avalonia.Input
-open Geometry
+open Math.Geometry
 open NUnit.Framework
 
-open CreasePattern
+open Origami
 open Gui.Tabs.CreasePatternTab
 open Gui.Tabs.CreasePatternTab.Drawing
 open Gui
@@ -26,40 +26,39 @@ let testCases =
       { name = "Vertex Hover"
         messages = [ CreasePatternCanvas.Msg.MouseMove(Point(500., 500.)) ]
         expected =
-            { CreasePatternTab.init with
-                  mousePosition = Some(Point(500., 500.))
-                  vertexPosition = Some(Point2D.xy 1. 1.)
-                  hover = Point2D.xy 1. 1. |> VertexElement |> Some } }
+          { CreasePatternTab.init with
+              mousePosition = Some(Point(500., 500.))
+              vertexPosition = Some(Point2D.meters 1. 1.)
+              hover = Point2D.meters 1. 1. |> VertexElement |> Some } }
 
       { name = "Crease edge by dragging between points"
         messages =
-            [ CreasePatternCanvas.Msg.MousePressed(Point(500., 500.))
-              CreasePatternCanvas.Msg.MouseReleased(Point(0., 0.), KeyModifiers.None) ]
+          [ CreasePatternCanvas.Msg.MousePressed(Point(500., 500.))
+            CreasePatternCanvas.Msg.MouseReleased(Point(0., 0.), KeyModifiers.None) ]
         expected =
-            { CreasePatternTab.init with
-                  mousePosition = Some(Point(0., 0.))
-                  vertexPosition = Some(Point2D.xy 0. 0.)
-                  hover = Point2D.xy 0. 0. |> VertexElement |> Some
-                  creasePattern =
-                      CreasePattern.create
-                      |> CreasePattern.addEdge (
-                          Edge.betweenWithAssignment (Point2D.xy 1. 1.) (Point2D.xy 0. 0.) Unassigned
-                      ) } }
+          { CreasePatternTab.init with
+              mousePosition = Some(Point(0., 0.))
+              vertexPosition = Some(Point2D.meters 0. 0.)
+              hover = Point2D.meters 0. 0. |> VertexElement |> Some
+              creasePattern =
+                  CreasePattern.create
+                  |> CreasePattern.addEdge (
+                      Edge.betweenWithAssignment (Point2D.meters 1. 1.) (Point2D.meters 0. 0.) EdgeAssignment.Unassigned
+                  ) } }
 
       { name = "Press near point & release off point"
         messages =
-            [ CreasePatternCanvas.Msg.MousePressed(Point(500., 500.))
-              CreasePatternCanvas.Msg.MouseReleased(Point(200., 200.), KeyModifiers.None) ]
+          [ CreasePatternCanvas.Msg.MousePressed(Point(500., 500.))
+            CreasePatternCanvas.Msg.MouseReleased(Point(200., 200.), KeyModifiers.None) ]
         expected =
-            { CreasePatternTab.init with
-                  mousePosition = Some(Point(200., 200.))
-                  vertexPosition = Some(Point2D.xy 0.4 0.4) } } ]
+          { CreasePatternTab.init with
+              mousePosition = Some(Point(200., 200.))
+              vertexPosition = Some(Point2D.meters 0.4 0.4) } } ]
 
-    |> List.map
-        (fun testCase ->
-            TestCaseData(testCase.messages)
-                .Returns(testCase.expected)
-                .SetName(testCase.name))
+    |> List.map (fun testCase ->
+        TestCaseData(testCase.messages)
+            .Returns(testCase.expected)
+            .SetName(testCase.name))
 
 // TODO: Get Crease Pattern Tab test working
 [<Ignore("Test is currently not passing")>]

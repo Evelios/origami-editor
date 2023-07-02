@@ -1,19 +1,20 @@
-namespace CreasePattern
+namespace Origami
 
 open System
-open Geometry
+open Math.Geometry
+open Math.Units
+
 open Utilities.Extensions
 
 [<CustomEquality>]
 [<CustomComparison>]
 type Edge =
-    { Crease: LineSegment2D
+    { Crease: LineSegment2D<Meters, OrigamiCoordinates>
       Assignment: EdgeAssignment }
 
     (* Accessors *)
 
-    member this.line =
-        Line2D.through this.Crease.Start this.Crease.Finish
+    member this.line = Line2D.through this.Crease.Start this.Crease.Finish
 
 
     (* Interfaces *)
@@ -40,9 +41,7 @@ type Edge =
 
     override this.Equals(obj: obj) : bool =
         match obj with
-        | :? Edge as other ->
-            this.Crease = other.Crease
-            && this.Assignment = other.Assignment
+        | :? Edge as other -> this.Crease = other.Crease && this.Assignment = other.Assignment
         | _ -> false
 
     override this.GetHashCode() : int =
@@ -51,7 +50,7 @@ type Edge =
 module Edge =
 
     // ---- Builders -----------------------------------------------------------
-    
+
 
     /// Create an edge at a particular line segment location and give it an
     /// edge assignment.
@@ -65,7 +64,7 @@ module Edge =
 
 
     // ---- Modifiers ----------------------------------------------------------
-    
+
 
     /// Scale up the creases edge in both the X and Y axis
     let scale (x: float) edge = { edge with Crease = edge.Crease * x }
@@ -74,16 +73,15 @@ module Edge =
     /// This is either the perpendicular distance to the line or the distance
     /// to one of the endpoints.
     let distanceToVertex vertex edge =
-        edge.Crease
-        |> LineSegment2D.distanceToPoint vertex
+        edge.Crease |> LineSegment2D.distanceToPoint vertex
 
     let round edge =
         { edge with
-              Crease = LineSegment2D.round edge.Crease }
+            Crease = LineSegment2D.round edge.Crease }
 
 
     // ---- Accessors ---------------------------------------------------------
-    
+
 
     /// Get the two vertices that make up the edge.
     let vertices (edge: Edge) = edge.Crease.Start, edge.Crease.Finish
@@ -91,12 +89,10 @@ module Edge =
     /// Get the two vertices that make up the edge but as a sequence of two
     /// elements.
     let seqVertices (edges: Edge seq) =
-        Seq.map vertices edges
-        |> Seq.map Tuple2.toList
-        |> Seq.concat
+        Seq.map vertices edges |> Seq.map Tuple2.toList |> Seq.concat
 
     /// Get the line segment that makes up the edge
-    let line (e: Edge) : Line2D = e.line
+    let line (e: Edge) : Line2D<Meters, OrigamiCoordinates> = e.line
 
     /// Get the edge assignment of the edge
     let assignment (e: Edge) : EdgeAssignment = e.Assignment

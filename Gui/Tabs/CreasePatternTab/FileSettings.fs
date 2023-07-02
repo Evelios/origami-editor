@@ -7,7 +7,7 @@ module FileSettings =
     open Avalonia.FuncUI.Types
     open Avalonia.Layout
     
-    open CreasePattern
+    open Origami
     open Gui.Widgets
     open Gui
 

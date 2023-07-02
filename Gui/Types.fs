@@ -2,9 +2,10 @@ namespace Gui
 
 open Avalonia
 
-open CreasePattern
-open Geometry
+open Origami
 
+open Math.Geometry
+open Math.Units
 
 type Direction =
     | Left
@@ -14,8 +15,8 @@ type Direction =
 
 
 type CreasePatternTabState =
-    { creasePattern: CreasePattern.CreasePattern
-      creasePatternPreview: CreasePattern.CreasePattern
+    { creasePattern: CreasePattern
+      creasePatternPreview: CreasePattern
       filePath: string option
 
       (* User Interactivity *)
@@ -23,13 +24,13 @@ type CreasePatternTabState =
       pressed: GraphElement option
       selectedReferences: GraphElement list
       mousePosition: Point option
-      vertexPosition: Point2D option
+      vertexPosition: Point2D<Meters, OrigamiCoordinates> option
 
       (* Viewing Options *)
       axioms: Axiom list
       showVertices: bool
       translation: Translation
-      pageSize: Size }
+      pageSize: Size2D<Meters> }
 
 type ReferenceFinderTabState =
     { x: float

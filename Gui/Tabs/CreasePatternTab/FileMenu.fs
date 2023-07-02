@@ -11,7 +11,7 @@ module FileMenu =
     open System.IO
 
     open Fold
-    open CreasePattern
+    open Origami
     open Gui.Widgets
     open Gui
 

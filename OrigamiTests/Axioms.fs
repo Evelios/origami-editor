@@ -4,9 +4,9 @@ open NUnit.Framework
 open FsCheck
 open FsCheck.NUnit
 
-open CreasePattern
-open Geometry
-open GeometryTests
+open Origami
+open Math.Geometry
+open Math.GeometryTests
 
 [<SetUp>]
 let SetUp () = Gen.ArbGeometry.Register()

@@ -1,14 +1,16 @@
-namespace CreasePattern
+namespace Origami
 
-open Geometry
+open Math.Geometry
+open Math.Units
+
 open Utilities.Collections
 
 type ReferenceFinderSolution =
     { Solution: CreasePattern
       CreasePatterns: CreasePattern seq
       Steps: AxiomAction seq
-      Point: Point2D
-      Distance: float
+      Point: Point2D<Meters, OrigamiCoordinates>
+      Distance: Length
       Error: Percentage }
 
 module ReferenceFinder =
@@ -37,7 +39,7 @@ module ReferenceFinder =
         let maxDepth = 3
 
         let boundingBox =
-            BoundingBox2D.from (Point2D.xy 0. 0.) (Point2D.xy 1. 1.)
+            BoundingBox2D.from Point2D.origin (Point2D.meters 1. 1.)
 
         let continuation (step: Step) =
             CreasePattern.elements step.Final
@@ -83,7 +85,7 @@ module ReferenceFinder =
               CreasePatterns = []
               Steps = []
               Point = Point2D.origin
-              Distance = infinity
+              Distance = Quantity.infinity
               Error = Percentage.ofFloat infinity }
 
         fold
@@ -104,8 +106,8 @@ module ReferenceFinder =
             baseCase
             referenceFinder
 
-    /// Get the first crease pattern that creates a point close to the desired point
-    let bestFoldSequencesTo count target referenceFinder : ReferenceFinderSolution array =
+    /// Get crease patterns that are used to get to the reference finder solution.
+    let bestFoldSequencesTo (count: int) (target: Point2D<Meters, OrigamiCoordinates>) (referenceFinder: LookupTable) : ReferenceFinderSolution array =
         let distance step = step.Distance
 
         fold
@@ -115,9 +117,9 @@ module ReferenceFinder =
 
                 let largestDistance =
                     if Array.isEmpty bestSolutions then
-                        infinity
+                        Quantity.infinity
                     else
-                        bestSolutions.[lastIndex - 1].Distance
+                        bestSolutions[lastIndex - 1].Distance
 
 
                 match CreasePattern.closestVertex target step.Final with
@@ -143,7 +145,7 @@ module ReferenceFinder =
                             if Array.isEmpty bestSolutions then
                                 Array.empty
                             else
-                                bestSolutions.[0..(lastIndex - 1)]
+                                bestSolutions[0..(lastIndex - 1)]
 
                         Array.append keepSolutions [| newSolution |]
                         |> Array.sortBy distance

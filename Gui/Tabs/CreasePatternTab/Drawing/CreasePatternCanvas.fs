@@ -1,7 +1,8 @@
 namespace Gui.Tabs.CreasePatternTab.Drawing
 
-open Geometry
+open Math.Geometry
 open Gui.Widgets
+open Math.Units
 
 module CreasePatternCanvas =
     open Avalonia
@@ -10,7 +11,7 @@ module CreasePatternCanvas =
     open Avalonia.Input
 
     open Gui
-    open CreasePattern
+    open Origami
     open Utilities.Extensions
 
     type Msg =
@@ -24,65 +25,59 @@ module CreasePatternCanvas =
     let canvasName = "Crease Pattern Canvas"
 
     let theme =
-        {| creasePatternSize = 500.
-           pointerCloseDistance = 20. |}
+        {| creasePatternSize = Length.cssPixels 500.
+           pointerCloseDistance = Length.cssPixels 20. |}
 
     let rec update (msg: Msg) (state: CreasePatternTabState) : CreasePatternTabState =
         match msg with
         (* User Actions *)
         | KeyPressed key ->
             match key with
-            | Key.Escape ->
-                { state with selectedReferences = [] }
-                |> update RecalculateCreasePatternPreview
+            | Key.Escape -> { state with selectedReferences = [] } |> update RecalculateCreasePatternPreview
             | _ -> state
 
-        | MouseReleased (mousePosition, keyModifiers) ->
+        | MouseReleased(mousePosition, keyModifiers) ->
             let updatedState = update (MouseMove mousePosition) state
 
-            if keyModifiers.HasFlag(KeyModifiers.Shift)
-               && updatedState.pressed = updatedState.hover then
+            if
+                keyModifiers.HasFlag(KeyModifiers.Shift)
+                && updatedState.pressed = updatedState.hover
+            then
                 match updatedState.pressed with
                 | Some pressed ->
                     { updatedState with
-                          pressed = None
-                          selectedReferences = pressed :: updatedState.selectedReferences }
+                        pressed = None
+                        selectedReferences = pressed :: updatedState.selectedReferences }
                     |> update RecalculateCreasePatternPreview
-                | None ->
-                    updatedState
-                    |> update RecalculateCreasePatternPreview
+                | None -> updatedState |> update RecalculateCreasePatternPreview
 
             else
                 match updatedState.pressed, updatedState.hover with
-                | Some (VertexElement pressed), Some (VertexElement hover) when pressed <> hover ->
+                | Some(VertexElement pressed), Some(VertexElement hover) when pressed <> hover ->
 
                     { updatedState with
-                          pressed = None
-                          creasePattern =
-                              CreasePattern.addEdge
-                                  (Edge.betweenWithAssignment pressed hover Unassigned)
-                                  updatedState.creasePattern }
+                        pressed = None
+                        creasePattern =
+                            CreasePattern.addEdge
+                                (Edge.betweenWithAssignment pressed hover EdgeAssignment.Unassigned)
+                                updatedState.creasePattern }
                     |> update RecalculateCreasePatternPreview
 
-                | Some _, _ ->
-                    { updatedState with pressed = None }
-                    |> update RecalculateCreasePatternPreview
+                | Some _, _ -> { updatedState with pressed = None } |> update RecalculateCreasePatternPreview
 
-                | _ ->
-                    updatedState
-                    |> update RecalculateCreasePatternPreview
+                | _ -> updatedState |> update RecalculateCreasePatternPreview
 
         | MousePressed mousePosition ->
             let updatedState = update (MouseMove mousePosition) state
 
             { updatedState with
-                  pressed = updatedState.hover }
+                pressed = updatedState.hover }
 
         | MouseMove mousePosition ->
             // The mouse position converted into crease pattern coordinates
-            let convertedVertex =
-                Translation.pointToVertex state.translation mousePosition
+            let convertedVertex = Translation.pointToVertex state.translation mousePosition
 
+            // TODO: check these conversions
             let convertedCloseDistance =
                 (theme.pointerCloseDistance
                  / (max state.translation.xRatio state.translation.yRatio))
@@ -100,23 +95,22 @@ module CreasePatternCanvas =
                 | None, None -> None
 
             { state with
-                  mousePosition = Some mousePosition
-                  vertexPosition = Some convertedVertex
-                  hover = hover }
+                mousePosition = Some mousePosition
+                vertexPosition = Some convertedVertex
+                hover = hover }
 
         | CreaseEdge edge ->
             { state with
-                  creasePattern = CreasePattern.addEdge edge state.creasePattern
-                  selectedReferences = [] }
+                creasePattern = CreasePattern.addEdge edge state.creasePattern
+                selectedReferences = [] }
             |> update RecalculateCreasePatternPreview
 
         (* Internals *)
         | RecalculateCreasePatternPreview ->
-            let axioms =
-                Axiom.ofAxiomsFromElements state.axioms state.selectedReferences
+            let axioms = Axiom.ofAxiomsFromElements state.axioms state.selectedReferences
 
             { state with
-                  creasePatternPreview = CreasePattern.performAxioms EdgeAssignment.Preview axioms state.creasePattern }
+                creasePatternPreview = CreasePattern.performAxioms EdgeAssignment.Preview axioms state.creasePattern }
 
 
 
@@ -135,19 +129,14 @@ module CreasePatternCanvas =
 
         let dragLine =
             match state.pressed, state.hover, state.vertexPosition with
-            | Some (VertexElement pressed), Some (VertexElement hover), _ ->
-                CreasePatternDrawing.dragLine (LineSegment2D.from pressed hover)
-                |> Some
-            | Some (VertexElement pressed), _, Some vertexPosition ->
+            | Some(VertexElement pressed), Some(VertexElement hover), _ ->
+                CreasePatternDrawing.dragLine (LineSegment2D.from pressed hover) |> Some
+            | Some(VertexElement pressed), _, Some vertexPosition ->
                 CreasePatternDrawing.dragLine (LineSegment2D.from pressed vertexPosition)
                 |> Some
             | _ -> None
 
-        let userElements =
-            [ pressedElement
-              hoveredElement
-              dragLine ]
-            |> List.filterNone
+        let userElements = [ pressedElement; hoveredElement; dragLine ] |> List.filterNone
 
         CreasePatternDrawing.create (
             [ CreasePatternDrawing.creasePattern state.creasePatternPreview
@@ -161,20 +150,11 @@ module CreasePatternCanvas =
     let view (state: CreasePatternTabState) dispatch =
         DockPanel.create
         <| [ DockPanel.background Theme.palette.canvasBackdrop
-             DockPanel.onPointerMoved (
-                 (Event.positionRelativeTo canvasName)
-                 >> Msg.MouseMove
-                 >> dispatch
-             )
-             DockPanel.onPointerPressed (
-                 (Event.positionRelativeTo canvasName)
-                 >> Msg.MousePressed
-                 >> dispatch
-             )
-             DockPanel.onPointerReleased
-                 (fun e ->
-                     Msg.MouseReleased((Event.positionRelativeTo canvasName e), e.KeyModifiers)
-                     |> dispatch)
+             DockPanel.onPointerMoved ((Event.positionRelativeTo canvasName) >> Msg.MouseMove >> dispatch)
+             DockPanel.onPointerPressed ((Event.positionRelativeTo canvasName) >> Msg.MousePressed >> dispatch)
+             DockPanel.onPointerReleased (fun e ->
+                 Msg.MouseReleased((Event.positionRelativeTo canvasName e), e.KeyModifiers)
+                 |> dispatch)
              DockPanel.focusable true
              DockPanel.onKeyUp (Event.handleKeyPress (KeyPressed >> dispatch))
 

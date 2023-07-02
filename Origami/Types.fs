@@ -1,5 +1,8 @@
-namespace CreasePattern
+namespace Origami
 
+type OrigamiCoordinates = OrigamiCoordinates
+
+[<RequireQualifiedAccess>]
 type EdgeAssignment =
     | Boundary
     | Mountain
@@ -8,6 +11,7 @@ type EdgeAssignment =
     | Preview
     | Unassigned
 
+[<RequireQualifiedAccess>]
 type LengthUnit =
     | Meters
     | Pixels

@@ -11,7 +11,7 @@ let frameAttributes = Gen.setOfType<FrameAttribute>
 
 let lengthUnit = Gen.ofType<LengthUnit>
 
-let frame =
+let frame<'Coordinates> : Gen<Frame<'Coordinates>> =
     Gen.map6
         (fun author title description classes attributes unit ->
             Frame.empty
@@ -30,7 +30,7 @@ let frame =
 
 let foldClasses = Gen.setOfType<FileClass>
 
-let fold =
+let fold<'Coordinates> : Gen<Fold<'Coordinates>> =
     Gen.map7
         (fun creator author title description classes keyFrame frames ->
             Fold.empty

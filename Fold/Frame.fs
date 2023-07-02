@@ -1,7 +1,8 @@
 namespace Fold
 
 open FSharp.Json
-open Geometry
+open Math.Geometry
+open Math.Units
 
 type FrameClass =
     | [<JsonUnionCase("creasePattern")>] CreasePattern
@@ -31,7 +32,7 @@ type LengthUnit =
     | [<JsonUnionCase("um")>] Micrometers
     | [<JsonUnionCase("nm")>] Nanometers
     
-type FrameJson =
+type FrameJson<'Coordinates> =
     { FrameAuthor: string option
       FrameTitle: string option
       FrameDescription: string option
@@ -39,7 +40,7 @@ type FrameJson =
       FrameAttributes: FrameAttribute list option
       FrameUnit: LengthUnit option
       [<JsonField(Transform = typeof<Point2D.ListTransform>)>]
-      VerticesCoords: Point2D list option
+      VerticesCoords: Point2D<Meters, 'Coordinates> list option
       VerticesVertices: int list option
       VerticesFaces: int list list option
       EdgesVertices: (int * int) list option
@@ -52,22 +53,23 @@ type FrameJson =
       FacesEdges: int list list option
       FaceOrders: (int (*face id*)  * int (*face id*)  * int (*order*) ) list option }
 
-type Frame =
+type Frame<'Coordinates> =
     { Author: string
       Title: string
       Description: string
       Classes: FrameClass Set
       Attributes: FrameAttribute Set
       Unit: LengthUnit
-      Vertices: Vertices
+      Vertices: Vertices<'Coordinates>
       Edges: Edges
       Faces: Faces }
 
 module Frame =
 
-    let create a : Frame = a
+    let create a : Frame<'Coordinates> = a
 
-    let empty : Frame =
+
+    let empty : Frame<'Coordinates> =
         { Author = ""
           Title = ""
           Description = ""
@@ -80,40 +82,40 @@ module Frame =
 
     (* Modifiers *)
 
-    let setAuthor author frame : Frame = { frame with Author = author }
+    let setAuthor author frame : Frame<'Coordinates> = { frame with Author = author }
 
-    let setTitle title frame : Frame = { frame with Title = title }
+    let setTitle title frame : Frame<'Coordinates> = { frame with Title = title }
 
-    let setDescription description frame : Frame =
+    let setDescription description frame : Frame<'Coordinates> =
         { frame with Description = description }
 
-    let setClasses classes frame : Frame = { frame with Classes = classes }
+    let setClasses classes frame : Frame<'Coordinates> = { frame with Classes = classes }
 
-    let addClass theClass frame : Frame =
+    let addClass theClass frame : Frame<'Coordinates> =
         { frame with
               Classes = Set.add theClass frame.Classes }
 
-    let removeClass theClass frame : Frame =
+    let removeClass theClass frame : Frame<'Coordinates> =
         { frame with
               Classes = Set.remove theClass frame.Classes }
 
-    let withoutClasses frame : Frame = { frame with Classes = Set.empty }
-    let setAttributes attributes frame : Frame = { frame with Attributes = attributes }
+    let withoutClasses frame : Frame<'Coordinates> = { frame with Classes = Set.empty }
+    let setAttributes attributes frame : Frame<'Coordinates> = { frame with Attributes = attributes }
 
-    let addAttribute attribute frame : Frame =
+    let addAttribute attribute frame : Frame<'Coordinates> =
         { frame with
               Attributes = Set.add attribute frame.Attributes }
 
-    let removeAttribute attribute frame : Frame =
+    let removeAttribute attribute frame : Frame<'Coordinates> =
         { frame with
               Attributes = Set.remove attribute frame.Attributes }
 
-    let withoutAttributes frame : Frame = { frame with Attributes = Set.empty }
-    let setUnit unit frame : Frame = { frame with Unit = unit }
+    let withoutAttributes frame : Frame<'Coordinates> = { frame with Attributes = Set.empty }
+    let setUnit unit frame : Frame<'Coordinates> = { frame with Unit = unit }
 
-    let setVertices vertices frame : Frame = { frame with Vertices = vertices }
-    let setEdges edges frame : Frame = { frame with Edges = edges }
-    let setFaces faces frame : Frame = { frame with Faces = faces }
+    let setVertices vertices frame : Frame<'Coordinates> = { frame with Vertices = vertices }
+    let setEdges edges frame : Frame<'Coordinates> = { frame with Edges = edges }
+    let setFaces faces frame : Frame<'Coordinates> = { frame with Faces = faces }
 
     (* Json Serialization & Deserialization *)
 
@@ -125,7 +127,7 @@ module Frame =
         | name -> Json.snakeCase name
 
     /// Convert the frame type to a json serializable type
-    let internal toJsonType (frame: Frame) : FrameJson =
+    let internal toJsonType (frame: Frame<'Coordinates>) : FrameJson<'Coordinates> =
         let stringWithDefault =
             function
             | "" -> None
@@ -163,7 +165,7 @@ module Frame =
           FaceOrders = frame.Faces.Orders |> listWithDefault }
 
     /// Convert the json serializable type to the frame type
-    let internal fromJsonType (frameJson: FrameJson) : Frame =
+    let internal fromJsonType (frameJson: FrameJson<'Coordinates>) : Frame<'Coordinates> =
         let orEmptyString = Option.defaultValue ""
 
         let toSet =
@@ -209,12 +211,12 @@ module Frame =
     let private jsonConfigUnformatted =
         JsonConfig.create (jsonFieldNaming = nameConversion, serializeNone = SerializeNone.Omit, unformatted = true)
 
-    let toJson (frame: Frame) : string =
+    let toJson (frame: Frame<'Coordinates>) : string =
         Json.serializeEx jsonConfig (toJsonType frame)
 
-    let toJsonUnformatted (frame: Frame) : string =
+    let toJsonUnformatted (frame: Frame<'Coordinates>) : string =
         Json.serializeEx jsonConfigUnformatted (toJsonType frame)
 
-    let fromJson json : Frame =
-        Json.deserializeEx<FrameJson> jsonConfig json
+    let fromJson json : Frame<'Coordinates> =
+        Json.deserializeEx<FrameJson<'Coordinates>> jsonConfig json
         |> fromJsonType

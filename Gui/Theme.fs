@@ -1,5 +1,7 @@
 namespace Gui
 
+open Math.Units
+
 module Theme =
     let colors =
         {| darkGray = "#202020"
@@ -28,7 +30,7 @@ module Theme =
 
     let border = {| thickness = 1.; cornerRadius = 5. |}
 
-    let creasePattern = {| maxLength = 500. |}
+    let creasePattern = {| maxLength = Length.cssPixels 500. |}
 
     let spacing =
         {| small = 4.

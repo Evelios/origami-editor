@@ -1,16 +1,17 @@
 namespace Fold
 
-open Geometry
+open Math.Geometry
+open Math.Units
 
-type Vertices =
-    { Coordinates: Point2D list
+type Vertices<'Coordinates> =
+    { Coordinates: Point2D<Meters, 'Coordinates> list
       Vertices: int list
       Faces: int list list }
     
 module Vertices =
-    let create a : Vertices = a
+    let create a : Vertices<'Coordinates> = a
 
-    let empty : Vertices =
+    let empty : Vertices<'Coordinates> =
         { Coordinates = []
           Vertices = []
           Faces = [] }
