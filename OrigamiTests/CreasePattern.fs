@@ -1,8 +1,10 @@
 module CreasePatternTests.CreasePattern
 
 open NUnit.Framework
-open Origami
 open Math.Geometry
+open Math.Units
+
+open Origami
 open Utilities.Extensions
 
 [<SetUp>]
@@ -59,14 +61,14 @@ let pointDistanceTestCases =
             TestCaseData(vertices, find)
                 .Returns(Some(expected, distance)))
 
+
 [<TestCaseSource(nameof pointDistanceTestCases)>]
 let ``Distance to Points in Crease Pattern`` vertices vertex =
     CreasePattern.create
     |> CreasePattern.addVertices vertices
     |> CreasePattern.closestVertex vertex
 
-[<Literal>]
-let closeDistance = 0.1
+let closeDistance = Length.meters 0.1
 
 let pointCloseTestCases =
     let pointAdd = Point2D.meters 0.5 0.5

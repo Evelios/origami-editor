@@ -19,7 +19,7 @@
     <ItemGroup>
       <PackageReference Include="Aether" Version="8.3.1" />
       <PackageReference Include="FSharp.FGL" Version="0.0.4" />
-      <PackageReference Include="Math.Geometry" Version="0.1.132" />
+      <PackageReference Include="Math.Geometry" Version="0.1.135" />
       <PackageReference Include="MathNet.Spatial" Version="0.6.0" />
     </ItemGroup>
 

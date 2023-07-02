@@ -103,15 +103,15 @@ let testCases: (string * Frame<TestCoordinates>) list =
 let deserializationTestCases = Util.toTest testCases
 
 [<TestCaseSource("deserializationTestCases")>]
-let Deserialization source = Frame.fromJson source
+let Deserialization source: Frame<TestCoordinates> = Frame.fromJson source
 
 
 let serializationTestCases = Util.toTestReverse testCases
 
 [<TestCaseSource("serializationTestCases")>]
-let Serialization source = Frame.toJsonUnformatted source
+let Serialization (source: Frame<TestCoordinates>) = Frame.toJsonUnformatted source
 
 
 [<Property>]
 let ``Serialize and Deserialize`` frame =
-    frame |> Frame.toJson |> Frame.fromJson |> (=) frame
+    frame |> Frame.toJson |> Frame.fromJson<TestCoordinates> |> (=) frame

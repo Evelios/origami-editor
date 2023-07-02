@@ -167,7 +167,7 @@ module Fold =
           FaceOrders = fold.KeyFrame.Faces.Orders |> listWithDefault }
 
     /// Convert the json serializable type to the foldFile type
-    let fromJsonType (foldJson: FoldFileJson<'Coordinates>) : Fold<'Coordinates> =
+    let fromJsonType<'Coordinates> (foldJson: FoldFileJson<'Coordinates>) : Fold<'Coordinates> =
         let orEmptyString = Option.defaultValue ""
 
         let toSet =
@@ -219,5 +219,5 @@ module Fold =
     let toJsonUnformatted (fold: Fold<'Coordinates>) : string =
         Json.serializeEx jsonConfigUnformatted (toJsonType fold)
 
-    let fromJson json : Fold<'Coordinates> =
-        Json.deserializeEx<FoldFileJson<'Coordinates>> jsonConfig json |> fromJsonType
+    let fromJson<'Coordinates> json : Fold<'Coordinates> =
+        Json.deserializeEx<FoldFileJson<'Coordinates>> jsonConfig json |> fromJsonType<'Coordinates>

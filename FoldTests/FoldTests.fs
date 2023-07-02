@@ -78,13 +78,13 @@ let testCases: (string * Fold<TestCoordinates>) list =
 let deserializationTestCases = Util.toTest testCases
 
 [<TestCaseSource("deserializationTestCases")>]
-let Deserialization source = Fold.fromJson source
+let Deserialization source : Fold<TestCoordinates> = Fold.fromJson source
 
 let serializationTestCases = Util.toTestReverse testCases
 
 [<TestCaseSource("serializationTestCases")>]
-let Serialization source = Fold.toJsonUnformatted source
+let Serialization (source: Fold<TestCoordinates>) = Fold.toJsonUnformatted source
 
 [<Property>]
-let ``Serialize and Deserialize`` fold =
+let ``Serialize and Deserialize`` (fold: Fold<TestCoordinates>) =
     fold |> Fold.toJson |> Fold.fromJson |> (=) fold

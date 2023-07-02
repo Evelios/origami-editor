@@ -6,7 +6,7 @@ open FsCheck.NUnit
 
 open Origami
 open Math.Geometry
-open Math.GeometryTests
+open Math.Geometry.Test
 
 [<SetUp>]
 let SetUp () = Gen.ArbGeometry.Register()

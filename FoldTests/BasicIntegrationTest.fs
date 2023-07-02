@@ -5,6 +5,7 @@ open NUnit.Framework
 
 open Fold
 open Math.Geometry
+open Math.Units.Test
 
 [<SetUp>]
 let Setup () = ()
@@ -13,7 +14,7 @@ let json =
     Path.Combine(__SOURCE_DIRECTORY__, "basic-integration.fold")
     |> File.ReadAllText
 
-let foldFile =
+let foldFile: Fold<TestSpace> =
     Fold.create
         { Spec = 1
           Creator = "Thomas Waters"
@@ -67,7 +68,7 @@ let foldFile =
 
 [<Test>]
 let Deserialization () =
-    let actual = Fold.fromJson json
+    let actual: Fold<TestSpace> = Fold.fromJson<TestSpace> json
     Assert.AreEqual(foldFile, actual)
 
 [<Test>]

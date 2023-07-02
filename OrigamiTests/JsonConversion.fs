@@ -3,13 +3,11 @@ module CreasePatternTests.FoldDeserialization
 
 open NUnit.Framework
 open FsCheck
-open FsCheck.NUnit
 
 open Fold
 open Origami
 open Math.Geometry
 open Utilities
-open Utilities.Test
 
 [<SetUp>]
 let SetUp () = Gen.ArbOrigami.Register()
@@ -25,10 +23,10 @@ let ``Basic Serialization`` () =
 
     let creasePattern =
         CreasePattern.empty
-        |> CreasePattern.addEdges [ Edge.betweenWithAssignment v.bl v.br Boundary
-                                    Edge.betweenWithAssignment v.br v.tr Boundary
-                                    Edge.betweenWithAssignment v.tr v.tl Boundary
-                                    Edge.betweenWithAssignment v.tl v.bl Boundary ]
+        |> CreasePattern.addEdges [ Edge.betweenWithAssignment v.bl v.br EdgeAssignment.Boundary
+                                    Edge.betweenWithAssignment v.br v.tr EdgeAssignment.Boundary
+                                    Edge.betweenWithAssignment v.tr v.tl EdgeAssignment.Boundary
+                                    Edge.betweenWithAssignment v.tl v.bl EdgeAssignment.Boundary ]
 
     /// Expect
     let vertices =
@@ -46,10 +44,10 @@ let ``Basic Serialization`` () =
             { Vertices = [ (0, 1); (2, 0); (1, 3); (3, 2) ]
               Faces = []
               Assignment =
-                  [ Fold.Boundary
-                    Fold.Boundary
-                    Fold.Boundary
-                    Fold.Boundary ]
+                  [ Fold.EdgeAssignment.Boundary
+                    Fold.EdgeAssignment.Boundary
+                    Fold.EdgeAssignment.Boundary
+                    Fold.EdgeAssignment.Boundary ]
               FoldAngle = []
               Length = []
               Orders = [] }
@@ -101,10 +99,10 @@ let ``Deserialize edges`` () =
             { Vertices = [ (0, 1); (1, 2); (2, 3); (3, 0) ]
               Faces = []
               Assignment =
-                  [ Fold.Boundary
-                    Fold.Boundary
-                    Fold.Boundary
-                    Fold.Boundary ]
+                  [ Fold.EdgeAssignment.Boundary
+                    Fold.EdgeAssignment.Boundary
+                    Fold.EdgeAssignment.Boundary
+                    Fold.EdgeAssignment.Boundary ]
               FoldAngle = []
               Length = []
               Orders = [] }
@@ -132,10 +130,10 @@ let ``Deserialize edges`` () =
 
     let expected =
         CreasePattern.empty
-        |> CreasePattern.addEdges [ Edge.betweenWithAssignment v.bl v.br Boundary
-                                    Edge.betweenWithAssignment v.br v.tr Boundary
-                                    Edge.betweenWithAssignment v.tr v.tl Boundary
-                                    Edge.betweenWithAssignment v.tl v.bl Boundary ]
+        |> CreasePattern.addEdges [ Edge.betweenWithAssignment v.bl v.br EdgeAssignment.Boundary
+                                    Edge.betweenWithAssignment v.br v.tr EdgeAssignment.Boundary
+                                    Edge.betweenWithAssignment v.tr v.tl EdgeAssignment.Boundary
+                                    Edge.betweenWithAssignment v.tl v.bl EdgeAssignment.Boundary ]
 
     Assert.AreEqual(expected, CreasePattern.fromFoldFrame frame)
 

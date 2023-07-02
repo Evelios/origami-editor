@@ -217,6 +217,6 @@ module Frame =
     let toJsonUnformatted (frame: Frame<'Coordinates>) : string =
         Json.serializeEx jsonConfigUnformatted (toJsonType frame)
 
-    let fromJson json : Frame<'Coordinates> =
+    let fromJson<'Coordinates> json : Frame<'Coordinates> =
         Json.deserializeEx<FrameJson<'Coordinates>> jsonConfig json
         |> fromJsonType
